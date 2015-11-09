@@ -1,0 +1,23 @@
+//Note have to be double quote " in json
+SharcUser
+{
+	"username" : "James Smith",
+	"email" : "james.smith@gmail.com",
+	"cloudType": "Google Drive",
+	"cloudAccountId": "1232435554"
+}
+
+SharcExperience		
+{		
+	"name": "Wray village",                   
+	"description": "Short walk",
+	"designerId": "1",
+	"isPublished": "0",                    
+	"moderationMode": "1",
+	"latLng": "", 
+	"summary": "",
+	"snapshotPath": "",                                       
+	"thumbnailPath": "",
+	"size": "0",
+	"theme": ""
+}
