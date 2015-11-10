@@ -23,100 +23,46 @@
     $app->post('/users', function () use ($app) {
         //Get a user sent from client and convert it to a json object
         $jsonUser = $app->request->getBody();         
-        $objUser = json_decode($jsonUser, true);
-     
-        $response = array();
-        $user = UserService::userLogin($objUser);        
-        $response["user"] = $user->toJson();
-        
-        if ($user != null) {
-            $response["error"] = false;
-            $response["message"] = "Successfully logged in.";            
-            Utils::echoResponse(201, $response); 
-        }
-        else {
-            $response["error"] = true;            
-            $response["message"] = "An error occurred while logging in.";
-            Utils::echoResponse(200, $response); 
-        }
-    });
- 
-    $app->get('/users', function () {
-        /**
-        * $user = User::where('email','trien.v.do@gmail.com')->get();
-        *     if($user->count() > 0) 
-        *         echo $user[0]->username; 
-        *     else echo "not found";
-        */
-        echo  UserService::getAllUsers()->toJson();
-            
-    });
-    
-    $app->get('/users/:id', function ($id) {
-        $response = array();
-        $user = SharcUser::find($id);        
-        echo $user;
-        //$response["user"] = $user->getUserId();
-        //Response->setStatusC("200");        
-        //echo json_encode($response);
-            
+        $objUser = json_decode($jsonUser, true);     
+        $response = UserService::userLogin($objUser);
+        Utils::echoResponse($response);                
     });
     
     //RESTful for SharcExperience
     $app->post('/experiences', function () use ($app) {
         //Get a user sent from client and convert it to a json object
-        $jsonExperience = $app->request->getBody();         
-        echo $jsonExperience;
+        $jsonExperience = $app->request->getBody();
         $objExperience = json_decode($jsonExperience, true);
-        
-        $response = array();
-        $experience = ExperienceService::addNewExperience($objExperience);        
-        $response["experience"] = $experience->toJson();
-        
-        if ($experience != null) {
-            $response["error"] = false;
-            $response["message"] = "Successfully added an experience.";            
-            Utils::echoResponse(201, $response); 
-        }
-        else {
-            $response["error"] = true;            
-            $response["message"] = "An error occurred while adding an experience.";
-            Utils::echoResponse(200, $response); 
-        }
+        $response = ExperienceService::addNewExperience($objExperience);
+        Utils::echoResponse($response);
     });
     
-    $app->put('/experiences/:id', function ($id) use ($app) {
-        //Get a user sent from client and convert it to a json object
+    $app->put('/experiences/:id', function ($id) use ($app) {        
         $jsonExperience = $app->request->getBody();         
-        $objExperience = json_decode($jsonExperience, true);
-     
-        $response = array();
-        $experience = ExperienceService::updateExperience($id,$objExperience);        
-        $response["experience"] = $experience->toJson();
-        
-        if ($experience != null) {
-            $response["error"] = false;
-            $response["message"] = "Successfully updated an experience.";            
-            Utils::echoResponse(201, $response); 
-        }
-        else {
-            $response["error"] = true;            
-            $response["message"] = "An error occurred while updating an experience.";
-            Utils::echoResponse(200, $response); 
-        }
+        $objExperience = json_decode($jsonExperience, true);     
+        $response = ExperienceService::updateExperience($id,$objExperience);
+        Utils::echoResponse($response);
     });
     
     $app->get('/experiences', function () { 
-        echo  ExperienceService::getAllExperiences()->toJson(); 
-    });
+        $response = array();        
+        $response = ExperienceService::getAllExperiences();
+        Utils::echoResponse($response); 
+    });   
     
     $app->get('/experiences/:id', function ($id) { 
-        echo  ExperienceService::getExperienceFromId($id)->toJson(); 
+        $response = array();        
+        $response = ExperienceService::getExperienceFromId($id);
+        Utils::echoResponse($response); 
     });
     
-    $app->delete('/experiences/:id', function ($id) { 
-        echo  ExperienceService::deleteExperienceFromId($id); 
+    $app->delete('/experiences/:id', function ($id) {
+        $response = array();        
+        $response = ExperienceService::deleteExperienceFromId($id);
+        Utils::echoResponse($response); 
     });
+    
+    //RESTful for SharcExperience
  
     $app->map('/hello', function () {
 		echo "Welcome to SHARC 2.0 RESTful Web services";

@@ -8,10 +8,14 @@ class Utils
         return md5(uniqid(rand(), true));
     }
     
-    public static function echoResponse($status_code, $response) {
+    public static function echoResponse($response) {
 	    $app = \Slim\Slim::getInstance();
-	    // Http response code
-	    $app->status($status_code);	 
+        if($response["status"] == SUCCESS)        
+            $app->status(201);
+        else if($response["status"] == FAILED)        
+            $app->status(200);
+        else
+            $app->status(500);
 	    // setting response content type to json
 	    $app->contentType('application/json');	 
 	    echo json_encode($response);

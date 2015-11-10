@@ -12,10 +12,18 @@
         'prefix' => ''
     );
  
-    //Define constants        
-    define('USER_CREATED_SUCCESSFULLY', 0);
-    define('USER_UPDATAED__SUCCESSFULLY', 1);
-    define('USER_CREATE_FAILED', 2);
+    //Define general constants
+    define('SUCCESS', "success");
+    define('FAILED', "failed");
+    define('ERROR', "error");            
+    define('INTERNAL_SERVER_ERROR', "Sorry, an error occurred on our server.");
+    
+    //Constants for Experience
+    define('EXPERIENCE_EXIST', "This name already exists. Please use another name for your experience.");
+    define('EXPERIENCE_NOT_EXIST', "Could not find any experience with the submitted id.");
+    define('EXPERIENCES_NOT_FOUND', "There are no experiences at the moment.");
+    
+    
     
         
     //Bootstrap Eloquent ORM -> https://laracasts.com/lessons/how-to-use-eloquent-outside-of-laravel
@@ -59,7 +67,8 @@
         $table->string('description');        
         $table->date('createdDate');
         $table->date('lastPublishedDate');
-        $table->integer('designerId');
+        $table->integer('designerId')->unsigned();
+        $table->foreign('designerId')->references('id')->on('SharcUsers');
         $table->boolean('isPublished');//0 not published - 1 published
         $table->integer('moderationMode');//0: No moderation (accept all responses)- 1: Moderation - 2: Responses are not allowed
         $table->string('latLng');
