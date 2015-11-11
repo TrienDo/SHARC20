@@ -61,7 +61,7 @@
             catch(Exception $e)
             {
                 $response["status"] = ERROR;
-                $response["data"] = INTERNAL_SERVER_ERROR.$e->getMessage();
+                $response["data"] = Utils::getExceptionMessage($e);
             }    
             return $response;                 
         }

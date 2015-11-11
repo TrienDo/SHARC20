@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <script src="googleDriveCloud.js"> </script>
+    <script src="https://apis.google.com/js/client.js?onload=checkAuth">
+    </script>
+  </head>
+  <body>
+  <img src="https://drive.google.com/uc?export=download&id=0B7NUMLjg3OVXTGp1LXhNNUNJbWM"/>
+    <div id="authorize-div" style="display: none">
+      <span>Authorize access to Drive API</span>
+      <!--Button for the user to click to initiate auth sequence -->
+      <button id="authorize-button" onclick="handleAuthClick(event)">
+        Authorize
+      </button>
+    </div>
+    <button id="about-button" onclick="getUserInfo(event)">Get User Info</button>    
+    <input type="file" onchange="insertFile(this.files[0],uploadFileDone)"/>  
+    <button onclick="deleteAppFiles(event)">Delete all files</button>
+    <pre id="output"></pre>
+    <pre id="userInfo"></pre>
+    <img id="uploadedImage" src=""/>
+    <audio id= "audioControl" controls>
+        <source id="uploadedAudio" src="" type="audio/mp3"/>        
+        Your browser does not support the audio element.
+    </audio>
+    
+    <video id= "videoControl" controls>
+        <source id="uploadedVideo" src="" type="audio/mp4"/>        
+        Your browser does not support the audio element.
+    </video>
+    
+  </body>
+</html>

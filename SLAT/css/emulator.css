@@ -1,0 +1,80 @@
+/*Emulator*/
+#mapEmulatorCanvas
+{
+    position: absolute;
+    top: 84px;
+	left:50px;
+    width: 358px;    
+	height: 570px;    
+    z-index: 3;
+    background-color: #fff;        
+}
+
+#centerMapButton
+{
+    position: absolute;
+    top: 88px;
+	left:382px;
+    width: 20px;    
+	height: 20px;    
+    z-index: 4;
+    background-image:url('../images/centerMapButton.png');
+	background-size: 20px 20px;
+	border:1px solid grey;
+}
+
+#mediaContent 
+{
+    position: absolute;
+    top: 114px;
+	left:50px;
+    width: 358px;    
+	height: 570px;    
+    z-index: 5;
+    background-color: #fff;        
+	overflow-x:hidden;
+}
+
+
+
+#mediaTitle
+{
+    position: absolute;
+    top: 84px;
+	left:50px;
+    width: 303px;    
+	height: 25px;    
+    z-index: 6;
+	padding-top: 5px;    
+	padding-left: 5px;    
+    background-color: #CCC;        	
+	font-weight: bold; 
+}
+
+#closeMediaContent
+{
+    position: absolute;
+    top: 84px;
+	left:352px;
+    width: 52px;    
+	height: 26px;
+	padding: 2px;    
+    z-index: 6;
+    background-color: #CCC;        	
+}
+
+#closeButton
+{
+	position: absolute;
+    top: 70px;
+	left:350px;
+    width: 30px;    
+	height: 26px;    
+    z-index: 7;	
+}
+
+#emulatorBody
+{
+	background-image:url('../images/nexus7.png');
+	background-repeat:no-repeat;
+}

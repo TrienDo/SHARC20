@@ -55,7 +55,7 @@
             catch(Exception $e)
             {
                 $response["status"] = ERROR;
-                $response["data"] = INTERNAL_SERVER_ERROR.$e->getMessage();
+                $response["data"] = Utils::getExceptionMessage($e);
             }
             return $response;
         }
@@ -100,11 +100,15 @@
             catch(Exception $e)
             {
                 $response["status"] = ERROR;
-                $response["data"] = INTERNAL_SERVER_ERROR.$e->getMessage();
+                $response["data"] = Utils::getExceptionMessage($e);
             }    
             return $response;
         }
         
+        /**
+         * Get info of an experience
+         * @param int $id: id of the SharcExperience         
+         */
         public static function getExperienceFromId($id)
         {
             $response = array();
@@ -122,11 +126,14 @@
             catch(Exception $e)
             {
                 $response["status"] = ERROR;
-                $response["data"] = INTERNAL_SERVER_ERROR.$e->getMessage();
+                $response["data"] = Utils::getExceptionMessage($e);
             }
             return $response;
         }
-        
+        /**
+         * Get all available experience
+         * @param int $id: id of the SharcExperience         
+         */
         public static function getAllExperiences()
         {
             $response = array();
@@ -137,11 +144,15 @@
             catch(Exception $e)
             {
                 $response["status"] = ERROR;
-                $response["data"] = INTERNAL_SERVER_ERROR.$e->getMessage();
+                $response["data"] = Utils::getExceptionMessage($e);
             }    
             return $response;
         }
         
+        /**
+         * Delete an experience
+         * @param int $id: id of the SharcExperience         
+         */
         public static function deleteExperienceFromId($id)
         {
             $response = array();
@@ -167,7 +178,7 @@
             catch(Exception $e)
             {
                 $response["status"] = ERROR;
-                $response["data"] = INTERNAL_SERVER_ERROR.$e->getMessage();
+                $response["data"] = Utils::getExceptionMessage($e);
             }
             return $response;
         }

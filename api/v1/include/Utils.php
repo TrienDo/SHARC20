@@ -8,6 +8,10 @@ class Utils
         return md5(uniqid(rand(), true));
     }
     
+    public static function getExceptionMessage($e) {
+        return INTERNAL_SERVER_ERROR. $e->getMessage();
+    }
+    
     public static function echoResponse($response) {
 	    $app = \Slim\Slim::getInstance();
         if($response["status"] == SUCCESS)        
