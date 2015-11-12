@@ -45,8 +45,8 @@
                 else {//exists -> update lastLogin and generate new apiKey
                     $user = $rs[0];
                     $user->lastOnline = date('Y-m-d');
-                    $user->apiKey = Utils::generateApiKey();
-                    $user->save();
+                    //$user->apiKey = Utils::generateApiKey();//uncomment this for final version
+                    
                     $result = $user->save(); 
                     if ($result){ //= 1 success
                         $response["status"] = SUCCESS;            

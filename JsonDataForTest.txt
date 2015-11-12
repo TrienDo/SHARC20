@@ -21,3 +21,20 @@ SharcExperience
 	"size": "0",
 	"theme": ""
 }
+
+{  
+   "experienceId":15,
+   "poiDesigner":{  
+      "poiDesignerId":0,
+      "name":"InfoLab",
+      "coordinate":"54.00549749384832 -2.7846157550811768",
+      "triggerZone":"circle 00ff00 20 54.00549749384832 -2.7846157550811768",
+      "designerID":6
+   },
+   "description":"SCC",
+   "poiExperienceId":0,
+   "typeList":"",
+   "eoiList":"",
+   "routeList":"",
+   "mediaList":""
+}

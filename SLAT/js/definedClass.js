@@ -17,11 +17,6 @@ function SharcUser(userID, userName, userEmail, registrationDate, lastOnline, cl
     this.apiKey = apiKey;
 }
 
-
-                	
-                
-        
-
 function SharcExperience(id, name, description, createdDate, lastPublishedDate, designerId, isPublished, moderationMode, latLng, summary, snapshotPath, thumbnailPath, size, theme)
 {
     this.id = id;
@@ -38,7 +33,66 @@ function SharcExperience(id, name, description, createdDate, lastPublishedDate, 
     this.thumbnailPath = thumbnailPath;
     this.size = size;
     this.theme = theme;    
-}  
+}
+
+function SharcPoiDesigner(poiDesignerId, name, coordinate, triggerZone, designerID)
+{
+    this.poiDesignerId = poiDesignerId;
+    this.name = name;    
+    this.coordinate = coordinate;
+    this.triggerZone = triggerZone;
+    this.designerId = designerID;
+    this.getFirstPoint = function()
+    {
+        var tmpLatLng = this.coordinate.split(" ");
+        return new google.maps.LatLng(parseFloat(tmpLatLng[0]), parseFloat(tmpLatLng[1]));
+    }
+    
+    this.getPoiVizPath = function()
+    {
+        var tmpPath = new Array();
+        var tmpLatLng = this.latLng.split(" ");
+        if (tmpLatLng.length > 2)
+        {
+            
+            for(k = 0; k < tmpLatLng.length; k=k+2)
+        	{		
+        		tmpPath.push(new google.maps.LatLng(tmpLatLng[k],tmpLatLng[k+1]));
+        	}
+        }            
+        return tmpPath;
+    }
+    
+    this.setTriggerZone = function (zoneObj,colour)
+    {
+        if(zoneObj.center != null)  //trigger zone is a circle
+        {
+            this.triggerZone = "circle " + colour.substring(1) +  " " + zoneObj.radius + " " + zoneObj.center.lat() + " " + zoneObj.center.lng();
+        }
+        else                        //trigger zone is a polygon
+        {
+            var tmp = zoneObj.getPath().getArray().toString();//"(66.99025646736109, -24.36492919921875),(66.64426812270932, -12.06024169921875)"
+            tmp  = tmp.replace(/\(/g,"");//Replace ( with blank
+            tmp  = tmp.replace(/\)/g,"");//Replace ) with blank
+            tmp = tmp.replace(/ /g,"");//Replace space with blank
+            tmp = tmp.replace(/,/g," ");//Replace , with space
+            this.triggerZone = "polygon " + colour.substring(1) +  " " + tmp;
+        }
+    }
+}
+
+function SharcPoiExperience(experienceId,poiDesigner,description,poiExperienceId, typeList, eoiList, routeList, mediaList)
+{
+    this.experienceId = experienceId;
+    this.poiDesigner = poiDesigner;
+    this.description = description;
+    this.poiExperienceId = poiExperienceId;
+    this.typeList = typeList;
+    this.eoiList = eoiList;
+    this.routeList = routeList;
+    this.mediaList = mediaList;
+}
+  
 function Media(mID, mName,mType,mDesc,mContent,mNoOfLike,mContext,mPoIID,mAttachedTo)
 {
     this.id = mID;
@@ -81,69 +135,6 @@ function POIType(mID,mName,mIcon,mDesc)
     this.state = "new";         //Not in use
 }
 
-function POI(mName,mType,mEvent,mDesc,mlatLng,mID,mRoute,mTriggerZone)
-{
-    this.id = mID;
-    this.name = mName;
-    this.type = mType;
-    this.associatedEOI = mEvent;
-    this.associatedRoute = mRoute;
-    this.desc = mDesc;
-    this.latLng = mlatLng;
-    this.mediaOrder = new Array();
-    this.mainMedia = "";                    //Not in use -> first photo
-    this.associatedMedia = new Array();
-    this.associatedResponses = new Array();
-    this.state = "new";
-    this.triggerZone = mTriggerZone;
-    this.getLatLng = function()
-    {
-        var tmpLatLng = this.latLng.split(" ");
-        return new google.maps.LatLng(parseFloat(tmpLatLng[0]), parseFloat(tmpLatLng[1]));
-    }
-    
-    this.getPoiVizPath = function()
-    {
-        var tmpPath = new Array();
-        var tmpLatLng = this.latLng.split(" ");
-        if (tmpLatLng.length > 2)
-        {
-            
-            for(k = 0; k < tmpLatLng.length; k=k+2)
-        	{		
-        		tmpPath.push(new google.maps.LatLng(tmpLatLng[k],tmpLatLng[k+1]));
-        	}
-        }            
-        return tmpPath;
-    }
-    
-    this.setTriggerZone = function (zoneObj,colour)
-    {
-        if(zoneObj.center != null)  //trigger zone is a circle
-        {
-            this.triggerZone = "circle " + colour.substring(1) +  " " + zoneObj.radius + " " + zoneObj.center.lat() + " " + zoneObj.center.lng();
-        }
-        else                        //trigger zone is a polygon
-        {
-            var tmp = zoneObj.getPath().getArray().toString();//"(66.99025646736109, -24.36492919921875),(66.64426812270932, -12.06024169921875)"
-            tmp  = tmp.replace(/\(/g,"");//Replace ( with blank
-            tmp  = tmp.replace(/\)/g,"");//Replace ) with blank
-            tmp = tmp.replace(/ /g,"");//Replace space with blank
-            tmp = tmp.replace(/,/g," ");//Replace , with space
-            this.triggerZone = "polygon " + colour.substring(1) +  " " + tmp;
-        }
-    }
-    
-    this.getLikeCount = function() //total of likes of all media associated with the POI
-    {
-    	var total = 0;
-    	for(i=0; i < this.associatedMedia.length; i++)
-		{
-    		total += this.associatedMedia[i].noOfLike;
-		}
-    	return total;
-    }
-}
 
 
 function EOI(mID,mName,mSDate,mEDate,mDesc,mPOI,mRoute)

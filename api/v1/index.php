@@ -11,8 +11,11 @@
     require_once 'include/Utils.php';    
     require_once 'models/SharcUser.php';
     require_once 'models/SharcExperience.php';
+    require_once 'models/SharcPoiDesigner.php';
+    require_once 'models/SharcPoiExperience.php';
     require_once 'services/UserService.php';
     require_once 'services/ExperienceService.php';
+    require_once 'services/PoiService.php';
     
  
     $app = new \Slim\Slim(array(
@@ -76,7 +79,21 @@
         Utils::echoResponse($response); 
     });
     
-    //RESTful for SharcExperience
+    //RESTful for Poi
+    $app->post('/pois', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $jsonPoi = $app->request->getBody();        
+        $objPoi = json_decode($jsonPoi, true);
+        $objPoi['poiDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = PoiService::addNewPoi($objPoi);
+        Utils::echoResponse($response);
+    });
  
     $app->map('/hello', function () {
 		echo "Welcome to SHARC 2.0 RESTful Web services";

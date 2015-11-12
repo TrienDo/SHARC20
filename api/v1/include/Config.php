@@ -81,4 +81,32 @@
         $table->string('theme');
     });
     */
+    
+    //Table SharcPoiDesigner  
+    /*        
+    Capsule::schema()->dropIfExists('SharcPoiDesigners');
+    Capsule::schema()->create('SharcPoiDesigners', function($table)
+    {
+        $table->increments('id');
+        $table->string('name');        	
+        $table->string('coordinate');
+        $table->string('triggerZone');
+        $table->integer('designerId')->unsigned();
+        $table->foreign('designerId')->references('id')->on('SharcUsers');        
+    });
+    */
+    
+    //Table SharcPoiDesigner   
+    /*
+    Capsule::schema()->dropIfExists('SharcPoiExperiences');
+    Capsule::schema()->create('SharcPoiExperiences', function($table)
+    {
+        $table->increments('id');
+        $table->integer('experienceId')->unsigned();
+        $table->foreign('experienceId')->references('id')->on('SharcExperiences');        
+        $table->integer('poiDesignerId')->unsigned();
+        $table->foreign('poiDesignerId')->references('id')->on('SharcPoiDesigners');
+        $table->string('description');                        
+    });
+    */
 ?>

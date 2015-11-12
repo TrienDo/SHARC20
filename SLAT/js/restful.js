@@ -56,12 +56,30 @@ function SharcRestful()
             }
         });    
     }
-    
-                   
+                       
     
     this.loadExperience = function (experienceId)
     {
         alert("Opening:" + experienceId);
+    }
+    
+    //Working with POI
+    this.createNewPoi = function (poiExperience)
+    {
+        var data = JSON.stringify(poiExperience);
+        $.ajax({
+            type:'POST',
+            url: apiRoot + 'pois',
+            data: data,                       
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    presentNewPoi(result.data);
+                }
+                else
+                    showMessage(result.data);
+            }
+        });    
     }
 }
 

@@ -84,9 +84,9 @@ function createPOI(isCreating,isFromPhoto,tdIndex)//
         else//edit POI --> Fill current params of the POI
         {
             showAppropriatePoiMap(mapPOI, curPOI);
-            $("#poiName").val(curPOI.name);
-            $("#poiDesc").val(curPOI.desc);
-            markerPOI.setPosition(curPOI.getLatLng());
+            $("#poiName").val(curPOI.poiDesigner.name);
+            $("#poiDesc").val(curPOI.description);
+            markerPOI.setPosition(curPOI.poiDesigner.getFirstPoint());
             markerPOI.setMap(mapPOI);
             //showMapWithCorrectBound(mapPOI, maxZoomLevel);
             
@@ -99,13 +99,13 @@ function createPOI(isCreating,isFromPhoto,tdIndex)//
             drawingManager.get('polygonOptions').strokeColor = "#" + tmpArr[1]; 	
             
             //Associated entities
-            var selectedTypes = curPOI.type.split(" ");
+            var selectedTypes = curPOI.typeList.split(" ");
             for(var i=0; i<selectedTypes.length; i++)
                 $('#poiType input[value="' + selectedTypes[i] + '"]').prop('checked', true);
-            var selectedEvents = curPOI.associatedEOI.split(" ");
+            var selectedEvents = curPOI.eoiList.split(" ");
             for(var i=0; i<selectedEvents.length; i++)
                 $('#poiEvent input[value="' + selectedEvents[i] + '"]').prop('checked', true);
-            var selectedRoutes = curPOI.associatedRoute.split(" ");
+            var selectedRoutes = curPOI.routeList.split(" ");
             for(var i=0; i<selectedRoutes.length; i++)
                 $('#poiRoute input[value="' + selectedRoutes[i] + '"]').prop('checked', true);
         }
@@ -183,17 +183,16 @@ function createPOI(isCreating,isFromPhoto,tdIndex)//
                         allRoutePaths[i].setMap(map);
                     
                     if(!isCreating)//only update POI
-                    {
-                        curPOI.name = name;
+                    {                        
+                        curPOI.poiDesigner.name = name;
                         curPOI.desc = desc;  
-                        curPOI.latLng = markerPOI.getPosition().lat() + " " + markerPOI.getPosition().lng();                                               
-                        curPOI.type = selectedTypes.join(" ");                                               
-                        curPOI.associatedEOI = selectedEvents.join(" ");                                      
-                        curPOI.associatedRoute = selectedRoutes.join(" ");  
+                        curPOI.poiDesigner.coordinate = markerPOI.getPosition().lat() + " " + markerPOI.getPosition().lng();                                               
+                        curPOI.typeList = selectedTypes.join(" ");                                               
+                        curPOI.eoiList = selectedEvents.join(" ");                                      
+                        curPOI.routeList = selectedRoutes.join(" ");  
                         curPOI.setTriggerZone(trigerZonePOI,$('#zoneColour').val());                       
-                        //Create update for POIs table                       
-                        newRow = '["U","POIs","' + curPOI.id + '",{"name":["P","' +  encodeURI(curPOI.name) + '"],"desc":["P","' +  encodeURI(curPOI.desc) + '"],"type":["P","' +  curPOI.type + '"],"associatedEOI":["P","' +  curPOI.associatedEOI + '"],"associatedRoute":["P","' +  curPOI.associatedRoute + '"],"triggerZone":["P","' +  curPOI.triggerZone + '"],"latLng":["P","' +  curPOI.latLng+ '"]}]';
-                            
+                        //Create update for POIs table
+                        resfulManager.updatePoi();
                         //mDropBox.updatePOI(curPOI);                        
                         allPOIMarkers[tdIndex].setPosition(curPOI.getLatLng());
                         updatePOIZone(tdIndex, trigerZonePOI);  
@@ -202,8 +201,11 @@ function createPOI(isCreating,isFromPhoto,tdIndex)//
                     }
                     else//create new POI
                     {                    
-                        curPOI = new POI(name,selectedTypes.join(" "),selectedEvents.join(" "),desc,markerPOI.getPosition().lat() + " " + markerPOI.getPosition().lng(),(new Date()).getTime(),selectedRoutes.join(" "),"");
-                        curPOI.setTriggerZone(trigerZonePOI,$('#zoneColour').val());
+                        var poiBank = new SharcPoiDesigner(0, name, markerPOI.getPosition().lat() + " " + markerPOI.getPosition().lng(), "", designerInfo.id);
+                        poiBank.setTriggerZone(trigerZonePOI,$('#zoneColour').val());
+                        
+                        curPOI = new SharcPoiExperience(curProject.id, poiBank, desc, 0, selectedTypes.join(" "),selectedEvents.join(" "), selectedRoutes.join(" "),"");
+                        
                         if(isFromPhoto && $('#includeGPSPhoto').is(':checked'))//include the GPS taggged photo as the first media for POI
                         {
                             //add the GPS photo to the POI
@@ -216,42 +218,31 @@ function createPOI(isCreating,isFromPhoto,tdIndex)//
                         
                         var tmpPoiMarker = new google.maps.Marker({  
     					   position: markerPOI.getPosition(), map: map, zIndex:2,visible: true,draggable: false,
-    					   icon:"images/poi.png", title: curPOI.name,id: allPOIMarkers.length	
+    					   icon:"images/poi.png", title: curPOI.poiDesigner.name,id: allPOIMarkers.length	
     				    });
                         
                         addMarkerPOIClickEvent(tmpPoiMarker);                    
                         allPOIMarkers.push(tmpPoiMarker);
                         allPOIZones.push(trigerZonePOI);
                         allPOIZones[allPOIZones.length-1].setMap(map); 
-                        allPOIZones[allPOIZones.length-1].setEditable(false);
-                     
+                        allPOIZones[allPOIZones.length-1].setEditable(false);                     
                         allPOIs.push(curPOI);
                         $("#noOfPOI").text("Number of POIs: " + allPOIs.length);
                         //Create insert command for new POI
-                        newRow = '["I","POIs",' + '"' + curPOI.id + '"' + ',{"name":"' + encodeURI(curPOI.name) + '","type":"' + curPOI.type + '","associatedEOI":"' + curPOI.associatedEOI + '","associatedRoute":"' + curPOI.associatedRoute + '","desc":"' + encodeURI(curPOI.desc) + '","triggerZone":"' + curPOI.triggerZone + '","latLng":"' + curPOI.latLng + '","mediaOrder":"' + curPOI.mediaOrder + '"}]';
-                        //mDropBox.insertPOI(curPOI);
-                    }
-                    
-                    //update related database
-                    dataChanges.push(newRow);//Table POIs  
-                    dataChanges = dataChanges.concat(updateAssociatedEntity(curPOI.id,curPOI.associatedEOI,allEOIs,"associatedPOI","EOIs")); //Table EOIs                    
-                    dataChanges = dataChanges.concat(updateAssociatedEntity(curPOI.id,curPOI.associatedRoute,allRoutes,"associatedPOI","Routes"));//Table Routes
-                    //Join all queries
-                    dataChanges = dataChanges.join(",");
-                    dataChanges = "[" + dataChanges + "]";
-                    //Call the update command
-                    if(!isCreating)
-                        mDropBox.updateCommand(dataChanges);
-                    else
-                        mDropBox.insertPOI(dataChanges);//because may need to add media
-                    //Update screen
-                    showMapWithCorrectBound(map, maxZoomLevel);                    
-                    $(this).dialog("close");
-                    //showAllPOIs();                    
+                        resfulManager.createNewPoi(curPOI);
+                    }                   
                 }             
             }
         });
     });
+}
+
+function presentNewPoi()
+{
+    //Update screen
+    showMapWithCorrectBound(map, maxZoomLevel);
+    $("#dialog-message").dialog("close");
+    //showAllPOIs();
 }
 
 function addMarkerPOIClickEvent(marker)

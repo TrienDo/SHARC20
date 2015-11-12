@@ -67,7 +67,7 @@ function startDesigningExperience(data)
 //Open an existing experience
 function openProject()
 {	
-     resfulManager.getExperienceList(presentAllProject);
+     resfulManager.getExperienceList();
 }
 
 function presentAllProject(data)
