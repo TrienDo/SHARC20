@@ -58,13 +58,31 @@
                     } 
                 }
             }
-            catch(Exception $e)
-            {
+            catch(Exception $e) {
                 $response["status"] = ERROR;
                 $response["data"] = Utils::getExceptionMessage($e);
             }    
             return $response;                 
         }
         
+        public static function checkAuthentication($apiKey) {
+            $response = array();
+            try{
+                $rs = SharcUser::where('apiKey',$apiKey)->get();
+                if ($rs->count() == 0){ //Not exists -> add a new user
+                    $response["status"] = FAILED;
+                    $response["data"] = USER_NOT_AUTHENTICATED;
+                }
+                else {
+                    $response["status"] = SUCCESS;
+                    $response["data"] = $rs[0];
+                }
+            }
+            catch(Exception $e) {
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }
+            return $response;
+        }
     } 
 ?>

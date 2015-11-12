@@ -130,6 +130,26 @@
             }
             return $response;
         }
+        
+        
+        /**
+         * Get available experiences of a designer
+         * @param int $id: id of the designer         
+         */
+        public static function getExperienceOfDesigner($id)
+        {
+            $response = array();
+            try{    
+                $response["status"] = SUCCESS;            
+                $response["data"] = SharcExperience::where('designerId',$id)->get()->toArray();
+            }
+            catch(Exception $e)
+            {
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }
+            return $response;
+        }
         /**
          * Get all available experience
          * @param int $id: id of the SharcExperience         

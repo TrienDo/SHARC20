@@ -9,7 +9,7 @@ class Utils
     }
     
     public static function getExceptionMessage($e) {
-        return INTERNAL_SERVER_ERROR. $e->getMessage();
+        return INTERNAL_SERVER_ERROR." ".$e->getMessage();
     }
     
     public static function echoResponse($response) {
@@ -24,7 +24,7 @@ class Utils
 	    $app->contentType('application/json');	 
 	    echo json_encode($response);
 	}
-    
+        
     public static function verifyRequiredParams($required_fields) {
 	    $error = false;
 	    $error_fields = "";

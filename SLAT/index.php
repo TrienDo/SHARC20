@@ -18,10 +18,10 @@
     <script src="lib/sha.js"></script>    
     <script src="https://www.dropbox.com/static/api/dropbox-datastores-1.2-latest.js" type="text/javascript"></script>
     <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="nz8hhultn33wlqu"></script>
-    <script type="text/javascript" src="http://tinymce.cachefly.net/4.0/tinymce.min.js"></script>
-    <script src="js/menuUser.js"></script>     
-    <script src="js/sharcAuthoringLogic.js"></script>    
-    <script src="js/menuExperience.js"></script>    
+    <script type="text/javascript" src="http://tinymce.cachefly.net/4.0/tinymce.min.js"></script>         
+    <script src="js/sharcAuthoringLogic.js"></script>
+    <script src="js/menuUser.js"></script>    
+    <script src="js/menuExperience.js"></script>
     <script src="js/menuPOI.js"></script>
     <script src="js/menuPOIType.js"></script>
     <script src="js/menuEOI.js"></script>    
@@ -30,6 +30,7 @@
     <script src="js/menuResponse.js"></script>    
     <script src="js/dropbox.js"></script>
     <script src="js/googleDrive.js"> </script>
+    <script src="js/restful.js"> </script>
     <script src="js/definedClass.js"></script>
     <script src="js/media.js"></script>
     <script src="js/utils.js"></script>

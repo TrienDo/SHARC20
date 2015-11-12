@@ -9,138 +9,130 @@ var allProjects = new Array();//For managing experiences
 var curProject = null;
 //Create a new experience
 function createProject() {   
-    
-    //Get all current project name from MySQL database -> New project name can't be duplicated
-    $.post(
-        'php/listProjects.php',
-        {            
-            proAuthID: designerInfo.id         
-        },
-        function(data,status){            
-            var result = JSON.parse(data);
-            hashProjects = [];  //Use a hashtable
-			if(result.success == 1) //success is coded in JSON object from server = 0/1 and projects = arrays of name and description
-			{				
-				for (var i = 0; i < result.projects.length; i++)
-				{
-					hashProjects[result.projects[i].proName] = result.projects[i].proPath;
-                }
+    //Create a dialog for the user to enter details about the experience
+    $(function() {        
+        $('#dialog-message').html('');        
+        $('#dialog-message').dialog({ title: "Creating a new experience" });
+        $('#dialog-message').append('<div class="formLabel">Experience name</div><div><input type="text" id="projectName" class="inputText"/></div><div class="formLabel">Experience description (optional but please consider including accessibility issues and whether this route is affected by season, weather, etc)</div><div><textarea rows="3" id="projectDesc" class="inputText"/></div>');
+               
+        $( "#dialog-message" ).dialog({
+            modal: true,
+            height: 290,
+            width: 355,
+            position: ['center','middle'],
+            buttons: {
+                Cancel: function() {
+                    $( this ).dialog("close");
+                },
+                Create: function() {
+                    var fname = $("#projectName").val();
+                    fname = $.trim(fname);
+                    if(!isValidProName(fname))
+                    {
+                        showMessage("Invalid project name! Experience name cannot be blank and should contain only numbers, characters, hyphen, underscore, period, single quote and space.");
+                        return;
+                    }
+                    if(hashProjects[fname]!=null)
+                    {
+                        showMessage("This experience name has been used. Please use another name!");
+                        return;
+                    }
+                    var fdesc = $("#projectDesc").val();
+                    fdesc = $.trim(fdesc);
+                    if(fdesc!="" && !isValidDescription(fdesc))
+                    {
+                        showMessage("Invalid experience description! Experience description should contain only numbers, characters, hyphen, underscore, comma, period, colon, and space.");
+                        return;
+                    }
+                    $("#projectSection").show();
+                    $("#curProject").text("Current experience: " + fname);
+                    $("#proDesc").text("Current experience: " + fdesc);                    
+                    //Create a datastore in Dropbox and share it + add a row about the new experience to the MySQL database                    
+                    curProject = new SharcExperience(0, fname, fdesc, "", "", designerInfo.id, 0, 1, "", "", "", "", 0, "");
+                    resfulManager.createExperience(curProject);
+                    //$(this).dialog("close");                    
+                }             
             }
-            //Create a dialog for the user to enter details about the experience
-            $(function() {        
-                    $('#dialog-message').html('');        
-                    $('#dialog-message').dialog({ title: "Creating a new experience" });
-                    $('#dialog-message').append('<div class="formLabel">Experience name</div><div><input type="text" id="projectName" class="inputText"/></div><div class="formLabel">Experience description (optional but please consider including accessibility issues and whether this route is affected by season, weather, etc)</div><div><textarea rows="3" id="projectDesc" class="inputText"/></div>');
-                           
-                    $( "#dialog-message" ).dialog({
-                        modal: true,
-                        height: 290,
-                        width: 355,
-                        position: ['center','middle'],
-                        buttons: {
-                            Cancel: function() {
-                                $( this ).dialog("close");
-                            },
-                            Create: function() {
-                                var fname = $("#projectName").val();
-                                fname = $.trim(fname);
-                                if(!isValidProName(fname))
-                                {
-                                    showMessage("Invalid project name! Experience name cannot be blank and should contain only numbers, characters, hyphen, underscore, period, single quote and space.");
-                                    return;
-                                }
-                                if(hashProjects[fname]!=null)
-                                {
-                                    showMessage("This experience name has been used. Please use another name!");
-                                    return;
-                                }
-                                var fdesc = $("#projectDesc").val();
-                                fdesc = $.trim(fdesc);
-                                if(fdesc!="" && !isValidDescription(fdesc))
-                                {
-                                    showMessage("Invalid experience description! Experience description should contain only numbers, characters, hyphen, underscore, comma, period, colon, and space.");
-                                    return;
-                                }
-                                $("#projectSection").show();
-                                $("#curProject").text("Current experience: " + fname);
-                                $("#proDesc").text("Current experience: " + fdesc);
-                                showMessage("You now can start designing your new experience. Please use the menus at the top to create Points Of Interest (POIs), Events of Interest (EOIs), etc.");
-                                //Create a datastore in Dropbox and share it + add a row about the new experience to the MySQL database
-                                curProject = new Experience("", fname, "", fdesc, new Date(), designerInfo.id, "0#0", "", "", "", "", "");
-                                mDropBox.createDatabase(fname);
-                                clearScreen();
-                            }             
-                        }
-                    });
-                });		            			
-        }
-    );
+        });
+    });
 }
 
+function startDesigningExperience(data)
+{
+    curProject = data;
+    showMessage("You now can start designing your new experience. Please use the menus at the top to create Points Of Interest (POIs), Events of Interest (EOIs), etc.");
+    $("#dialog-message").dialog("close");
+    clearScreen();
+}
 //Open an existing experience
 function openProject()
 {	
-    $.post(
-        'php/listProjects.php',
-        {            
-            proAuthID: designerInfo.id         
-        },
-        function(data,status){            
-            var result = JSON.parse(data);//JSON object return by listProjects.php
-            //result.success = 0 or 1 
-            //result.projects = arrays of name and description of experiences
-			if(result.success == 1) //there are available experiences 
-			{				
-				//Create a dialog for the user to select an experience from a list of experiences         
-                var selectList = '<div class="formLabel">Please select an experience</div><div><select id="allProjects" class="inputText">';
-                selectList = selectList + '<option value = "-1">Please select</option>';
-                allProjects = result.projects;
-                for (var i = 0; i < result.projects.length; i++)
-				{
-					selectList = selectList + '<option value = "' + result.projects[i].proPath + '">' + result.projects[i].proName + '</option>';
-				}
-                selectList = selectList + '</select></div>';
-                $('#dialog-message').html('');        
-                $('#dialog-message').dialog({ title: "Load an experience" });
-                $('#dialog-message').append(selectList);//            
-                $("#dialog-message").dialog({
-                    modal: true,
-                    height: 200,
-                    width: 340,
-                    position: ['center','middle'],
-                    buttons: {
-                        Cancel: function() {
-                            $(this).dialog("close");
-                        },
-                        Open: function() {               
-                            var tmpPath = $("#allProjects").val();
-                            if(tmpPath != "-1")
-                            {
-                                clearScreen();
-                                $("#projectSection").show();
-                                $("#curProject").text("Current experience: " + $("#allProjects option:selected").text());
-                                //Open an experience
-                                for(m=0; m < allProjects.length; m++)
-                                {
-                                    if(allProjects[m].proPath == tmpPath)
-                                        curProject = allProjects[m]; 
-                                }
-                                $("#proDesc").text(curProject.proDesc);
-                                mDropBox.openDatastore(tmpPath);
-                                $(this).dialog("close");
-                            }
-                        }             
+     resfulManager.getExperienceList(presentAllProject);
+}
+
+function presentAllProject(data)
+{
+    //Create a dialog for the user to select an experience from a list of experiences         
+    var selectList = '<div class="formLabel">Please select an experience</div><div><select id="allProjects" class="inputText">';
+    selectList = selectList + '<option value = "-1">Please select</option>';
+    allProjects = data;
+    for (var i = 0; i < allProjects.length; i++)
+	{
+		selectList = selectList + '<option value = "' + allProjects[i].id + '">' + allProjects[i].name + '</option>';
+	}
+    selectList = selectList + '</select></div>';
+    $('#dialog-message').html('');        
+    $('#dialog-message').dialog({ title: "Load an experience" });
+    $('#dialog-message').append(selectList);//            
+    $("#dialog-message").dialog({
+        modal: true,
+        height: 200,
+        width: 340,
+        position: ['center','middle'],
+        buttons: {
+            Cancel: function() {
+                $(this).dialog("close");
+            },
+            Open: function() {               
+                var tmpId = $("#allProjects").val();
+                if(tmpId != "-1")
+                {
+                    clearScreen();
+                    $("#projectSection").show();
+                    $("#curProject").text("Current experience: " + $("#allProjects option:selected").text());
+                    //Open an experience
+                    for(m=0; m < allProjects.length; m++)
+                    {
+                        if(allProjects[m].id == tmpId)
+                            curProject = allProjects[m]; 
                     }
-                });				
-			}
-            else//No experience is available -> ask the user whether she wants to create a new one
-            {
-                if(confirm("No available experiences! Do you want to create a new experience?") == true) {
-                    createProject();
-                }   
-            }		
+                    $("#proDesc").text(curProject.description);
+                    resfulManager.loadExperience(tmpId);
+                    $(this).dialog("close");
+                }
+            }             
         }
-    );   
+    });
+}
+
+function askToCreateNewProject()
+{
+    $('#dialog-confirm').html('');        
+    $('#dialog-confirm').dialog({ title: "Sharc Locative media Authoring Tool"});           
+    $('#dialog-confirm').append('<p>No available experiences! Would you like to create a new one?</p>');
+    $("#dialog-confirm").dialog({
+        modal: true,
+        width: 350,
+        buttons: {
+            Cancel: function() {
+                $( this ).dialog("close");
+            },
+            Ok: function() {
+                $( this ).dialog( "close" );
+                createProject();
+            }
+        }
+    });    
 }
 
 //Manage all experiences of the "logged in" user

@@ -7,7 +7,7 @@
      */
  
     require ("vendor/autoload.php");    
-    require_once 'include/DbConfig.php';
+    require_once 'include/Config.php';
     require_once 'include/Utils.php';    
     require_once 'models/SharcUser.php';
     require_once 'models/SharcExperience.php';
@@ -30,9 +30,16 @@
     
     //RESTful for SharcExperience
     $app->post('/experiences', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
         //Get a user sent from client and convert it to a json object
         $jsonExperience = $app->request->getBody();
         $objExperience = json_decode($jsonExperience, true);
+        $objExperience['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
         $response = ExperienceService::addNewExperience($objExperience);
         Utils::echoResponse($response);
     });
@@ -44,15 +51,22 @@
         Utils::echoResponse($response);
     });
     
-    $app->get('/experiences', function () { 
+    $app->get('/experiences', function () { //should be published experiences only
         $response = array();        
         $response = ExperienceService::getAllExperiences();
         Utils::echoResponse($response); 
     });   
     
-    $app->get('/experiences/:id', function ($id) { 
-        $response = array();        
-        $response = ExperienceService::getExperienceFromId($id);
+    //Get all experience of a designer with id
+    $app->get('/experiences/:id', function ($id) use ($app) {
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }
+        $response = array();   
+        $id = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only     
+        $response = ExperienceService::getExperienceOfDesigner($id);
         Utils::echoResponse($response); 
     });
     

@@ -38,18 +38,6 @@ function showLoginDialog()
     });
 }
 
-//When the designer logs into SLAT, store details about her dropbox account in a MySQL db
-function checkAndAddNewUser(designerInfo) {   
-    var data = JSON.stringify(designerInfo);
-    $.post(
-        '../api/v1/users',
-        data,        
-        function(data,status){
-            alert(data + ":" +  status);            
-        }            
-    );
-}
-
 //Show About us dialog
 function showAboutUs()
 {

@@ -3,21 +3,41 @@
     Created:    Oct 2014
     Tasks:      Declaring user-defined classes   
 */  
+var SUCCESS = "success";
 
-function Experience(proID, proName, proPath, proDesc, proDate, proAuthID, proAccess, proPublicURL, proLocation, proSummary, proThumbnail, proSize)
+function SharcUser(userID, userName, userEmail, registrationDate, lastOnline, cloudType, cloudAccountId, apiKey)
 {
-    this.proID = proID;
-    this.proName = proName;
-    this.proPath = proPath;          
-    this.proDesc = proDesc;
-    this.proDate = proDate;     
-    this.proAuthID = proAuthID;
-    this.proAccess = proAccess;     
-    this.proPublicURL = proPublicURL;        
-    this.proLocation = proLocation;
-    this.proSummary = proSummary; 
-    this.proThumbnail = proThumbnail;
-    this.proSize = proSize;   
+    this.id = userID;
+    this.username = userName;
+    this.email = userEmail;
+    this.registrationDate = registrationDate;
+    this.lastOnline = lastOnline;
+    this.cloudType = cloudType;
+    this.cloudAccountId = cloudAccountId;
+    this.apiKey = apiKey;
+}
+
+
+                	
+                
+        
+
+function SharcExperience(id, name, description, createdDate, lastPublishedDate, designerId, isPublished, moderationMode, latLng, summary, snapshotPath, thumbnailPath, size, theme)
+{
+    this.id = id;
+    this.name = name;
+    this.description = description;          
+    this.createdDate = createdDate;
+    this.lastPublishedDate = lastPublishedDate;     
+    this.designerId = designerId;
+    this.isPublished = isPublished;     
+    this.moderationMode = moderationMode;        
+    this.latLng = latLng;
+    this.summary = summary; 
+    this.snapshotPath = snapshotPath;
+    this.thumbnailPath = thumbnailPath;
+    this.size = size;
+    this.theme = theme;    
 }  
 function Media(mID, mName,mType,mDesc,mContent,mNoOfLike,mContext,mPoIID,mAttachedTo)
 {
@@ -188,15 +208,6 @@ function Route(mID,mName,mDesc,mColour,mSelectedPOIs,mPolygon,mSelectedEOIs,mDir
         distance/=1000;//to km
         return distance.toFixed(2);//get two decimal places
     }     
-}
-
-function SharcUser(userID, userName, userEmail, cloudType, cloudAccountId)
-{
-    this.id = userID;
-    this.username = userName;
-    this.email = userEmail;    
-    this.cloudType = cloudType;
-    this.cloudAccountId = cloudAccountId;
 }
 
 //Model for a Placemark from KML file

@@ -72,11 +72,10 @@ function SharcDropBox()
                     success: function(data) {                        
                         var result = JSON.parse(data);
                         $("#userAccount").html('Logged in as ' + result.display_name + '<img src="images/arrow.png" class="arrowMenu"/>');
-                        designerInfo = new SharcUser(0, result.display_name, result.email, "Dropbox", result.uid);
+                        designerInfo = new SharcUser(0, result.display_name, result.email, "", "", "Dropbox", result.uid, "");
                         logedIn = true;   
-                        showMenu(true);
-                        showWelcomeDialog(designerInfo.name);  
-                        checkAndAddNewUser(designerInfo);                                   
+                        showMenu(true);                          
+                        resfulManager.updateOrAddUser(designerInfo);                                   
                     },
                     error: function(jqXHR, textStatus, errorThrown ) {
                         showMessage("Error: " + textStatus + " because:" + errorThrown);
@@ -84,126 +83,7 @@ function SharcDropBox()
                 });                                  
             }
         });         
-    }
-    
-    this.deleteDatastore = function(dsID)//id of the datastore
-    {      
-        //Open a datastore to get its handle
-        $.ajax({
-            type:'POST',
-            url: 'https://api.dropbox.com/1/datastores/get_datastore?dsid=' + dsID,
-            dataType: 'html',
-            headers: { 'Authorization': REQUEST_HEADER },
-            success: function(data) {
-               
-                var result = JSON.parse(data);
-                var delHandle = result.handle;                
-                //var row = '[["I",":acl",' + '"\\\\Au1\\\\dddddddddd\\\\Z"' + ',{"principal": "public","role":"2000"}]]';
-                //Delete the datastore
-                $.ajax({
-                        type:'POST',
-                        url: 'https://api.dropbox.com/1/datastores/delete_datastore?handle=' + delHandle,
-                        dataType: 'html',
-                        headers: { 'Authorization': REQUEST_HEADER },
-                        success: function(data) {
-                            //showMessage("The experience has been deleted.");
-                        }                   
-                    });
-            },
-            error: function(jqXHR, textStatus, errorThrown ) {
-                showMessage("Error: " + textStatus + " because:" + errorThrown);
-            }
-        });             
-    }
-    
-    this.createDatabase = function(dbName)
-    {        
-        //http://caligatio.github.io/jsSHA/
-        //A unique ID must be generated for each datastore
-        var keyObj = new jsSHA(dbName.toLowerCase()+ designerInfo.id + (new Date()).getTime() , "TEXT");//Create a seed for SHA = experience name + designerID + time
-        var key = keyObj.getHash("SHA-256","B64",1);            
-        key  = key.replace(/=/g,""); //Remove = signs
-        key  = key.replace(/\+/g,"-");//Replace + with -
-        key  = key.replace(/\//g,"_");//Replace / with _
-        
-        var dsidObj = new jsSHA(key, "TEXT");
-        var dsid = dsidObj.getHash("SHA-256","B64",1);  
-        dsid  = dsid.replace(/=/g,""); //Remove = signs
-        dsid  = dsid.replace(/\+/g,"-");//Replace + with -
-        dsid  = dsid.replace(/\//g,"_");//Replace / with _ 
-        dsid = '.' + dsid; 
-        projectID = dsid;   
-        var dataContent = {dsid:dsid,key:key};     
-        //Create a datastore
-        $.ajax({
-            type:'POST',
-            url: 'https://api.dropbox.com/1/datastores/create_datastore',
-            data: dataContent,
-            dataType: 'html',
-            headers: { 'Authorization': REQUEST_HEADER},
-            success: function(data) {                
-                var result = JSON.parse(data);
-                databaseHandle = result.handle;
-                databaseRevision = result.rev;
-                if(result.created == false)
-                {                    
-                    showMessage("This name has been used for another experience. Please give your experience another name!");
-                }
-                else
-                {   
-                    //Add meta data about the new experience to the MySQL db
-                    curProject.proPath = projectID;
-                    curProject.proAuthID = designerInfo.id;
-                    
-                    $.post(
-                        'php/saveProject.php',
-                        {
-                            proName: curProject.proName,
-                            proPath: curProject.proPath,
-                            proDesc: curProject.proDesc,
-                            proAuthID: curProject.proAuthID,
-                            proAccess: curProject.proAccess
-                        },
-                        function(data,status){
-                            //if(status != "success");
-                            //    showMessage("Error when creating a new project: " + data);
-                    });
-                    $("#dialog-message").dialog("close");
-                    //open and share datastore (share datastore by inserting a row to the access control table of a datastore)
-                    var row = '[["I",":acl","public",{"role":{"I":"2000"}}]]';
-                    var dataContent = {handle:databaseHandle,rev:databaseRevision,changes:row};
-                    $.ajax({
-                            type:'POST',
-                            url: 'https://api.dropbox.com/1/datastores/put_delta',
-                            data: dataContent,
-                            dataType: 'html',
-                            headers: { 'Authorization': REQUEST_HEADER },
-                            success: function(data) {
-                              
-                                var result = JSON.parse(data);
-                                if(result.rev != undefined)
-                                {                              
-                                    databaseRevision = result.rev;
-                                }
-                                else
-                                {
-                                    showMessage(data);
-                                }    
-                                //var params = parseQueryString(data);                
-                            },
-                            error: function(jqXHR, textStatus, errorThrown ) {
-                                showMessage("Error: " + textStatus + " because:" + errorThrown);
-                            }
-                    });
-                }
-                                        
-            },
-            error: function(jqXHR, textStatus, errorThrown ) 
-            {
-                showMessage("Error: " + textStatus + " because:" + errorThrown);
-            }
-        });                   
-    }
+    }     
      
     this.createSnapshot = function(dsID)//dump all content of an experience to a json file
     {      

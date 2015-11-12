@@ -12,6 +12,7 @@ var map;                        //main map
 var highlight;                  //Circle to highlight current POI - blinking when a POI is selected
 var selectedPOIMarker = null;   //Create red marker to highlight the selected POI
 var cloudManager;               //object to interact with cloud
+var resfulManager;              //object to interact with SHARC RESTful
 
 //Variables related to POI
 var mapPOI;                     //map for creating/editing POI
@@ -65,6 +66,7 @@ $(document).ready(function(){
 
 function initialize() 
 {	 
+    resfulManager = new SharcRestful();
     $("#version").text(version); 
     getCallbackURL();       //Get the correct version of SLAT so Dropbox can redirect to after the login process                            
     createGoogleObjects();  //Create google map object and other related objects
@@ -359,13 +361,13 @@ function showWelcomeDialog(authorName)
         height: 200,
         width: 450,            
         buttons: {
-            "Open an exisiting experience": function() {                
-                openProject();
-                $( this ).dialog("close");                
+            "Open an exisiting experience": function() {
+                $( this ).dialog("close");
+                openProject();                
             },
             "Create a new experience": function() {                
-           	    createProject();
-                $( this ).dialog("close");                
+           	    $( this ).dialog("close");
+                createProject();                   
             }             
         }
     });     
