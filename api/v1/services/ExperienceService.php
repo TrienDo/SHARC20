@@ -202,6 +202,43 @@
             }
             return $response;
         }
+        
+        /**
+         * Get content of an experience
+         * @param int $id: id of the SharcExperience         
+         */
+        public static function getExperienceContent($designerId, $experienceId){
+            $response = array();
+            try{    
+                //Check if the designerId owns the experience
+                $rs = SharcExperience::where('id',$experienceId)->where('designerId',$designerId)->get();
+                if ($rs->count() == 0){ //Not exists 
+                    $response["status"] = FAILED;            
+                    $response["data"] = EXPERIENCE_NOT_EXIST;
+                    return $response; 
+                }
+                else {
+                    $response["status"] = SUCCESS;
+                    //Get all POIs of the experience
+                    $objPois = SharcPoiExperience::where('experienceId',$experienceId)->get();            
+                    $tmpPois = $objPois->toArray();                    
+                    $i = 0;
+                    for ($i; $i< $objPois->count(); $i++) {
+                        $rs = SharcPoiDesigner::where('id',$objPois[$i]->poiDesignerId)->where('designerId',$designerId)->get();
+                        $tmpPois[$i]["poiDesigner"] = $rs[0]->toArray();
+                    }                    
+                    $response["data"]["allPois"] = $tmpPois;
+                    //Get all EOIs of the experience
+                    return $response;
+                }
+            }
+            catch(Exception $e){
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }
+            return $response;    
+        }
+        
     }
  
 ?>

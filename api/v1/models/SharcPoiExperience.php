@@ -1,7 +1,7 @@
 <?php
     
     /**
-     * This class is a model of a SharcPoiExperience using Eloquent     
+     * This class is a model of a SharcPoiExperience using Eloquent  [POIs used in an experience]   
      *
      * @author: Trien Do  
      */
@@ -14,7 +14,7 @@
     	protected $table = 'SharcPoiExperiences'; //name of table
         /*public function sharcPoiDesigner()
         {
-            return $this->hasOne('SharcPoiDesigner');
+            return $this->belongsTo('SharcPoiDesigner');
         }*/
     }
 ?>

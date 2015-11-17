@@ -53,14 +53,32 @@ function SharcRestful()
                 }
                 else
                     showMessage(result.data);
+            },
+            error: function(result) {                
+                showMessage(result);
             }
+
         });    
     }
                        
     
     this.loadExperience = function (experienceId)
     {
-        alert("Opening:" + experienceId);
+        $.ajax({
+            type:'GET',
+            url: apiRoot + 'experiences/' + designerInfo.id + '/'+ experienceId,                        
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){                    
+                    renderProject(result.data);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(result) {                
+                showMessage(result);
+            }
+        });
     }
     
     //Working with POI

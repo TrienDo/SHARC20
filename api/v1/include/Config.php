@@ -20,7 +20,7 @@
     
     //Constants for Experience
     define('EXPERIENCE_EXIST', "This name already exists. Please use another name for your experience.");
-    define('EXPERIENCE_NOT_EXIST', "Could not find any experience with the submitted id.");
+    define('EXPERIENCE_NOT_EXIST', "Could not find any experience with the submitted parameters.");
     define('EXPERIENCES_NOT_FOUND', "There are no experiences at the moment.");
     //Constants for Users
     define('USER_NOT_AUTHENTICATED', "User not authenticated.");
@@ -96,7 +96,7 @@
     });
     */
     
-    //Table SharcPoiDesigner   
+    //Table SharcPoiExperiences   
     /*
     Capsule::schema()->dropIfExists('SharcPoiExperiences');
     Capsule::schema()->create('SharcPoiExperiences', function($table)
@@ -109,4 +109,38 @@
         $table->string('description');                        
     });
     */
+    
+    //Table SharcMediaDesigner  
+    /*        
+    Capsule::schema()->dropIfExists('SharcMediaDesigners');
+    Capsule::schema()->create('SharcMediaDesigners', function($table)
+    {
+        $table->increments('id');
+        $table->integer('contentType');        	
+        $table->string('content');
+        $table->integer('size');
+        $table->integer('designerId')->unsigned();
+        $table->foreign('designerId')->references('id')->on('SharcUsers');        
+    });
+    */
+    
+    //Table SharcMediaDesigner  
+    /*        
+    Capsule::schema()->dropIfExists('SharcMediaExperiences');
+    Capsule::schema()->create('SharcMediaExperiences', function($table)// mediaDesignerId, entityType, entityId, experienceId, caption, context, mainMedia, visible, order
+    {
+        $table->increments('id');
+        $table->integer('mediaDesignerId')->unsigned();
+        $table->foreign('mediaDesignerId')->references('id')->on('SharcMediaDesigners');
+        $table->integer('entityType');
+        $table->integer('entityId');        	
+        $table->integer('experienceId')->unsigned();
+        $table->foreign('experienceId')->references('id')->on('SharcExperiences');
+        $table->string('caption');
+        $table->string('context');
+        $table->boolean('mainMedia');
+        $table->boolean('visible');
+        $table->integer('order');
+    });
+    */        
 ?>

@@ -79,6 +79,19 @@
         Utils::echoResponse($response); 
     });
     
+    //Get content of an experience
+    $app->get('/experiences/:designerId/:experienceId', function ($designerId, $experienceId) use ($app) {
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }
+        $response = array();   
+        $designerId = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only     
+        $response = ExperienceService::getExperienceContent($designerId, $experienceId);
+        Utils::echoResponse($response); 
+    });
+    
     //RESTful for Poi
     $app->post('/pois', function () use ($app) {
         //Check authentication        

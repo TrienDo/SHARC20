@@ -487,15 +487,15 @@ function presentPOIs()
         $('#dialog-message').append('<table width="100%" id="tblData"><thead><tr><th>No.</th><th class="tableNameColumn">Name</th><th>Description</th><th>No. of linked EOIs</th><th>No. of linked routes</th><th>No. of media</th><th>Total No. of Likes</th><th>No. of responses</th><th class="tableNameColumn">Action</th></tr></thead><tbody></tbody></table>');
         for(var i=0; i < allPOIs.length; i++)
         {
-            var name = allPOIs[i].name + " (" + allPOIs[i].latLng + ")";
-            var desc = allPOIs[i].desc;
-            allPOIs[i].associatedEOI += "";//make it a string
-            var eoiCount = (allPOIs[i].associatedEOI == "" ? 0 : allPOIs[i].associatedEOI.split(" ").length);
-            allPOIs[i].associatedRoute += "";
-            var routeCount = (allPOIs[i].associatedRoute == "" ? 0: allPOIs[i].associatedRoute.split(" ").length);
-            var mediaCount = allPOIs[i].mediaOrder.length;
-            var likeCount = allPOIs[i].getLikeCount();
-            $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + name + '</td><td>' + desc + '</td><td style="text-align:center;">' + eoiCount + '</td><td style="text-align:center;">' + routeCount + '</td><td style="text-align:center;">' + mediaCount + '</td><td style="text-align:center;">' + likeCount + '</td><td style="text-align:center;">' + Object.keys(allPOIs[i].associatedResponses).length +  '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/edit.png"> Edit this POI</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Delete this POI</button> <button class="btnView googleLookAndFeel">Manage this POI\'s media</button></td></tr>');
+            var name = allPOIs[i].poiDesigner.name;// + " (" + allPOIs[i].latLng + ")";
+            var desc = allPOIs[i].description;
+            allPOIs[i].eoiList += "";//make it a string
+            var eoiCount = (allPOIs[i].eoiList == "" ? 0 : allPOIs[i].eoiList.split(" ").length);
+            allPOIs[i].routeList += "";
+            var routeCount = (allPOIs[i].routeList == "" ? 0: allPOIs[i].routeList.split(" ").length);
+            var mediaCount = allPOIs[i].mediaList.length;
+            var likeCount = 0;//allPOIs[i].getLikeCount();
+            $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + name + '</td><td>' + desc + '</td><td style="text-align:center;">' + eoiCount + '</td><td style="text-align:center;">' + routeCount + '</td><td style="text-align:center;">' + mediaCount + '</td><td style="text-align:center;">' + likeCount + '</td><td style="text-align:center;">' + Object.keys(allPOIs[i].responseList).length +  '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/edit.png"> Edit this POI</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Delete this POI</button> <button class="btnView googleLookAndFeel">Manage this POI\'s media</button></td></tr>');
         } 
         $("#tblData").addClass("tableBorder");
         $("#tblData td").addClass("tableBorder");
@@ -507,6 +507,7 @@ function presentPOIs()
     catch(e)
     {
         showMessage("Error when presenting all POIs: " + e.message);
+        $('#dialog-message').dialog("close"); 
     }
 }
 

@@ -135,6 +135,89 @@ function askToCreateNewProject()
     });    
 }
 
+function renderProject(data)
+{
+    clearScreen();
+    renderPOIs(data.allPois); 
+    $("#noOfPOI").text("Number of POIs: " + allPOIs.length);
+    $("#noOfEOI").text("Number of EOIs: " + allEOIs.length);
+    $("#noOfROU").text("Number of Routes: " + allRoutes.length);
+    
+    //showNotification();//Red rectangle next to the Response menu to indicate new responses    
+    showMapWithCorrectBound(map,maxZoomLevel)   
+}
+
+function renderPOIs(retPOIs)    
+{
+    for(i = 0; i < retPOIs.length; i++) {
+        //Get info
+        var poiDesigner = new SharcPoiDesigner(retPOIs[i].poiDesigner.id, retPOIs[i].poiDesigner.name, retPOIs[i].poiDesigner.coordinate, retPOIs[i].poiDesigner.triggerZone, retPOIs[i].poiDesigner.designerId);
+        curPOI = new SharcPoiExperience(retPOIs[i].experienceId,retPOIs[i].poiDesigner,retPOIs[i].description,retPOIs[i].id, "", "", "", "");
+        allPOIs.push(curPOI);
+        //Vis Geofence
+        var fenceInfo = curPOI.poiDesigner.triggerZone.trim().split(" ");
+        if(fenceInfo[0]== "circle") //String format-->circle colourWithout# Radius Lat Lng
+        {
+            tmpPoiZone = new google.maps.Circle({					
+        		center: new google.maps.LatLng(parseFloat(fenceInfo[3]), parseFloat(fenceInfo[4])), 
+                radius: parseFloat(fenceInfo[2]),
+        		strokeColor: "#" + fenceInfo[1], strokeOpacity: 1.0, strokeWeight: 2,
+        		fillColor: "#" + fenceInfo[1], fillOpacity: 0.3,		
+        		map: map
+        	});
+        }
+        else if(fenceInfo[0]== "polygon")//String format-->polygon colourWithout# Lat1 Lng1 Lat2 Lng2
+        {
+            
+            var polyPath = new Array();
+			var k = 2;
+			while (k < fenceInfo.length)
+			{
+				var tmpPoint =  new google.maps.LatLng(parseFloat(fenceInfo[k]), parseFloat(fenceInfo[k+1]));				
+				polyPath.push(tmpPoint);
+				k+=2;
+			}
+            
+            tmpPoiZone = new google.maps.Polygon({					
+        		paths: polyPath,
+                strokeColor: "#" + fenceInfo[1], strokeOpacity: 1.0, strokeWeight: 2,
+        		fillColor: "#" + fenceInfo[1], fillOpacity: 0.3,		
+        		map: map
+        	});
+        }        
+        allPOIZones.push(tmpPoiZone);                                
+        //hashTablePOI[curPOI.id] = allPOIs.length;//key = id and value = index of POI in array --> to associate media with POI later
+        //Viz marker        
+        tmpLatLng = poiDesigner.getFirstPoint();
+        var poiIcon = null;
+        //if(curPOI.type == "accessibility")
+        //    poiIcon = "images/access.png";
+        //else
+        {
+            //poiIcon = getFirstImage(curPOI);
+            //if(poiIcon == null)
+                poiIcon = "images/poi.png";
+        }                         
+        tmpPoiMarker = new google.maps.Marker({  
+        			   position: tmpLatLng, map: map, zIndex:2,visible: true,draggable: false,
+        			   icon: poiIcon, title: curPOI.poiDesigner.name,id: allPOIMarkers.length	
+        		    });
+        //markerManager.addMarker(tmpPoiMarker);
+        addMarkerPOIClickEvent(tmpPoiMarker);                                
+        allPOIMarkers.push(tmpPoiMarker);
+        
+        //Viz of POI
+        var tmpPath =  poiDesigner.getPoiVizPath();
+        if(tmpPath.length > 0)
+        {
+            var poiViz = new google.maps.Polyline({ path: tmpPath,geodesic: true,editable:false, map: map, strokeColor: ("#FF0000"),strokeOpacity: 1.0,strokeWeight: 2}); 
+            allPoiViz.push(poiViz);
+        }
+        else 
+            allPoiViz.push(null);
+    }                                                             
+}
+
 //Manage all experiences of the "logged in" user
 function manageProjects()
 {	

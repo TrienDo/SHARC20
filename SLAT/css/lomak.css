@@ -103,6 +103,11 @@ body
     float: right;
 }
 
+#notification
+{
+	 text-align: center;
+}
+
 .noNotification
 {
 	width:0px;

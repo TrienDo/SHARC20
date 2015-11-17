@@ -51,7 +51,7 @@ function SharcPoiDesigner(poiDesignerId, name, coordinate, triggerZone, designer
     this.getPoiVizPath = function()
     {
         var tmpPath = new Array();
-        var tmpLatLng = this.latLng.split(" ");
+        var tmpLatLng = this.coordinate.split(" ");
         if (tmpLatLng.length > 2)
         {
             
@@ -91,19 +91,30 @@ function SharcPoiExperience(experienceId,poiDesigner,description,poiExperienceId
     this.eoiList = eoiList;
     this.routeList = routeList;
     this.mediaList = mediaList;
+    this.responseList = new Array();
 }
   
-function Media(mID, mName,mType,mDesc,mContent,mNoOfLike,mContext,mPoIID,mAttachedTo)
+function MediaDesigner(id, contentType, content, size, designerId)
 {
-    this.id = mID;
-    this.name = mName;
-    this.type = mType;          //(Text/Image/Audio/Video)
-    this.desc = mDesc;
-    this.content = mContent;    // Content (Text vs. path to media)
-    this.noOfLike = mNoOfLike;
-    this.context = mContext;    // time/direction/ect? - NOT IN USE
-    this.PoIID = mPoIID;        //id of the associated entity 
-    this.attachedTo = mAttachedTo;//Type of associated entity: POI - EOI - Route
+    this.id = id;    
+    this.contentType = contentType;          //(Text/Image/Audio/Video)
+    this.content = content;                  // Content (Text vs. path to media)   
+    this.size = size;   
+    this.designerId = designerId;    
+}
+
+function MediaExperience(id, mediaDesignerId, entityType, entityId, experienceId, caption, context, mainMedia, visible, order)
+{
+    this.id = id;
+    this.mediaDesignerId = mediaDesignerId;
+    this.entityType = entityType;          
+    this.entityId = entityId;
+    this.experienceId = experienceId;     
+    this.caption = caption;
+    this.context = context;     
+    this.mainMedia = mainMedia;        
+    this.visible = visible; 
+    this.order = order;
 }
 
 function Response(mID, mType,mDesc,mContent,mNoOfLike,mEntityType, mEntityID, mConName, mConEmail, mStatus, mSize)

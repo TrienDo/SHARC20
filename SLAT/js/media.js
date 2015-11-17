@@ -688,12 +688,12 @@ function viewAllMediaItems(tmpObject)
 {
     $('#dialog-message').html('');        
     //Title shows name of the entity and the number of media 
-    $('#dialog-message').dialog({ title: tmpObject.name + " (No. of media: " + tmpObject.mediaOrder.length + ")"});
+    $('#dialog-message').dialog({ title: tmpObject.poiDesigner.name + " (No. of media: " + tmpObject.mediaList.length + ")"});
     //Show all media items in an unordered list
     var content = getPOIMediaContentWithOptions(tmpObject);// + getResponseContent(tmpObject);
     $('#dialog-message').append(content);
     
-    var count = tmpObject.mediaOrder.length;    
+    var count = tmpObject.mediaList.length;    
     var buttonList = $("#uList").find("button");
     //Disable the Up button of the first item 
     $(buttonList[0]).prop('disabled', true);
@@ -924,7 +924,7 @@ function getPOIMediaContentWithOptions(tmpPOI)//For displaying media pane
 {
     var content = '<ul id="uList" style="list-style:none; padding-left:0;display:table; margin:0 auto;">';
     var tmpMedia;
-    for(var i=0; i < tmpPOI.mediaOrder.length; i++)
+    for(var i=0; i < tmpPOI.mediaList.length; i++)
     {
         tmpMedia = tmpPOI.associatedMedia[tmpPOI.mediaOrder[i]];
         if(tmpMedia == undefined)
