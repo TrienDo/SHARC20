@@ -16,8 +16,7 @@
          * Create a new Poi = 1 SharcPoiDesigner + 1 SharcPoiExperience
          * @param String $objPoi: a json object containing info of both Pois                  
          */
-        public static function addNewPoi($objPoi) {
-            $user = null;
+        public static function addNewPoi($objPoi) {            
             $response = array();
             try{//poiDesignerId, name, coordinate, triggerZone, designerID
                 $poiDesigner = SharcPoiDesigner::create(array(
@@ -58,26 +57,6 @@
                 $response["data"] = Utils::getExceptionMessage($e);
             }    
             return $response;                 
-        }
-        
-        public static function checkAuthentication($apiKey) {
-            $response = array();
-            try{
-                $rs = SharcUser::where('apiKey',$apiKey)->get();
-                if ($rs->count() == 0){ //Not exists -> add a new user
-                    $response["status"] = FAILED;
-                    $response["data"] = USER_NOT_AUTHENTICATED;
-                }
-                else {
-                    $response["status"] = SUCCESS;
-                    $response["data"] = $rs[0];
-                }
-            }
-            catch(Exception $e) {
-                $response["status"] = ERROR;
-                $response["data"] = Utils::getExceptionMessage($e);
-            }
-            return $response;
-        }
+        } 
     } 
 ?>

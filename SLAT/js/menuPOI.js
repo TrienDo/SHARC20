@@ -237,7 +237,7 @@ function createPOI(isCreating,isFromPhoto,tdIndex)//
     });
 }
 
-function presentNewPoi()
+function presentNewPoi(data)
 {
     //Update screen
     showMapWithCorrectBound(map, maxZoomLevel);
@@ -682,9 +682,23 @@ function updatePOIDropdownList()
 }
 function readMediaFileAsBinary(f) //https://github.com/josefrichter/resize/blob/master/public/preprocess.js
 {	
-	var reader = new FileReader({'blob': true});  // Create a FileReader object         
-	reader.readAsArrayBuffer(f);           // Read the file
-	reader.onload = function() 
+	var reader = null;
+    if(curBrowsingType != "image"){
+        if(cloudManager instanceof SharcDropBox)  {//read blob for Dropbox
+            reader = new FileReader({'blob': true});  // Create a FileReader object         
+            reader.readAsArrayBuffer(f);           // Read the file
+        }
+        else{
+            reader = new FileReader();
+            reader.readAsBinaryString(f);
+        }             
+    }
+    else {//image always read blob
+       reader = new FileReader({'blob': true});  // Create a FileReader object         
+	   reader.readAsArrayBuffer(f);           // Read the file 
+    }
+	
+    reader.onload = function() 
 	{    
 		if(curBrowsingType != "image")
         {
@@ -705,36 +719,7 @@ function readMediaFileAsBinary(f) //https://github.com/josefrichter/resize/blob/
             {
                 curMediaData = resizeImage(image);                        
                 //Send image to the remote server for compression
-                $.post(
-                    'php/compressImage.php',
-                    {            
-                        imageData: curMediaData,
-                        fileName: designerInfo.id         
-                    },
-                    function(data,status){
-                        var result = JSON.parse(data);
-            			if(result.success == 1) 
-            			{				
-            			    //Get the compressed image back
-                            var oReq = new XMLHttpRequest();
-                            oReq.open("GET", "php/data/" + designerInfo.id + ".jpg", true);
-                            oReq.responseType = "arraybuffer";                        
-                            oReq.onload = function(oEvent) 
-                            {
-                              var blob = new Blob([oReq.response], {type: "image/jpg"});
-                              curMediaData = blob;                              
-                              $('.ui-dialog-titlebar').show();
-                              $("#dialog-status").dialog("close");                        
-                            };                        
-                            oReq.send();					
-            			}
-                        else
-                        {
-                            showMessage("Something went wrong when resizing and compressing the photo. Please try again");
-                            $("#dialog-status").dialog("close");
-                        }                           			
-                    }
-                );   
+                resfulManager.compressImage();   
             }
         }        
 	};    	

@@ -102,7 +102,9 @@ function selectMediaType()
                 },   
                 Next: function() {
                     var type = $('input[name=mediaType]:checked', '#selectMediaType').val();
-                    curMedia = new Media((new Date()).getTime(),"",type,"","",0,"","",curMediaType);
+                    //curMedia = new Media((new Date()).getTime(),"",type,"","",0,"","",curMediaType);
+                    curMediaBank = new SharcMediaDesigner((new Date()).getTime() + "", type, "", 0, designerInfo.id); 
+                    curMedia = new SharcMediaExperience(0, curMediaBank, curMediaType, 0, curProject.id, "", "", false, true,0);
                     curBrowsingType = type;
                     switch (type)
                     {
@@ -532,20 +534,20 @@ function uploadAndAddMedia()
         }
     }
      
-    curMedia.name = name;
+    curMedia.caption = name;
     if(curMediaType == "POI")
-        curMedia.PoIID = curPOI.id;
+        curMedia.entityId = curPOI.id;
     else if(curMediaType == "EOI")
-        curMedia.PoIID = curEOI.id;
+        curMedia.entityId = curEOI.id;
     else if(curMediaType == "ROUTE")
-        curMedia.PoIID = curRoute.id;
+        curMedia.entityId = curRoute.id;
                
-    if(curMedia.type == "text")
+    if(curMediaBank.contentType == "text")
     {
-        curMedia.content = desc;        
-        mDropBox.insertTextMedia();
+        curMediaBank.content = desc;        
+        cloudManager.insertTextMedia();
     }
-    else if(curMedia.type == "audio")    
+    else if(curMediaBank.contentType == "audio")    
     {
         var fileName = $("#inputMedia").val();
         if(fileName == "" && audioByRecording == false)
@@ -557,10 +559,10 @@ function uploadAndAddMedia()
             fileName = "recorded.wav";
         //Get extension only
         fileName = fileName.substring(fileName.lastIndexOf("."));
-        mDropBox.uploadMedia(curMedia.id + fileName, curMediaData);
+        cloudManager.uploadMedia(curMediaBank.id + fileName, curMediaData);
         audioByRecording =false;
     }
-    else if(curMedia.type == "image")
+    else if(curMediaBank.contentType == "image")
     {
         var fileName = $("#inputMedia").val();
         if(fileName == "")
@@ -571,9 +573,9 @@ function uploadAndAddMedia()
         //Get extension only
         //fileName = fileName.substring(fileName.lastIndexOf("."));
         fileName = ".jpg";//always saved as a jpg image
-        mDropBox.uploadMedia(curMedia.id + fileName, curMediaData);
+        cloudManager.uploadMedia(curMediaBank.id + fileName, curMediaData);
     }
-    else if(curMedia.type == "video")
+    else if(curMediaBank.contentType == "video")
     {
         var fileName = $("#inputMedia").val();
         if(fileName == "")
@@ -583,13 +585,47 @@ function uploadAndAddMedia()
         }
         //Get extension only
         fileName = fileName.substring(fileName.lastIndexOf("."));        
-        mDropBox.uploadMedia(curMedia.id + fileName, curMediaData);
-    }      
+        cloudManager.uploadMedia(curMediaBank.id + fileName, curMediaData);
+    }    
     
     showUploadingStatus("Please wait! Uploading media...");
     $("#dialog-media").dialog("close");
 }
 
+function presentNewMedia(data)
+{
+    //add media to the array
+    allMedia.push(curMedia);    
+    /*if(result.rev != undefined)
+    {
+    
+        databaseRevision = result.rev;    
+        if(curMediaType == "POI")
+        {
+            curPOI.mediaOrder.push(curMedia.id);
+            curPOI.associatedMedia[curMedia.id] = curMedia;
+            mDropBox.updatePOIMediaOrder(curPOI);
+        }
+        else if(curMediaType == "EOI")
+        {
+            curEOI.mediaOrder.push(curMedia.id);
+            curEOI.associatedMedia[curMedia.id] = curMedia;
+            mDropBox.updateEOIMediaOrder(curEOI);
+        }
+        else if(curMediaType == "ROUTE")
+        {
+            curRoute.mediaOrder.push(curMedia.id);
+            curRoute.associatedMedia[curMedia.id] = curMedia;
+            mDropBox.updateRouteMediaOrder(curRoute);
+        }
+        goBack();     
+        $("#dialog-status").dialog("close");
+    }
+    else
+    {
+        showMessage(data);
+    }*/
+}
 //Edit a media item
 function viewEditMediaItem(curMedia)
 {        

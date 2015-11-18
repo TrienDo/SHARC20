@@ -35,9 +35,9 @@ function SharcExperience(id, name, description, createdDate, lastPublishedDate, 
     this.theme = theme;    
 }
 
-function SharcPoiDesigner(poiDesignerId, name, coordinate, triggerZone, designerID)
+function SharcPoiDesigner(id, name, coordinate, triggerZone, designerID)
 {
-    this.poiDesignerId = poiDesignerId;
+    this.id = id;
     this.name = name;    
     this.coordinate = coordinate;
     this.triggerZone = triggerZone;
@@ -81,12 +81,12 @@ function SharcPoiDesigner(poiDesignerId, name, coordinate, triggerZone, designer
     }
 }
 
-function SharcPoiExperience(experienceId,poiDesigner,description,poiExperienceId, typeList, eoiList, routeList, mediaList)
+function SharcPoiExperience(experienceId,poiDesigner,description,id, typeList, eoiList, routeList, mediaList)
 {
     this.experienceId = experienceId;
     this.poiDesigner = poiDesigner;
     this.description = description;
-    this.poiExperienceId = poiExperienceId;
+    this.id = id;
     this.typeList = typeList;
     this.eoiList = eoiList;
     this.routeList = routeList;
@@ -94,7 +94,7 @@ function SharcPoiExperience(experienceId,poiDesigner,description,poiExperienceId
     this.responseList = new Array();
 }
   
-function MediaDesigner(id, contentType, content, size, designerId)
+function SharcMediaDesigner(id, contentType, content, size, designerId)
 {
     this.id = id;    
     this.contentType = contentType;          //(Text/Image/Audio/Video)
@@ -103,10 +103,10 @@ function MediaDesigner(id, contentType, content, size, designerId)
     this.designerId = designerId;    
 }
 
-function MediaExperience(id, mediaDesignerId, entityType, entityId, experienceId, caption, context, mainMedia, visible, order)
+function SharcMediaExperience(id, mediaDesigner, entityType, entityId, experienceId, caption, context, mainMedia, visible, order)
 {
     this.id = id;
-    this.mediaDesignerId = mediaDesignerId;
+    this.mediaDesigner = mediaDesigner;
     this.entityType = entityType;          
     this.entityId = entityId;
     this.experienceId = experienceId;     

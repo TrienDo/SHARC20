@@ -110,13 +110,15 @@
     });
     */
     
+    /*
     //Table SharcMediaDesigner  
-    /*        
+            
     Capsule::schema()->dropIfExists('SharcMediaDesigners');
     Capsule::schema()->create('SharcMediaDesigners', function($table)
     {
-        $table->increments('id');
-        $table->integer('contentType');        	
+        $table->string('id');
+        $table->primary('id');
+        $table->string('contentType');        	
         $table->string('content');
         $table->integer('size');
         $table->integer('designerId')->unsigned();
@@ -124,15 +126,16 @@
     });
     */
     
+        
     //Table SharcMediaDesigner  
     /*        
     Capsule::schema()->dropIfExists('SharcMediaExperiences');
-    Capsule::schema()->create('SharcMediaExperiences', function($table)// mediaDesignerId, entityType, entityId, experienceId, caption, context, mainMedia, visible, order
+    Capsule::schema()->create('SharcMediaExperiences', function($table)
     {
         $table->increments('id');
-        $table->integer('mediaDesignerId')->unsigned();
+        $table->string('mediaDesignerId');
         $table->foreign('mediaDesignerId')->references('id')->on('SharcMediaDesigners');
-        $table->integer('entityType');
+        $table->string('entityType');
         $table->integer('entityId');        	
         $table->integer('experienceId')->unsigned();
         $table->foreign('experienceId')->references('id')->on('SharcExperiences');
@@ -142,5 +145,8 @@
         $table->boolean('visible');
         $table->integer('order');
     });
-    */        
+    */
+    
+    
+            
 ?>

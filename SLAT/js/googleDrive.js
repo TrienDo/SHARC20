@@ -100,5 +100,61 @@ function SharcGoogleDrive()
             SharcWebViewLink = resp.webViewLink;            
         });
     }
+    
+    this.uploadMedia = function(filename, mdata)
+    {        
+        if(curBrowsingType == "image"){//convert Blob to base64 for image
+            var reader = new window.FileReader();
+            //reader.readAsDataURL(mdata);
+            reader.readAsBinaryString(mdata); 
+            reader.onloadend = function() {                           
+                uploadFile(filename, reader.result);
+            }
+        }
+        else
+            uploadFile(filename, mdata);    
+    }                   
+                    
+}
+
+function uploadFile(filename, data)
+{
+    const boundary = '-------314159265358979323846';
+    const delimiter = "\r\n--" + boundary + "\r\n";
+    const close_delim = "\r\n--" + boundary + "--";
+    
+    var base64Data = btoa(data);
+    
+    var contentType = 'application/octet-stream';
+    var metadata = {
+        'title': filename,
+        'mimeType': contentType,
+        'parents':[{"id":SharcFolderId}]
+    };            
+    
+    var multipartRequestBody = delimiter + 'Content-Type: application/json\r\n\r\n' +
+                                JSON.stringify(metadata) + delimiter + 'Content-Type: ' + contentType + '\r\n' +
+                                'Content-Transfer-Encoding: base64\r\n' + '\r\n' + base64Data + close_delim;
+    
+    var request = gapi.client.request({
+        'path': '/upload/drive/v2/files',
+        'method': 'POST',
+        'params': {'uploadType': 'multipart'},
+        'headers': {
+            'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+        },
+        'body': multipartRequestBody});
+    
+    //request.execute(callback);
+    request.execute(function(resp) {
+        if (resp.error == null) {
+            curMediaBank.size = resp.fileSize;                
+            curMediaBank.content = SharcWebViewLink + resp.title;
+            resfulManager.addMedia(curMedia);
+        } 
+        else {
+            showMessage(resp.error.message);
+        }
+    });
 }
     

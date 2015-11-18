@@ -10,7 +10,8 @@
     class SharcMediaDesigner extends Model
     {	 
     	public $timestamps = false;
-    	protected $fillable = array('contentType', 'content', 'size', 'designerId');
+        public $incrementing = false;//Important for non-increment id
+    	protected $fillable = array('id', 'contentType', 'content', 'size', 'designerId');
     	protected $table = 'SharcMediaDesigners'; //name of table       
     }
 ?>

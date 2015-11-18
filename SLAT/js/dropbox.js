@@ -842,7 +842,7 @@ function SharcDropBox()
             success: function(data) {                
                 var result = JSON.parse(data);  
                 //Update size for media in the context field as this field has not been use!IMPORTANT
-                curMedia.context = result.bytes;                
+                curMediaBank.size = result.bytes;                
                                
                 //Share data                
                 $.ajax({
@@ -855,61 +855,8 @@ function SharcDropBox()
                         var url = rs.url;
                         url = url.substring(0,url.lastIndexOf("?"));
                         url = url.replace("https://www.drop","https://dl.drop");
-                        curMedia.content = url;
-                        //add media to the array
-                        allMedia.push(curMedia);
-                        //insert info to a table                                               
-                        var row = '[["I","media","' + curMedia.id + '",{"name":"' +  encodeURI(curMedia.name) + '","type":"' + curMedia.type 
-                                    + '","desc":"' + encodeURI(curMedia.desc) + '","content":"' + curMedia.content + '","noOfLike":"' + curMedia.noOfLike  
-                                    + '","context":"' + curMedia.context  + '","PoIID":"' + curMedia.PoIID + '","attachedTo":"' + curMedia.attachedTo + '"}]]';   
-                        var dataContent = {handle:databaseHandle,rev:databaseRevision,changes:row};                     
-                        $.ajax({
-                            type:'POST',
-                            url: 'https://api.dropbox.com/1/datastores/put_delta',
-                            data: dataContent,
-                            dataType: 'html',
-                            headers: { 'Authorization': REQUEST_HEADER },
-                            success: function(data) {
-                                
-                                var result = JSON.parse(data);
-                                if(result.rev != undefined)
-                                {
-                                
-                                    databaseRevision = result.rev;
-                                    //Add curMedia to the POI
-                                    if(curMediaType == "POI")
-                                    {
-                                        curPOI.mediaOrder.push(curMedia.id);
-                                        curPOI.associatedMedia[curMedia.id] = curMedia;
-                                        mDropBox.updatePOIMediaOrder(curPOI);
-                                    }
-                                    else if(curMediaType == "EOI")
-                                    {
-                                        curEOI.mediaOrder.push(curMedia.id);
-                                        curEOI.associatedMedia[curMedia.id] = curMedia;
-                                        mDropBox.updateEOIMediaOrder(curEOI);
-                                    }
-                                    else if(curMediaType == "ROUTE")
-                                    {
-                                        curRoute.mediaOrder.push(curMedia.id);
-                                        curRoute.associatedMedia[curMedia.id] = curMedia;
-                                        mDropBox.updateRouteMediaOrder(curRoute);
-                                    }
-                                    goBack();
-                                    //Update screen                                                                                                  
-                                    //$('.ui-dialog-titlebar').show();
-                                    $("#dialog-status").dialog("close");
-                                }
-                                else
-                                {
-                                    showMessage(data);
-                                }             
-                            },
-                            error: function(jqXHR, textStatus, errorThrown ) {
-                                showMessage("Error: " + textStatus + " because:" + errorThrown);
-                            }
-                        });        
-                                       
+                        curMediaBank.content = url;
+                        resfulManager.addMedia(curMedia);                        
                     },
                     error: function(jqXHR, textStatus, errorThrown ) {
                         showMessage("Error when sharing data: " + textStatus + " because:" + errorThrown);

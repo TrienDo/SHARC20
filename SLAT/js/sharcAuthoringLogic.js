@@ -55,7 +55,8 @@ var MAX_POINTS_ON_ROUTE = 10000;//Dropbox limit for a record --> need limit for 
 //Other variables
 var curBrowsingType = "image";  //To store the current type of media item -> compress image NOT compress video, audio
 var drawingManager = null;      //Google Drawing tool for creating trigger zones for POI and path for route
-var curMedia = null;            //Object to store current media details
+var curMediaBank = null;        //Object to store current media in the pool of designer
+var curMedia = null;            //Object to store current media details for the current POI
 var curMediaData = null;        //raw data of current image/audio/video media --> upload to dropbox
 var maxZoomLevel = 18;          //Zoom the map to this max level
 var callBackURL = "";           //As Dropbox needs an URL to redirect to after the login process, this variable enables to create a dynamic URL (for different version of SLAT) for redirection base on the original URL

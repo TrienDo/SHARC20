@@ -13,9 +13,12 @@
     require_once 'models/SharcExperience.php';
     require_once 'models/SharcPoiDesigner.php';
     require_once 'models/SharcPoiExperience.php';
+    require_once 'models/SharcMediaDesigner.php';
+    require_once 'models/SharcMediaExperience.php';
     require_once 'services/UserService.php';
     require_once 'services/ExperienceService.php';
     require_once 'services/PoiService.php';
+    require_once 'services/MediaService.php';
     
  
     $app = new \Slim\Slim(array(
@@ -105,6 +108,37 @@
         $objPoi = json_decode($jsonPoi, true);
         $objPoi['poiDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
         $response = PoiService::addNewPoi($objPoi);
+        Utils::echoResponse($response);
+    });
+    
+    //RESTful for Media    
+    $app->post('/media', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $jsonMedia = $app->request->getBody();        
+        $objMedia = json_decode($jsonMedia, true);
+        $objMedia['mediaDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = MediaService::addNewMedia($objMedia);
+        Utils::echoResponse($response);
+    });
+    //compress media
+    $app->post('/mediaCompress', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $jsonMedia = $app->request->getBody();        
+        $objMedia = json_decode($jsonMedia, true);        
+        $objMedia['fileName'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = MediaService::compressImage($objMedia);
         Utils::echoResponse($response);
     });
  

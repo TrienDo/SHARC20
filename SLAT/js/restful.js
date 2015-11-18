@@ -75,8 +75,8 @@ function SharcRestful()
                 else
                     showMessage(result.data);
             },
-            error: function(result) {                
-                showMessage(result);
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
             }
         });
     }
@@ -96,8 +96,73 @@ function SharcRestful()
                 }
                 else
                     showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
             }
         });    
+    }
+    
+    //Working with Media
+    this.addMedia = function(mediaExperience)
+    {
+        $("#dialog-status").dialog("close");
+        var data = JSON.stringify(mediaExperience);
+        $.ajax({
+            type:'POST',
+            url: apiRoot + 'media',
+            data: data,                       
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    presentNewMedia(result.data);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });   
+    }
+    
+    //Compress image
+    this.compressImage = function()
+    {
+        var data = {
+            imageData: curMediaData,
+            fileName: designerInfo.id
+        };
+        $.ajax({
+            type:'POST',
+            url: apiRoot + 'mediaCompress',
+            data: JSON.stringify(data),                       
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    //Get the compressed image back
+                    var oReq = new XMLHttpRequest();
+                    oReq.open("GET", apiRoot + 'data/' + result.data, true);
+                    oReq.responseType = "arraybuffer";                        
+                    oReq.onload = function(oEvent) 
+                    {
+                      var blob = new Blob([oReq.response], {type: "image/jpg"});
+                      curMediaData = blob;                              
+                      $('.ui-dialog-titlebar').show();
+                      $("#dialog-status").dialog("close");                        
+                    };                        
+                    oReq.send();	
+                }
+                else
+                {
+                    showMessage(result.data);
+                    $("#dialog-status").dialog("close");
+                }    
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });
     }
 }
 
