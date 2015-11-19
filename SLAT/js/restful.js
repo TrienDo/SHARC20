@@ -164,5 +164,33 @@ function SharcRestful()
             }
         });
     }
+    
+    
+    //get media items for an entity
+    this.getMediaForEntity = function(entityType, entityId){
+        var data = {
+            entityType: entityType,
+            entityId: entityId,
+            experienceId: curProject.id,
+            designerId: designerInfo.id
+        };
+        $.ajax({
+            type:'GET',
+            url: apiRoot + 'mediaForEntity/' + designerInfo.id + '/' + curProject.id + '/' + entityId  + '/' + entityType,                                 
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    viewAllMediaItems(result.data);	
+                }
+                else {
+                    showMessage(result.data);                    
+                }    
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });
+    }
+    
 }
 

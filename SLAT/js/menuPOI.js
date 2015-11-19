@@ -254,7 +254,8 @@ function addMarkerPOIClickEvent(marker)
             openFrom = MAIN_FORM;
             curMediaType = "POI";
             curPOI = allPOIs[marker.id];
-            viewAllMediaItems(curPOI);
+            //viewAllMediaItems(curPOI);
+            resfulManager.getMediaForEntity("POI", curPOI.id);
             highlightPOI(marker.id);            
             selectedPoiIndex = marker.id;
             

@@ -205,12 +205,20 @@ function goBack()
     }
     else if(callFrom == VIEW_FORM)
     {
+        /*
         if(curMediaType == "POI")
             viewAllMediaItems(curPOI);
         else if(curMediaType == "EOI")
             viewAllMediaItems(curEOI);
-         else if(curMediaType == "ROUTE")
+        else if(curMediaType == "ROUTE")
             viewAllMediaItems(curRoute);
+        */
+        if(curMediaType == "POI")
+            resfulManager.getMediaForEntity("POI", curPOI.id);
+        else if(curMediaType == "EOI")
+            resfulManager.getMediaForEntity("EOI", curEOI.id);
+        else if(curMediaType == "ROUTE")
+            resfulManager.getMediaForEntity("ROUTE", curRoute.id);
     }
 }
 
@@ -594,37 +602,31 @@ function uploadAndAddMedia()
 
 function presentNewMedia(data)
 {
-    //add media to the array
-    allMedia.push(curMedia);    
-    /*if(result.rev != undefined)
+    /*
+    allMedia.push(curMedia);   
+        
+    if(curMediaType == "POI")
     {
-    
-        databaseRevision = result.rev;    
-        if(curMediaType == "POI")
-        {
-            curPOI.mediaOrder.push(curMedia.id);
-            curPOI.associatedMedia[curMedia.id] = curMedia;
-            mDropBox.updatePOIMediaOrder(curPOI);
-        }
-        else if(curMediaType == "EOI")
-        {
-            curEOI.mediaOrder.push(curMedia.id);
-            curEOI.associatedMedia[curMedia.id] = curMedia;
-            mDropBox.updateEOIMediaOrder(curEOI);
-        }
-        else if(curMediaType == "ROUTE")
-        {
-            curRoute.mediaOrder.push(curMedia.id);
-            curRoute.associatedMedia[curMedia.id] = curMedia;
-            mDropBox.updateRouteMediaOrder(curRoute);
-        }
-        goBack();     
-        $("#dialog-status").dialog("close");
+        curPOI.mediaOrder.push(curMedia.id);
+        curPOI.associatedMedia[curMedia.id] = curMedia;
+        mDropBox.updatePOIMediaOrder(curPOI);
     }
-    else
+    else if(curMediaType == "EOI")
     {
-        showMessage(data);
-    }*/
+        curEOI.mediaOrder.push(curMedia.id);
+        curEOI.associatedMedia[curMedia.id] = curMedia;
+        mDropBox.updateEOIMediaOrder(curEOI);
+    }
+    else if(curMediaType == "ROUTE")
+    {
+        curRoute.mediaOrder.push(curMedia.id);
+        curRoute.associatedMedia[curMedia.id] = curMedia;
+        mDropBox.updateRouteMediaOrder(curRoute);
+    }
+    goBack();     
+    $("#dialog-status").dialog("close");
+    */
+    
 }
 //Edit a media item
 function viewEditMediaItem(curMedia)
@@ -718,18 +720,27 @@ function scrollDown(step)
     },500);
     
 }
-
+   
+function getCurrentEntityName()
+{
+    if(curMediaType == "POI")
+        return curPOI.poiDesigner.name;
+    else if(curMediaType == "EOI")
+        return curEOI.eoiDesigner.name;
+    else if(curMediaType == "ROUTE")
+        return curRoute.eoiDesigner.name;
+}
 //Display a list of media items associated to an entity (POI-EOI-Route)
-function viewAllMediaItems(tmpObject)
+function viewAllMediaItems(data)
 {
     $('#dialog-message').html('');        
     //Title shows name of the entity and the number of media 
-    $('#dialog-message').dialog({ title: tmpObject.poiDesigner.name + " (No. of media: " + tmpObject.mediaList.length + ")"});
+    $('#dialog-message').dialog({ title: getCurrentEntityName() + " (No. of media: " + data.length + ")"});
     //Show all media items in an unordered list
-    var content = getPOIMediaContentWithOptions(tmpObject);// + getResponseContent(tmpObject);
+    var content = getPOIMediaContentWithOptions(data);// + getResponseContent(tmpObject);
     $('#dialog-message').append(content);
     
-    var count = tmpObject.mediaList.length;    
+    var count = data.length;    
     var buttonList = $("#uList").find("button");
     //Disable the Up button of the first item 
     $(buttonList[0]).prop('disabled', true);
@@ -931,6 +942,7 @@ function viewAllMediaItems(tmpObject)
                     }                
                 },             
                 Close: function() {
+                    /*
                     if(isChangingMediaOrder)
                     {
                         if(curMediaType == "POI")
@@ -940,7 +952,7 @@ function viewAllMediaItems(tmpObject)
                         else if(curMediaType == "ROUTE")
                             mDropBox.updateRouteMediaOrder(tmpObject);
                         isChangingMediaOrder = false; 
-                    }
+                    }*/
                     $( this ).dialog("close");
                     goBackMain();
                 }
@@ -956,24 +968,23 @@ function viewAllMediaItems(tmpObject)
 //      - Caption (or title/description) which is placed above the content for text media and below the content for other media
 //      - availble actions: Move Up - Move Down - Edit - Delete 
 
-function getPOIMediaContentWithOptions(tmpPOI)//For displaying media pane
+function getPOIMediaContentWithOptions(mediaExperience)//For displaying media pane
 {
     var content = '<ul id="uList" style="list-style:none; padding-left:0;display:table; margin:0 auto;">';
     var tmpMedia;
-    for(var i=0; i < tmpPOI.mediaList.length; i++)
+    for(var i=0; i < mediaExperience.length; i++)
     {
-        tmpMedia = tmpPOI.associatedMedia[tmpPOI.mediaOrder[i]];
-        if(tmpMedia == undefined)
-            continue;
-        if(tmpMedia.type == "text")
-            content += '<li id="' + i + '"><div class="formLabel">' + tmpMedia.name + '</div><div>' + tmpMedia.content.replace(/\r\n|\r|\n/g,"<br />") +'</div>';//replace CRs with br
+        tmpMedia = mediaExperience[i].mediaDesigner;
+        
+        if(tmpMedia.contentType == "text")
+            content += '<li id="' + i + '"><div class="formLabel">' + mediaExperience[i].caption + '</div><div>' + tmpMedia.content.replace(/\r\n|\r|\n/g,"<br />") +'</div>';//replace CRs with br
             //content += '<li id="' + i + '"><div class="mediaPlacehold"><textarea class="textMediaBox">' + tmpMedia.content +'</textarea></div>';
-        else if(tmpMedia.type == "image")
-            content += '<li id="' + i + '"><img class="imgMedia" width="318" src="' + tmpMedia.content + '"/>' + '<div class="formLabel">' + tmpMedia.name + '</div>';        
-        else if(tmpMedia.type == "audio")
-            content += '<li id="' + i + '"><div class="mediaPlacehold"><audio width="318" height="50" controls ><source src="' + tmpMedia.content + '" type="audio/mpeg"></audio></div>' + '<div class="formLabel">' + tmpMedia.name + '</div>';
-        else if(tmpMedia.type == "video")
-            content += '<li id="' + i + '"><div class="mediaPlacehold"><video width="318" height="200" controls> <source src="' + tmpMedia.content + '"></video></div>' + '<div class="formLabel">' + tmpMedia.name + '</div>';
+        else if(tmpMedia.contentType == "image")
+            content += '<li id="' + i + '"><img class="imgMedia" width="318" src="' + tmpMedia.content + '"/>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';        
+        else if(tmpMedia.contentType == "audio")
+            content += '<li id="' + i + '"><div class="mediaPlacehold"><audio width="318" height="50" controls ><source src="' + tmpMedia.content + '" type="audio/mpeg"></audio></div>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';
+        else if(tmpMedia.contentType == "video")
+            content += '<li id="' + i + '"><div class="mediaPlacehold"><video width="318" height="200" controls> <source src="' + tmpMedia.content + '"></video></div>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';
         //content += '<div class="formLabel">' + tmpMedia.name + '</div><div style="text-align:center"><a href="#" class="reorder-up"><img  title="Move this media item up" class="actionImage" src="images/media_up.png"/></a><a href="#" class="reorder-down"><img class="actionImage" src="images/media_down.png" title="Move this media item down"/></a><a href="#" class="reorder-edit"><img class="actionImage" src="images/edit.png" title="Edit this media item"/></a><a href="#" class="reorder-delete"><img class="actionImage" src="images/delete.png" title="Delete this media item up"/></a></div><hr/>';
         //content += '<div style="text-align:center">' + tmpMedia.noOfLike + (tmpMedia.noOfLike > 1 ? ' Likes': ' Like') + '[ and xx Comments] <button class="googleLookAndFeel"><img class="actionImage" src="images/media_up.png"/>[View comments]</button></div><hr style="width:50%"/>';
         content += '<div style="text-align:center"><button class="reorder-up googleLookAndFeel"><img class="actionImage" src="images/media_up.png"/>Up</button><button class="reorder-down googleLookAndFeel"><img class="actionImage" src="images/media_down.png"/>Down</button><button class="reorder-edit googleLookAndFeel"><img class="actionImage" src="images/edit.png"/>Edit</button><button class="reorder-delete googleLookAndFeel"><img class="actionImage" src="images/delete.png" title="Delete this media item up"/>Delete</button></div><hr/>';

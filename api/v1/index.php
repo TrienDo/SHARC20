@@ -126,6 +126,19 @@
         $response = MediaService::addNewMedia($objMedia);
         Utils::echoResponse($response);
     });
+    
+    $app->get('/mediaForEntity/:designerId/:experienceId/:entityId/:entityType', function ($designerId, $experienceId, $entityId, $entityType) use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $response = MediaService::getMediaForEntity($designerId, $experienceId, $entityId, $entityType);
+        Utils::echoResponse($response);
+    });
+    
     //compress media
     $app->post('/mediaCompress', function () use ($app) {
         //Check authentication        
