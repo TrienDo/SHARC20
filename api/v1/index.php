@@ -15,10 +15,13 @@
     require_once 'models/SharcPoiExperience.php';
     require_once 'models/SharcMediaDesigner.php';
     require_once 'models/SharcMediaExperience.php';
+    require_once 'models/SharcEoiDesigner.php';
+    require_once 'models/SharcEoiExperience.php';
     require_once 'services/UserService.php';
     require_once 'services/ExperienceService.php';
     require_once 'services/PoiService.php';
     require_once 'services/MediaService.php';
+    require_once 'services/EoiService.php';
     
  
     $app = new \Slim\Slim(array(
@@ -124,6 +127,22 @@
         $objMedia = json_decode($jsonMedia, true);
         $objMedia['mediaDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
         $response = MediaService::addNewMedia($objMedia);
+        Utils::echoResponse($response);
+    });
+    
+    //RESTful for Eoi
+    $app->post('/eois', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $jsonEoi = $app->request->getBody();        
+        $objEoi = json_decode($jsonEoi, true);
+        $objEoi['eoiDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = EoiService::addNewEoi($objEoi);
         Utils::echoResponse($response);
     });
     

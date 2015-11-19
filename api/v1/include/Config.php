@@ -148,5 +148,31 @@
     */
     
     
-            
+    //Table SharcPoiDesigner  
+    /*        
+    Capsule::schema()->dropIfExists('SharcEoiDesigners');
+    Capsule::schema()->create('SharcEoiDesigners', function($table)//(id, name, description, designerId)
+    {
+        $table->increments('id');
+        $table->string('name');        	
+        $table->string('description');        
+        $table->integer('designerId')->unsigned();
+        $table->foreign('designerId')->references('id')->on('SharcUsers');        
+    });
+    */
+    
+    
+    //Table SharcPoiExperiences   
+    /*
+    Capsule::schema()->dropIfExists('SharcEoiExperiences');
+    Capsule::schema()->create('SharcEoiExperiences', function($table)
+    {
+        $table->increments('id');
+        $table->integer('experienceId')->unsigned();
+        $table->foreign('experienceId')->references('id')->on('SharcExperiences');        
+        $table->integer('eoiDesignerId')->unsigned();
+        $table->foreign('eoiDesignerId')->references('id')->on('SharcEoiDesigners');
+        $table->string('note');                        
+    });
+    */            
 ?>

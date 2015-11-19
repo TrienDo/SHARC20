@@ -209,11 +209,9 @@ function createPOI(isCreating,isFromPhoto,tdIndex)//
                         if(isFromPhoto && $('#includeGPSPhoto').is(':checked'))//include the GPS taggged photo as the first media for POI
                         {
                             //add the GPS photo to the POI
-                            var fileName = $("#inputFile").val();
-                            //Get extension only
-                            curMediaType = "POI";//New media
-                            fileName = fileName.substring(fileName.lastIndexOf("."));
-                            curMedia = new Media((new Date()).getTime(),$("#mediaCaptionPOI").val(),"image","","",0,"","including" + fileName,"POI");   //trick: if curMedia.PoiID = including then add                      
+                            curMediaType = "POI";//New media                            
+                            curMediaBank = new SharcMediaDesigner((new Date()).getTime() + "", "image", "", 0, designerInfo.id); 
+                            curMedia = new SharcMediaExperience(0, curMediaBank, "POI", -1, curProject.id, $("#mediaCaptionPOI").val(), "", false, true,0);//trick: if curMedia.entityId = -1 then upload media                      
                         }
                         
                         var tmpPoiMarker = new google.maps.Marker({  
@@ -239,6 +237,7 @@ function createPOI(isCreating,isFromPhoto,tdIndex)//
 
 function presentNewPoi(data)
 {
+    curPOI.id = data.id;
     //Update screen
     showMapWithCorrectBound(map, maxZoomLevel);
     $("#dialog-message").dialog("close");
@@ -581,7 +580,7 @@ function viewMediaPOI()
     curPOI = allPOIs[tdIndex];
     openFrom = POI_FORM;
     curMediaType = "POI";
-    viewAllMediaItems(curPOI);
+    resfulManager.getMediaForEntity(curMediaType, curPOI.id);    
 }
 
 function editPOI()

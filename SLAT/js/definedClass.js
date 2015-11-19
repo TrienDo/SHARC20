@@ -117,6 +117,22 @@ function SharcMediaExperience(id, mediaDesigner, entityType, entityId, experienc
     this.order = order;
 }
 
+function SharcEoiDesigner(id, name, description, designerId)
+{
+    this.id = id;
+    this.name = name;
+    this.description = description;
+    this.designerId = designerId;
+}
+
+function SharcEoiExperience(id, eoiDesigner,experienceId, note)
+{
+    this.id = id;
+    this.eoiDesigner = eoiDesigner;
+    this.experienceId = experienceId;
+    this.note = note;    
+}
+
 function Response(mID, mType,mDesc,mContent,mNoOfLike,mEntityType, mEntityID, mConName, mConEmail, mStatus, mSize)
 {
     this.id = mID;    

@@ -139,6 +139,7 @@ function renderProject(data)
 {
     clearScreen();
     renderPOIs(data.allPois); 
+    renderEOIs(data.allEois);
     $("#noOfPOI").text("Number of POIs: " + allPOIs.length);
     $("#noOfEOI").text("Number of EOIs: " + allEOIs.length);
     $("#noOfROU").text("Number of Routes: " + allRoutes.length);
@@ -218,6 +219,15 @@ function renderPOIs(retPOIs)
     }                                                             
 }
 
+function renderEOIs(retEOIs)    
+{
+    for(i = 0; i < retEOIs.length; i++) {
+        //Get info
+        var eoiDesigner = new SharcEoiDesigner(retEOIs[i].eoiDesigner.id, retEOIs[i].eoiDesigner.name,retEOIs[i].eoiDesigner.description, retEOIs[i].eoiDesigner.designerId);
+        curEOI = new SharcEoiExperience(retEOIs[i].id, eoiDesigner, retEOIs[i].experienceId,retEOIs[i].note);
+        allEOIs.push(curEOI);                
+    }                                                             
+}
 //Manage all experiences of the "logged in" user
 function manageProjects()
 {	

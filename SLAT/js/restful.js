@@ -93,6 +93,36 @@ function SharcRestful()
             success: function(result) {                
                 if(result.status == SUCCESS){
                     presentNewPoi(result.data);
+                    //Upload media if the POI is created from a GPS-tagged photo
+                    if(curMedia != null && curMedia.entityId ==-1)
+                    {
+                        //Upload the GPS image
+                        showUploadingStatus("Please wait. Uploading data...");
+                        curMedia.entityId = curPOI.id;
+                        cloudManager.uploadMedia(curMediaBank.id + ".jpg", curMediaData);                        
+                    }
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });    
+    }
+    
+    //Working with EOI
+    this.createNewEoi = function (eoiExperience)
+    {
+        var data = JSON.stringify(eoiExperience);
+        $.ajax({
+            type:'POST',
+            url: apiRoot + 'eois',
+            data: data,                       
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    presentNewEoi(result.data);
                 }
                 else
                     showMessage(result.data);

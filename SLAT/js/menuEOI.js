@@ -32,8 +32,8 @@ function createNewEOI(isCreating) {
         {
             $("#eoiName").val(curEOI.name);
             $("#eoiDesc").val(curEOI.desc);
-            $("#startDate").val(curEOI.startDate);
-            $("#endDate").val(curEOI.endDate);  
+            //$("#startDate").val(curEOI.startDate);
+            //$("#endDate").val(curEOI.endDate);  
             var selectedPOIs = curEOI.associatedPOI.split(" ");
             for(var i=0; i<selectedPOIs.length; i++)
                 $('#relPoi input[value="' + selectedPOIs[i] + '"]').prop('checked', true);
@@ -134,27 +134,24 @@ function createNewEOI(isCreating) {
                         //mDropBox.updateEOI(curEOI);                                                                        
                     }
                     else
-                    {
-                        curEOI = new EOI((new Date()).getTime(),name,startDate,endDate,desc,selectedPOIs.join(" "),selectedRoutes.join(" "));                        
-                        allEOIs.push(curEOI);
-                        newRow = '["I","EOIs",' + '"' + curEOI.id + '"' + ',{"name":"' + encodeURI(curEOI.name) + '","startDate":"' + encodeURI(curEOI.startDate) + '","endDate":"' + encodeURI(curEOI.endDate) + '","desc":"' + encodeURI(curEOI.desc) + '","associatedPOI":"' + curEOI.associatedPOI + '","associatedRoute":"' + curEOI.associatedRoute + '"}]';
-                        //mDropBox.insertEOI(curEOI);     
-                        $("#noOfEOI").text("Number of EOIs: " + allEOIs.length);                                                                   
+                    {                        
+                        var eoiBank = new SharcEoiDesigner(0, name, desc, designerInfo.id);                        
+                        curEOI = new SharcEoiExperience(0, eoiBank, curProject.id, "");                        
+                        allEOIs.push(curEOI);                             
+                        $("#noOfEOI").text("Number of EOIs: " + allEOIs.length); 
+                        resfulManager.createNewEoi(curEOI);                                                                  
                     }
-                    dataChanges.push(newRow);//Table EOIs
-                    dataChanges = dataChanges.concat(updateAssociatedEntity(curEOI.id,curEOI.associatedPOI,allPOIs,"associatedEOI","POIs"));
-                    dataChanges = dataChanges.concat(updateAssociatedEntity(curEOI.id,curEOI.associatedRoute,allRoutes,"associatedEOI","Routes"));
-                    //Join all queries
-                    dataChanges = dataChanges.join(",");
-                    dataChanges = "[" + dataChanges + "]";
-                    //Call the update command
-                    mDropBox.updateCommand(dataChanges);
                     $(this).dialog("close");
                     showAllEOIs();                    
                 }             
             }
         });
     });
+}
+
+function presentNewEoi(data)
+{
+    curEOI.id = data.id;
 }
 function getPOIAndRoute()
 {
@@ -226,13 +223,14 @@ function presentEOIs()
         $('#dialog-message').append('<table width="100%" id="tblData"><thead><tr><th>No.</th><th class="tableNameColumn">Name</th><th>No. of linked POIs</th><th>No. of linked routes</th><th>No. of media</th><th class="tableNameColumn">Action</th></tr></thead><tbody></tbody></table>');
         for(var i=0; i < allEOIs.length; i++)
         {
-            var name = allEOIs[i].name;
-            var desc = allEOIs[i].desc;
+            var name = allEOIs[i].eoiDesigner.name;
+            var desc = allEOIs[i].eoiDesigner.description;
             allEOIs[i].associatedPOI += "";//Make it a string
             var poiCount = (allEOIs[i].associatedPOI == "" ? 0 : allEOIs[i].associatedPOI.split(" ").length);
             allEOIs[i].associatedRoute += "";//Make it a string
             var routeCount = (allEOIs[i].associatedRoute == "" ? 0 : allEOIs[i].associatedRoute.split(" ").length);
-            var mediaCount = allEOIs[i].mediaOrder.length;
+            var mediaCount = 0;
+            //var mediaCount = allEOIs[i].mediaOrder.length;
             //$("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + name + '</td><td>' + desc + '</td><td style="text-align:center;">' + poiCount + '</td><td style="text-align:center;">' + routeCount + '</td><td style="text-align:center;">' + mediaCount + '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/edit.png"> Edit this EOI</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Delete this EOI</button> <button class="btnView googleLookAndFeel">Manage this EOI\'s media</button></td></tr>');
             $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + name + '</td><td style="text-align:center;">' + poiCount + '</td><td style="text-align:center;">' + routeCount + '</td><td style="text-align:center;">' + mediaCount + '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/edit.png"> Edit this EOI</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Delete this EOI</button> <button class="btnView googleLookAndFeel">Manage this EOI\'s media</button></td></tr>');
         } 
@@ -318,7 +316,7 @@ function viewMediaEOI()
     curEOI = allEOIs[tdIndex];
     openFrom = EOI_FORM;
     curMediaType = "EOI";
-    viewAllMediaItems(curEOI);
+    resfulManager.getMediaForEntity(curMediaType, curEOI.id);    
 }
 
 function editEOI()

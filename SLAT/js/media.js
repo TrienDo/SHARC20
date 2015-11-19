@@ -577,11 +577,9 @@ function uploadAndAddMedia()
         {
             showMessage("Please select a media file!");
             return;
-        }
-        //Get extension only
-        //fileName = fileName.substring(fileName.lastIndexOf("."));
-        fileName = ".jpg";//always saved as a jpg image
-        cloudManager.uploadMedia(curMediaBank.id + fileName, curMediaData);
+        }                
+        //always saved as a jpg image
+        cloudManager.uploadMedia(curMediaBank.id + ".jpg", curMediaData);
     }
     else if(curMediaBank.contentType == "video")
     {

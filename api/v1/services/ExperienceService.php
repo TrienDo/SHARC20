@@ -229,6 +229,14 @@
                     }                    
                     $response["data"]["allPois"] = $tmpPois;
                     //Get all EOIs of the experience
+                    $objEois = SharcEoiExperience::where('experienceId',$experienceId)->get();            
+                    $tmpEois = $objEois->toArray();                    
+                    $i = 0;
+                    for ($i; $i< $objEois->count(); $i++) {
+                        $rs = SharcEoiDesigner::where('id',$objEois[$i]->eoiDesignerId)->where('designerId',$designerId)->get();
+                        $tmpEois[$i]["eoiDesigner"] = $rs[0]->toArray();
+                    }                    
+                    $response["data"]["allEois"] = $tmpEois;
                     return $response;
                 }
             }
