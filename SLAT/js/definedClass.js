@@ -133,6 +133,58 @@ function SharcEoiExperience(id, eoiDesigner,experienceId, note)
     this.note = note;    
 }
 
+function SharcRouteDesigner(id, name, directed, colour, path, designerId)
+{
+    this.id = id;
+    this.name = name;
+    this.directed = directed;
+    this.colour = colour;
+    this.path = path;
+    this.designerId = designerId;
+}
+
+function SharcRouteExperience(id, routeDesigner,experienceId, description, polygon)
+{
+    this.id = id;
+    this.routeDesigner = routeDesigner;
+    this.experienceId = experienceId;
+    this.description = description; 
+    this.polygon = polygon;
+    this.getPolygon = function()
+    {
+        //Polygon = MVCArray -> Get Array() of latlng
+        var tmp = this.polygon.getArray().toString();//"(66.99025646736109, -24.36492919921875),(66.64426812270932, -12.06024169921875)"
+        tmp  = tmp.replace(/\(/g,"");//Replace ( with blank
+        tmp  = tmp.replace(/\)/g,"");//Replace ) with blank
+        tmp = tmp.replace(/ /g,"");//Replace space with blank
+        tmp = tmp.replace(/,/g," ");//Replace , with space
+        return tmp;
+    } 
+    this.getKmlPath = function()
+    {
+        var path = this.polygon.getArray();
+        //KML colour = AABBGGRR
+        var kmlPath = "<Placemark><Style><LineStyle><color>FF" + this.colour.substring(5) + this.colour.substring(3,5) + this.colour.substring(1,3) + "</color><width>3</width></LineStyle></Style><gx:MultiTrack><altitudeMode>absolute</altitudeMode><gx:interpolate>1</gx:interpolate><gx:Track>";
+        for(var i = 0; i < path.length; i++)
+        {
+            kmlPath += "<gx:coord>" +  path[i].lng() + " " +  path[i].lat() + " 0</gx:coord>";
+        }
+        kmlPath += "</gx:Track></gx:MultiTrack></Placemark>";
+        return kmlPath;
+    } 
+    this.getDistance =function()
+    {
+        var tmp = this.polygon.getArray();        
+        var distance = 0.0;		
+		for (i=1; i < tmp.length; i++)
+		{			
+			distance += getDistanceLong(tmp[i-1].lat(), tmp[i-1].lng(), tmp[i].lat(), tmp[i-1].lng());
+		}
+        distance/=1000;//to km
+        return distance.toFixed(2);//get two decimal places
+    }        
+}
+
 function Response(mID, mType,mDesc,mContent,mNoOfLike,mEntityType, mEntityID, mConName, mConEmail, mStatus, mSize)
 {
     this.id = mID;    
@@ -161,23 +213,7 @@ function POIType(mID,mName,mIcon,mDesc)
     this.associatedPOI = "";    //Not in use
     this.state = "new";         //Not in use
 }
-
-
-
-function EOI(mID,mName,mSDate,mEDate,mDesc,mPOI,mRoute)
-{
-    this.id = mID;
-    this.name = mName;
-    this.startDate = mSDate;
-    this.endDate = mEDate;
-    this.desc = mDesc;
-    this.associatedMedia = new Array();
-    this.mediaOrder = new Array();
-    this.mainMedia = "";
-    this.associatedPOI = mPOI;    
-    this.associatedRoute = mRoute;
-    this.state = "new";    
-}
+ 
 
 function Route(mID,mName,mDesc,mColour,mSelectedPOIs,mPolygon,mSelectedEOIs,mDirected)
 {

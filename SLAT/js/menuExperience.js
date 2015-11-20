@@ -140,6 +140,7 @@ function renderProject(data)
     clearScreen();
     renderPOIs(data.allPois); 
     renderEOIs(data.allEois);
+    renderRoutes(data.allRoutes);
     $("#noOfPOI").text("Number of POIs: " + allPOIs.length);
     $("#noOfEOI").text("Number of EOIs: " + allEOIs.length);
     $("#noOfROU").text("Number of Routes: " + allRoutes.length);
@@ -226,6 +227,55 @@ function renderEOIs(retEOIs)
         var eoiDesigner = new SharcEoiDesigner(retEOIs[i].eoiDesigner.id, retEOIs[i].eoiDesigner.name,retEOIs[i].eoiDesigner.description, retEOIs[i].eoiDesigner.designerId);
         curEOI = new SharcEoiExperience(retEOIs[i].id, eoiDesigner, retEOIs[i].experienceId,retEOIs[i].note);
         allEOIs.push(curEOI);                
+    }                                                             
+}
+
+function renderRoutes(retRoutes)    
+{
+    for(i = 0; i < retRoutes.length; i++) {
+        //Get info
+        var routeDesigner = new SharcRouteDesigner(retRoutes[i].routeDesigner.id, retRoutes[i].routeDesigner.name,retRoutes[i].routeDesigner.directed,retRoutes[i].routeDesigner.colour, retRoutes[i].routeDesigner.path,retRoutes[i].routeDesigner.designerId);
+        //get points of path
+        var allCoors = new Array();
+        if(routeDesigner.path.trim()!= "")
+            allCoors = routeDesigner.path.split(" ");
+        
+        var tmpPath = new Array();
+        for(k = 0; k < allCoors.length; k=k+2)
+    	{		
+    		tmpPath.push(new google.maps.LatLng(allCoors[k],allCoors[k+1]));
+    	}
+        routePath = new google.maps.Polyline({ path: tmpPath,geodesic: true,editable:false, map: map, strokeColor: (routeDesigner.colour),strokeOpacity: 1.0,strokeWeight: 2}); 
+        allRoutePaths.push(routePath);
+        
+        //show start and end marker
+		var tmpR = routePath.getPath().getArray();
+        if (tmpR.length > 0)
+        {		
+    		tmpRouteMarker = new google.maps.Marker({
+                position: new google.maps.LatLng(0,0),
+                draggable:true,
+                icon: "images/end.png",
+                map:null
+            });
+            tmpRouteMarker.setPosition(tmpR[tmpR.length - 1]);
+    		if(routeDesigner.directed)
+                tmpRouteMarker.setMap(map);
+            allRouteMarkers.push(tmpRouteMarker);
+            
+            tmpRouteMarker = new google.maps.Marker({
+                position: new google.maps.LatLng(0,0),
+                draggable:true,
+                icon: "images/start.png",
+                map:null
+            });
+            tmpRouteMarker.setPosition(tmpR[0]);
+    		if(routeDesigner.directed)
+                tmpRouteMarker.setMap(map);
+            allRouteMarkers.push(tmpRouteMarker);
+        }
+        curRoute = new SharcRouteExperience(retRoutes[i].id, routeDesigner, retRoutes[i].experienceId,retRoutes[i].description, routePath.getPath());
+        allRoutes.push(curRoute);                
     }                                                             
 }
 //Manage all experiences of the "logged in" user

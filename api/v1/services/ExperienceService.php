@@ -237,6 +237,15 @@
                         $tmpEois[$i]["eoiDesigner"] = $rs[0]->toArray();
                     }                    
                     $response["data"]["allEois"] = $tmpEois;
+                    //Get all Routes of the experience
+                    $objRoutes = SharcRouteExperience::where('experienceId',$experienceId)->get();            
+                    $tmpRoutes = $objRoutes->toArray();                    
+                    $i = 0;
+                    for ($i; $i< $objRoutes->count(); $i++) {
+                        $rs = SharcRouteDesigner::where('id',$objRoutes[$i]->routeDesignerId)->where('designerId',$designerId)->get();
+                        $tmpRoutes[$i]["routeDesigner"] = $rs[0]->toArray();
+                    }                    
+                    $response["data"]["allRoutes"] = $tmpRoutes;
                     return $response;
                 }
             }

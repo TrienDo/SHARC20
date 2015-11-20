@@ -165,7 +165,7 @@ function getPOIAndRoute()
                     +            '<div id="relPoi" style="max-height: 70px; overflow: auto;width:152px;">'
                     +                '<table border="0" cellpadding="1" cellspacing="1">';                        
     for(var i=0;i<allPOIs.length;i++)
-        content += '<tr><td class="formText"><input type="checkbox" class="inputCheckbox" value="' + allPOIs[i].id + '"> ' + allPOIs[i].name + '</td></tr>';
+        content += '<tr><td class="formText"><input type="checkbox" class="inputCheckbox" value="' + allPOIs[i].id + '"> ' + allPOIs[i].poiDesigner.name + '</td></tr>';
     content = content +          '</table>'                    
                     +            '</div>'
                     +           '</td>'
@@ -173,7 +173,7 @@ function getPOIAndRoute()
                     +                '<div id="relRoute" style="max-height: 70px; overflow: auto; width:152px;">'
                     +                    '<table border="0" cellpadding="1" cellspacing="1" >';    
     for(var i=0;i<allRoutes.length;i++)
-        content += '<tr><td class="formText"><input type="checkbox" class="inputCheckbox" value="' + allRoutes[i].id + '"> ' + allRoutes[i].name + '</td></tr>';
+        content += '<tr><td class="formText"><input type="checkbox" class="inputCheckbox" value="' + allRoutes[i].id + '"> ' + allRoutes[i].routeDesigner.name + '</td></tr>';
     content = content +              '</table>'                    
                     +               '</div>'
                     +           '</td>'                    

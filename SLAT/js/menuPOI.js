@@ -327,7 +327,7 @@ function getTypeEventRoute()//Get associated Type/Event/Route of the POI
                     +            '<div id="poiEvent" style="max-height: 90px; overflow: auto;width:200px;">'
                     +                '<table border="0" cellpadding="1" cellspacing="1">';                        
     for(var i=0;i<allEOIs.length;i++)
-        content     +=                      '<tr><td class="formText"><input type="checkbox" class="inputCheckbox" value="' + allEOIs[i].id + '"> ' + allEOIs[i].name + '</td></tr>';
+        content     +=                      '<tr><td class="formText"><input type="checkbox" class="inputCheckbox" value="' + allEOIs[i].id + '"> ' + allEOIs[i].eoiDesigner.name + '</td></tr>';
     content = content +              '</table>'                    
                     +            '</div>' 
                     +           '</td>'
@@ -335,7 +335,7 @@ function getTypeEventRoute()//Get associated Type/Event/Route of the POI
                     +                '<div id="poiRoute" style="max-height: 90px; overflow: auto; width:200px;">'
                     +                    '<table border="0" cellpadding="1" cellspacing="1" >'    
     for(var i=0;i<allRoutes.length;i++)
-        content     +=                      '<tr><td class="formText"><input type="checkbox" class="inputCheckbox" value="' + allRoutes[i].id + '"> ' + allRoutes[i].name + '</td></tr>';
+        content     +=                      '<tr><td class="formText"><input type="checkbox" class="inputCheckbox" value="' + allRoutes[i].id + '"> ' + allRoutes[i].routeDesigner.name + '</td></tr>';
     content = content +                  '</table>'                    
                     +               '</div>' 
                     +           '</td>'                    

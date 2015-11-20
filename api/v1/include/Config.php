@@ -148,10 +148,10 @@
     */
     
     
-    //Table SharcPoiDesigner  
+    //Table SharcEoiDesigner  
     /*        
     Capsule::schema()->dropIfExists('SharcEoiDesigners');
-    Capsule::schema()->create('SharcEoiDesigners', function($table)//(id, name, description, designerId)
+    Capsule::schema()->create('SharcEoiDesigners', function($table)
     {
         $table->increments('id');
         $table->string('name');        	
@@ -162,7 +162,7 @@
     */
     
     
-    //Table SharcPoiExperiences   
+    //Table SharcEoiExperiences   
     /*
     Capsule::schema()->dropIfExists('SharcEoiExperiences');
     Capsule::schema()->create('SharcEoiExperiences', function($table)
@@ -173,6 +173,36 @@
         $table->integer('eoiDesignerId')->unsigned();
         $table->foreign('eoiDesignerId')->references('id')->on('SharcEoiDesigners');
         $table->string('note');                        
+    });
+    */       
+    
+    //Table SharcRouteDesigner  
+    /*        
+    Capsule::schema()->dropIfExists('SharcRouteDesigners');
+    Capsule::schema()->create('SharcRouteDesigners', function($table)
+    {
+        $table->increments('id');
+        $table->string('name');        	
+        $table->boolean('directed');
+        $table->string('colour',10);   
+        $table->text('path');           
+        $table->integer('designerId')->unsigned();
+        $table->foreign('designerId')->references('id')->on('SharcUsers');        
+    });
+    */
+    
+    
+    //Table SharcRouteExperiences   
+    /*
+    Capsule::schema()->dropIfExists('SharcRouteExperiences');
+    Capsule::schema()->create('SharcRouteExperiences', function($table)// , routeDesigner, , 
+    {
+        $table->increments('id');
+        $table->integer('experienceId')->unsigned();
+        $table->foreign('experienceId')->references('id')->on('SharcExperiences');        
+        $table->integer('routeDesignerId')->unsigned();
+        $table->foreign('routeDesignerId')->references('id')->on('SharcRouteDesigners');
+        $table->string('description');                        
     });
     */            
 ?>

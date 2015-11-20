@@ -98,7 +98,7 @@ function SharcRestful()
                     {
                         //Upload the GPS image
                         showUploadingStatus("Please wait. Uploading data...");
-                        curMedia.entityId = curPOI.id;
+                        curMedia.entityId = result.data.id;//return id of the current POI
                         cloudManager.uploadMedia(curMediaBank.id + ".jpg", curMediaData);                        
                     }
                 }
@@ -123,6 +123,28 @@ function SharcRestful()
             success: function(result) {                
                 if(result.status == SUCCESS){
                     presentNewEoi(result.data);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });    
+    }    
+    
+    //Working with Route
+    this.createNewRoute = function (routeExperience)
+    {
+        var data = JSON.stringify(routeExperience);
+        $.ajax({
+            type:'POST',
+            url: apiRoot + 'routes',
+            data: data,                       
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    presentNewRoute(result.data);
                 }
                 else
                     showMessage(result.data);

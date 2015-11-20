@@ -17,11 +17,14 @@
     require_once 'models/SharcMediaExperience.php';
     require_once 'models/SharcEoiDesigner.php';
     require_once 'models/SharcEoiExperience.php';
+    require_once 'models/SharcRouteDesigner.php';
+    require_once 'models/SharcRouteExperience.php';
     require_once 'services/UserService.php';
     require_once 'services/ExperienceService.php';
     require_once 'services/PoiService.php';
     require_once 'services/MediaService.php';
     require_once 'services/EoiService.php';
+    require_once 'services/RouteService.php';
     
  
     $app = new \Slim\Slim(array(
@@ -143,6 +146,22 @@
         $objEoi = json_decode($jsonEoi, true);
         $objEoi['eoiDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
         $response = EoiService::addNewEoi($objEoi);
+        Utils::echoResponse($response);
+    });
+    
+    //RESTful for Route
+    $app->post('/routes', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $jsonRoute = $app->request->getBody();        
+        $objRoute = json_decode($jsonRoute, true);
+        $objRoute['routeDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = RouteService::addNewRoute($objRoute);
         Utils::echoResponse($response);
     });
     

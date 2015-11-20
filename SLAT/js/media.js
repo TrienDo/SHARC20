@@ -726,7 +726,7 @@ function getCurrentEntityName()
     else if(curMediaType == "EOI")
         return curEOI.eoiDesigner.name;
     else if(curMediaType == "ROUTE")
-        return curRoute.eoiDesigner.name;
+        return curRoute.routeDesigner.name;
 }
 //Display a list of media items associated to an entity (POI-EOI-Route)
 function viewAllMediaItems(data)
