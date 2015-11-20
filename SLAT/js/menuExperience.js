@@ -154,7 +154,7 @@ function renderPOIs(retPOIs)
     for(i = 0; i < retPOIs.length; i++) {
         //Get info
         var poiDesigner = new SharcPoiDesigner(retPOIs[i].poiDesigner.id, retPOIs[i].poiDesigner.name, retPOIs[i].poiDesigner.coordinate, retPOIs[i].poiDesigner.triggerZone, retPOIs[i].poiDesigner.designerId);
-        curPOI = new SharcPoiExperience(retPOIs[i].experienceId,retPOIs[i].poiDesigner,retPOIs[i].description,retPOIs[i].id, "", "", "", "");
+        curPOI = new SharcPoiExperience(retPOIs[i].experienceId,retPOIs[i].poiDesigner,retPOIs[i].description,retPOIs[i].id, retPOIs[i].typeList, retPOIs[i].eoiList,retPOIs[i].routeList, retPOIs[i].mediaCount, retPOIs[i].responseCount);
         allPOIs.push(curPOI);
         //Vis Geofence
         var fenceInfo = curPOI.poiDesigner.triggerZone.trim().split(" ");
@@ -190,7 +190,7 @@ function renderPOIs(retPOIs)
         allPOIZones.push(tmpPoiZone);                                
         //hashTablePOI[curPOI.id] = allPOIs.length;//key = id and value = index of POI in array --> to associate media with POI later
         //Viz marker        
-        tmpLatLng = poiDesigner.getFirstPoint();
+        tmpLatLng = curPOI.getFirstPoint();
         var poiIcon = null;
         //if(curPOI.type == "accessibility")
         //    poiIcon = "images/access.png";
@@ -209,7 +209,7 @@ function renderPOIs(retPOIs)
         allPOIMarkers.push(tmpPoiMarker);
         
         //Viz of POI
-        var tmpPath =  poiDesigner.getPoiVizPath();
+        var tmpPath =  curPOI.getPoiVizPath();
         if(tmpPath.length > 0)
         {
             var poiViz = new google.maps.Polyline({ path: tmpPath,geodesic: true,editable:false, map: map, strokeColor: ("#FF0000"),strokeOpacity: 1.0,strokeWeight: 2}); 
@@ -225,7 +225,7 @@ function renderEOIs(retEOIs)
     for(i = 0; i < retEOIs.length; i++) {
         //Get info
         var eoiDesigner = new SharcEoiDesigner(retEOIs[i].eoiDesigner.id, retEOIs[i].eoiDesigner.name,retEOIs[i].eoiDesigner.description, retEOIs[i].eoiDesigner.designerId);
-        curEOI = new SharcEoiExperience(retEOIs[i].id, eoiDesigner, retEOIs[i].experienceId,retEOIs[i].note);
+        curEOI = new SharcEoiExperience(retEOIs[i].id, eoiDesigner, retEOIs[i].experienceId,retEOIs[i].note, retEOIs[i].poiList, retEOIs[i].routeList);
         allEOIs.push(curEOI);                
     }                                                             
 }
@@ -274,7 +274,7 @@ function renderRoutes(retRoutes)
                 tmpRouteMarker.setMap(map);
             allRouteMarkers.push(tmpRouteMarker);
         }
-        curRoute = new SharcRouteExperience(retRoutes[i].id, routeDesigner, retRoutes[i].experienceId,retRoutes[i].description, routePath.getPath());
+        curRoute = new SharcRouteExperience(retRoutes[i].id, routeDesigner, retRoutes[i].experienceId,retRoutes[i].description, routePath.getPath(), retRoutes[i].poiList, retRoutes[i].eoiList);
         allRoutes.push(curRoute);                
     }                                                             
 }

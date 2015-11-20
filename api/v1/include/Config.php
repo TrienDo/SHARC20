@@ -106,7 +106,10 @@
         $table->foreign('experienceId')->references('id')->on('SharcExperiences');        
         $table->integer('poiDesignerId')->unsigned();
         $table->foreign('poiDesignerId')->references('id')->on('SharcPoiDesigners');
-        $table->string('description');                        
+        $table->string('description'); 
+        $table->string('typeList');
+        $table->string('eoiList');
+        $table->string('routeList');                               
     });
     */
     
@@ -172,7 +175,9 @@
         $table->foreign('experienceId')->references('id')->on('SharcExperiences');        
         $table->integer('eoiDesignerId')->unsigned();
         $table->foreign('eoiDesignerId')->references('id')->on('SharcEoiDesigners');
-        $table->string('note');                        
+        $table->string('note');  
+        $table->string('poiList');
+        $table->string('routeList');                      
     });
     */       
     
@@ -203,6 +208,8 @@
         $table->integer('routeDesignerId')->unsigned();
         $table->foreign('routeDesignerId')->references('id')->on('SharcRouteDesigners');
         $table->string('description');                        
+        $table->string('poiList');
+        $table->string('eoiList');
     });
     */            
 ?>

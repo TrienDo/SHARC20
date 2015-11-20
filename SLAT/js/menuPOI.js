@@ -86,14 +86,14 @@ function createPOI(isCreating,isFromPhoto,tdIndex)//
             showAppropriatePoiMap(mapPOI, curPOI);
             $("#poiName").val(curPOI.poiDesigner.name);
             $("#poiDesc").val(curPOI.description);
-            markerPOI.setPosition(curPOI.poiDesigner.getFirstPoint());
+            markerPOI.setPosition(curPOI.getFirstPoint());
             markerPOI.setMap(mapPOI);
             //showMapWithCorrectBound(mapPOI, maxZoomLevel);
             
             trigerZonePOI = allPOIZones[tdIndex];
             trigerZonePOI.setMap(mapPOI);
             //Color
-            var tmpArr = curPOI.triggerZone.split(" ");
+            var tmpArr = curPOI.poiDesigner.triggerZone.split(" ");
             $('#zoneColour').val("#" + tmpArr[1]);
             drawingManager.get('polygonOptions').fillColor = "#" + tmpArr[1];
             drawingManager.get('polygonOptions').strokeColor = "#" + tmpArr[1]; 	
@@ -185,26 +185,23 @@ function createPOI(isCreating,isFromPhoto,tdIndex)//
                     if(!isCreating)//only update POI
                     {                        
                         curPOI.poiDesigner.name = name;
-                        curPOI.desc = desc;  
+                        curPOI.description = desc;  
                         curPOI.poiDesigner.coordinate = markerPOI.getPosition().lat() + " " + markerPOI.getPosition().lng();                                               
                         curPOI.typeList = selectedTypes.join(" ");                                               
                         curPOI.eoiList = selectedEvents.join(" ");                                      
                         curPOI.routeList = selectedRoutes.join(" ");  
-                        curPOI.setTriggerZone(trigerZonePOI,$('#zoneColour').val());                       
-                        //Create update for POIs table
-                        resfulManager.updatePoi();
-                        //mDropBox.updatePOI(curPOI);                        
-                        allPOIMarkers[tdIndex].setPosition(curPOI.getLatLng());
+                        curPOI.setTriggerZone(trigerZonePOI,$('#zoneColour').val());
+                        allPOIMarkers[tdIndex].setPosition(curPOI.getFirstPoint());
                         updatePOIZone(tdIndex, trigerZonePOI);  
                         allPOIZones[tdIndex].setMap(map); 
-                        allPOIZones[tdIndex].setEditable(false);                     
+                        allPOIZones[tdIndex].setEditable(false);
+                        resfulManager.updatePoi(curPOI);                     
                     }
                     else//create new POI
                     {                    
                         var poiBank = new SharcPoiDesigner(0, name, markerPOI.getPosition().lat() + " " + markerPOI.getPosition().lng(), "", designerInfo.id);
-                        poiBank.setTriggerZone(trigerZonePOI,$('#zoneColour').val());
-                        
-                        curPOI = new SharcPoiExperience(curProject.id, poiBank, desc, 0, selectedTypes.join(" "),selectedEvents.join(" "), selectedRoutes.join(" "),"");
+                        curPOI = new SharcPoiExperience(curProject.id, poiBank, desc, 0, selectedTypes.join(" "),selectedEvents.join(" "), selectedRoutes.join(" "), 0, 0);
+                        curPOI.setTriggerZone(trigerZonePOI,$('#zoneColour').val());
                         
                         if(isFromPhoto && $('#includeGPSPhoto').is(':checked'))//include the GPS taggged photo as the first media for POI
                         {
@@ -225,8 +222,7 @@ function createPOI(isCreating,isFromPhoto,tdIndex)//
                         allPOIZones[allPOIZones.length-1].setMap(map); 
                         allPOIZones[allPOIZones.length-1].setEditable(false);                     
                         allPOIs.push(curPOI);
-                        $("#noOfPOI").text("Number of POIs: " + allPOIs.length);
-                        //Create insert command for new POI
+                        $("#noOfPOI").text("Number of POIs: " + allPOIs.length);                        
                         resfulManager.createNewPoi(curPOI);
                     }                   
                 }             
@@ -493,9 +489,10 @@ function presentPOIs()
             var eoiCount = (allPOIs[i].eoiList == "" ? 0 : allPOIs[i].eoiList.split(" ").length);
             allPOIs[i].routeList += "";
             var routeCount = (allPOIs[i].routeList == "" ? 0: allPOIs[i].routeList.split(" ").length);
-            var mediaCount = allPOIs[i].mediaList.length;
-            var likeCount = 0;//allPOIs[i].getLikeCount();
-            $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + name + '</td><td>' + desc + '</td><td style="text-align:center;">' + eoiCount + '</td><td style="text-align:center;">' + routeCount + '</td><td style="text-align:center;">' + mediaCount + '</td><td style="text-align:center;">' + likeCount + '</td><td style="text-align:center;">' + Object.keys(allPOIs[i].responseList).length +  '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/edit.png"> Edit this POI</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Delete this POI</button> <button class="btnView googleLookAndFeel">Manage this POI\'s media</button></td></tr>');
+            var mediaCount = allPOIs[i].mediaCount;
+            var responseCount = allPOIs[i].responseCount;
+            var likeCount = 0;
+            $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + name + '</td><td>' + desc + '</td><td style="text-align:center;">' + eoiCount + '</td><td style="text-align:center;">' + routeCount + '</td><td style="text-align:center;">' + mediaCount + '</td><td style="text-align:center;">' + likeCount + '</td><td style="text-align:center;">' + responseCount +  '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/edit.png"> Edit this POI</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Delete this POI</button> <button class="btnView googleLookAndFeel">Manage this POI\'s media</button></td></tr>');
         } 
         $("#tblData").addClass("tableBorder");
         $("#tblData td").addClass("tableBorder");
@@ -506,8 +503,8 @@ function presentPOIs()
     }
     catch(e)
     {
+        $('#dialog-message').dialog("close");
         showMessage("Error when presenting all POIs: " + e.message);
-        $('#dialog-message').dialog("close"); 
     }
 }
 
@@ -525,7 +522,7 @@ function showDropdownPOI()
             selectList = selectList + '<option value = "-1">Please select</option>';
             for(var i=0; i < allPOIs.length; i++)
 			{
-				selectList = selectList + '<option value = "' + i + '">' + allPOIs[i].name + '</option>';
+				selectList = selectList + '<option value = "' + i + '">' + allPOIs[i].poiDesigner.name + '</option>';
 			}
             selectList = selectList + '</select></div>';
             
@@ -650,7 +647,7 @@ function linkPOIs()
         $('#dialog-message').append('<table width="100%" id="tblData"><thead><tr><th>No</th><th>Name</th><th>Description</th><th>Action</th></tr></thead><tbody></tbody></table>');
         for(var i=0; i < allPOIs.length; i++)
         {
-            $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + allPOIs[i].name + '</td><td>' + allPOIs[i].desc + '</td><td nowrap style="text-align:center;"><img src="images/link.png" title="Edit association between POIs with EOIs and Routes" class="btnSave"></td></tr>');
+            $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + allPOIs[i].poiDesigner.name + '</td><td>' + allPOIs[i].description + '</td><td nowrap style="text-align:center;"><img src="images/link.png" title="Edit association between POIs with EOIs and Routes" class="btnSave"></td></tr>');
         } 
         $("#tblData").addClass("tableBorder");
         $("#tblData td").addClass("tableBorder");

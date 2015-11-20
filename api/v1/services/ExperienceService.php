@@ -226,6 +226,9 @@
                     for ($i; $i< $objPois->count(); $i++) {
                         $rs = SharcPoiDesigner::where('id',$objPois[$i]->poiDesignerId)->where('designerId',$designerId)->get();
                         $tmpPois[$i]["poiDesigner"] = $rs[0]->toArray();
+                        $media = SharcMediaExperience::where('entityId',$objPois[$i]->id)->where('entityType','POI')->get();
+                        $tmpPois[$i]["mediaCount"] = $media->count();
+                        $tmpPois[$i]["responseCount"] = 0; 
                     }                    
                     $response["data"]["allPois"] = $tmpPois;
                     //Get all EOIs of the experience

@@ -177,7 +177,7 @@ function createRouteFromKML()
                     });
                     
                     var directed = $('#direction').is(':checked');                    
-                    curRoute = new SharcRouteExperience(0,null,curProject.id,desc,routePath.getPath());//,selectedEOIs.join(" "),directed);
+                    curRoute = new SharcRouteExperience(0,null,curProject.id,desc,routePath.getPath(), selectedPOIs.join(" "), selectedEOIs.join(" "));
                     var routeBank = new SharcRouteDesigner(0,name,directed,$('#routeColour').val(), curRoute.getPolygon(), designerInfo.id);
                     curRoute.routeDesigner = routeBank;
                     
@@ -391,8 +391,8 @@ function createRouteByDrawing(isCreating)
                         curRoute.name = name;
                         curRoute.desc = desc;
                         curRoute.colour = $('#routeColour').val();
-                        curRoute.associatedPOI = selectedPOIs.join(" ");
-                        curRoute.associatedEOI = selectedEOIs.join(" ");
+                        curRoute.poiList = selectedPOIs.join(" ");
+                        curRoute.eoiList = selectedEOIs.join(" ");
                         curRoute.polygon = routePath.getPath();
                         curRoute.directed = directed;
                         newRow = '["U","Routes","' + curRoute.id + '",{"name":["P","' +  encodeURI(curRoute.name) + '"],"desc":["P","' +  encodeURI(curRoute.desc) + '"],"directed":["P","' +  directed + '"],"colour":["P","' +  curRoute.colour.substring(1) + '"],"polygon":["P","' +  curRoute.getPolygon() + '"],"associatedPOI":["P","' +  curRoute.associatedPOI + '"],"associatedEOI":["P","' +  curRoute.associatedEOI + '"]}]';
@@ -400,7 +400,7 @@ function createRouteByDrawing(isCreating)
                     }
                     else
                     {
-                        curRoute = new SharcRouteExperience(0,null,curProject.id,desc,routePath.getPath());//,selectedEOIs.join(" "),directed);
+                        curRoute = new SharcRouteExperience(0,null,curProject.id,desc,routePath.getPath(),selectedPOIs.join(" "), selectedEOIs.join(" "));
                         var routeBank = new SharcRouteDesigner(0,name,directed,$('#routeColour').val(), curRoute.getPolygon(), designerInfo.id);
                         curRoute.routeDesigner = routeBank;
                     

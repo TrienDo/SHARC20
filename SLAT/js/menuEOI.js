@@ -126,8 +126,8 @@ function createNewEOI(isCreating) {
                         curEOI.desc = desc;
                         curEOI.startDate = startDate;
                         curEOI.endDate = endDate;
-                        curEOI.associatedPOI = selectedPOIs.join(" ");
-                        curEOI.associatedRoute = selectedRoutes.join(" ");
+                        curEOI.poiList = selectedPOIs.join(" ");
+                        curEOI.routeList = selectedRoutes.join(" ");
                         
                         //Create update for EOIs table                       
                         newRow = '["U","EOIs","' + curEOI.id + '",{"name":["P","' +  encodeURI(curEOI.name) + '"],"desc":["P","' +  encodeURI(curEOI.desc) + '"],"startDate":["P","' +  encodeURI(curEOI.startDate) + '"],"endDate":["P","' +  encodeURI(curEOI.endDate) + '"],"associatedPOI":["P","' +  curEOI.associatedPOI + '"],"associatedRoute":["P","' +  curEOI.associatedRoute + '"]}]';
@@ -136,7 +136,7 @@ function createNewEOI(isCreating) {
                     else
                     {                        
                         var eoiBank = new SharcEoiDesigner(0, name, desc, designerInfo.id);                        
-                        curEOI = new SharcEoiExperience(0, eoiBank, curProject.id, "");                        
+                        curEOI = new SharcEoiExperience(0, eoiBank, curProject.id, "", selectedPOIs.join(" "), selectedRoutes.join(" "));                        
                         allEOIs.push(curEOI);                             
                         $("#noOfEOI").text("Number of EOIs: " + allEOIs.length); 
                         resfulManager.createNewEoi(curEOI);                                                                  

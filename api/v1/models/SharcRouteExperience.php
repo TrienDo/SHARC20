@@ -10,7 +10,7 @@
     class SharcRouteExperience extends Model  
     {	 
     	public $timestamps = false;
-    	protected $fillable = array('experienceId', 'routeDesignerId','description');
+    	protected $fillable = array('experienceId', 'routeDesignerId', 'description', 'poiList', 'eoiList');
     	protected $table = 'SharcRouteExperiences'; //name of table
     }
 ?>

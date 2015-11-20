@@ -34,7 +34,9 @@
                 $eoiExperience = SharcEoiExperience::create(array(
                     'experienceId' => $objEoi['experienceId'],                   
                     'eoiDesignerId' => $eoiDesigner->id,
-                    'note' => $objEoi['note']                    
+                    'note' => $objEoi['note'],
+                    'poiList' => $objEoi['poiList'],
+                    'routeList' => $objEoi['routeList']                    
                 ));
                 
                 

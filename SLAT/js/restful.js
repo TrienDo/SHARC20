@@ -111,6 +111,28 @@ function SharcRestful()
         });    
     }
     
+    //Update POI
+    this.updatePoi = function (poiExperience)
+    {
+        var data = JSON.stringify(poiExperience);
+        $.ajax({
+            type:'PUT',
+            url: apiRoot + 'pois',
+            data: data,                       
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    presentNewPoi(result.data);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });    
+    }
+    
     //Working with EOI
     this.createNewEoi = function (eoiExperience)
     {

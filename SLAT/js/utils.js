@@ -94,7 +94,7 @@ function showAppropriatePoiMap(inMap, tmpPOI)//inMap can be map of main UI or of
     }
     else//edit POI -> go to the current POI with maxZome
     {
-        inMap.setCenter(tmpPOI.getLatLng());     
+        inMap.setCenter(tmpPOI.getFirstPoint());     
         inMap.setZoom(maxZoomLevel);    
     }   
 }

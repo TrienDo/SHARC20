@@ -42,16 +42,28 @@ function SharcPoiDesigner(id, name, coordinate, triggerZone, designerID)
     this.coordinate = coordinate;
     this.triggerZone = triggerZone;
     this.designerId = designerID;
+}
+
+function SharcPoiExperience(experienceId,poiDesigner,description,id, typeList, eoiList, routeList, mediaCount, responseCount)
+{
+    this.experienceId = experienceId;
+    this.poiDesigner = poiDesigner;
+    this.description = description;
+    this.id = id;
+    this.typeList = typeList;
+    this.eoiList = eoiList;
+    this.routeList = routeList;    
+    this.mediaCount = mediaCount;
+    this.responseCount = responseCount;
     this.getFirstPoint = function()
     {
-        var tmpLatLng = this.coordinate.split(" ");
+        var tmpLatLng = this.poiDesigner.coordinate.split(" ");
         return new google.maps.LatLng(parseFloat(tmpLatLng[0]), parseFloat(tmpLatLng[1]));
     }
-    
     this.getPoiVizPath = function()
     {
         var tmpPath = new Array();
-        var tmpLatLng = this.coordinate.split(" ");
+        var tmpLatLng = this.poiDesigner.coordinate.split(" ");
         if (tmpLatLng.length > 2)
         {
             
@@ -67,7 +79,7 @@ function SharcPoiDesigner(id, name, coordinate, triggerZone, designerID)
     {
         if(zoneObj.center != null)  //trigger zone is a circle
         {
-            this.triggerZone = "circle " + colour.substring(1) +  " " + zoneObj.radius + " " + zoneObj.center.lat() + " " + zoneObj.center.lng();
+            this.poiDesigner.triggerZone = "circle " + colour.substring(1) +  " " + zoneObj.radius + " " + zoneObj.center.lat() + " " + zoneObj.center.lng();
         }
         else                        //trigger zone is a polygon
         {
@@ -76,22 +88,9 @@ function SharcPoiDesigner(id, name, coordinate, triggerZone, designerID)
             tmp  = tmp.replace(/\)/g,"");//Replace ) with blank
             tmp = tmp.replace(/ /g,"");//Replace space with blank
             tmp = tmp.replace(/,/g," ");//Replace , with space
-            this.triggerZone = "polygon " + colour.substring(1) +  " " + tmp;
+            this.poiDesigner.triggerZone = "polygon " + colour.substring(1) +  " " + tmp;
         }
     }
-}
-
-function SharcPoiExperience(experienceId,poiDesigner,description,id, typeList, eoiList, routeList, mediaList)
-{
-    this.experienceId = experienceId;
-    this.poiDesigner = poiDesigner;
-    this.description = description;
-    this.id = id;
-    this.typeList = typeList;
-    this.eoiList = eoiList;
-    this.routeList = routeList;
-    this.mediaList = mediaList;
-    this.responseList = new Array();
 }
   
 function SharcMediaDesigner(id, contentType, content, size, designerId)
@@ -125,12 +124,14 @@ function SharcEoiDesigner(id, name, description, designerId)
     this.designerId = designerId;
 }
 
-function SharcEoiExperience(id, eoiDesigner,experienceId, note)
+function SharcEoiExperience(id, eoiDesigner,experienceId, note, poiList, routeList)
 {
     this.id = id;
     this.eoiDesigner = eoiDesigner;
     this.experienceId = experienceId;
-    this.note = note;    
+    this.note = note; 
+    this.poiList = poiList;
+    this.routeList = routeList;   
 }
 
 function SharcRouteDesigner(id, name, directed, colour, path, designerId)
@@ -143,13 +144,15 @@ function SharcRouteDesigner(id, name, directed, colour, path, designerId)
     this.designerId = designerId;
 }
 
-function SharcRouteExperience(id, routeDesigner,experienceId, description, polygon)
+function SharcRouteExperience(id, routeDesigner,experienceId, description, polygon, poiList, eoiList)
 {
     this.id = id;
     this.routeDesigner = routeDesigner;
     this.experienceId = experienceId;
     this.description = description; 
     this.polygon = polygon;
+    this.poiList = poiList;
+    this.eoiList = eoiList;   
     this.getPolygon = function()
     {
         //Polygon = MVCArray -> Get Array() of latlng

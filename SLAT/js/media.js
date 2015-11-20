@@ -600,31 +600,22 @@ function uploadAndAddMedia()
 
 function presentNewMedia(data)
 {
-    /*
-    allMedia.push(curMedia);   
+    //allMedia.push(curMedia);   
         
     if(curMediaType == "POI")
     {
-        curPOI.mediaOrder.push(curMedia.id);
-        curPOI.associatedMedia[curMedia.id] = curMedia;
-        mDropBox.updatePOIMediaOrder(curPOI);
+        curPOI.mediaCount++;
     }
     else if(curMediaType == "EOI")
     {
-        curEOI.mediaOrder.push(curMedia.id);
-        curEOI.associatedMedia[curMedia.id] = curMedia;
-        mDropBox.updateEOIMediaOrder(curEOI);
+        curEOI.mediaCount++;
     }
     else if(curMediaType == "ROUTE")
     {
-        curRoute.mediaOrder.push(curMedia.id);
-        curRoute.associatedMedia[curMedia.id] = curMedia;
-        mDropBox.updateRouteMediaOrder(curRoute);
+        curRoute.mediaCount++;
     }
-    goBack();     
-    $("#dialog-status").dialog("close");
-    */
-    
+    //goBack();     
+    //$("#dialog-status").dialog("close");
 }
 //Edit a media item
 function viewEditMediaItem(curMedia)

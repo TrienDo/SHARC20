@@ -117,6 +117,21 @@
         Utils::echoResponse($response);
     });
     
+    $app->put('/pois', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $jsonPoi = $app->request->getBody();        
+        $objPoi = json_decode($jsonPoi, true);
+        $objPoi['poiDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = PoiService::updatePoi($objPoi);
+        Utils::echoResponse($response);
+    });
+    
     //RESTful for Media    
     $app->post('/media', function () use ($app) {
         //Check authentication        

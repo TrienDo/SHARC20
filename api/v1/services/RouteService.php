@@ -36,7 +36,9 @@
                 $routeExperience = SharcRouteExperience::create(array(
                     'experienceId' => $objRoute['experienceId'],                   
                     'routeDesignerId' => $routeDesigner->id,
-                    'description' => $objRoute['description']                    
+                    'description' => $objRoute['description'],
+                    'poiList' => $objRoute['poiList'],      
+                    'eoiList' => $objRoute['eoiList']                    
                 ));
                 
                 
