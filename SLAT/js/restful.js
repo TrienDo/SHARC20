@@ -92,7 +92,7 @@ function SharcRestful()
             headers: { 'apiKey': designerInfo.apiKey},
             success: function(result) {                
                 if(result.status == SUCCESS){
-                    presentNewPoi(result.data);
+                    presentNewPoi(result.data, false);
                     //Upload media if the POI is created from a GPS-tagged photo
                     if(curMedia != null && curMedia.entityId ==-1)
                     {
@@ -122,7 +122,29 @@ function SharcRestful()
             headers: { 'apiKey': designerInfo.apiKey},
             success: function(result) {                
                 if(result.status == SUCCESS){
-                    presentNewPoi(result.data);
+                    presentNewPoi(result.data, false);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });    
+    }
+    
+    //Delete POI
+    this.deletePoi = function (poiExperience)
+    {
+        var data = JSON.stringify(poiExperience);
+        $.ajax({
+            type:'DELETE',
+            url: apiRoot + 'pois',
+            data: data,                       
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    presentNewPoi(result.data, true);
                 }
                 else
                     showMessage(result.data);
@@ -144,7 +166,7 @@ function SharcRestful()
             headers: { 'apiKey': designerInfo.apiKey},
             success: function(result) {                
                 if(result.status == SUCCESS){
-                    presentNewEoi(result.data);
+                    presentNewEoi(result.data, false);
                 }
                 else
                     showMessage(result.data);
@@ -166,7 +188,7 @@ function SharcRestful()
             headers: { 'apiKey': designerInfo.apiKey},
             success: function(result) {                
                 if(result.status == SUCCESS){
-                    presentNewEoi(result.data);
+                    presentNewEoi(result.data, false);
                 }
                 else
                     showMessage(result.data);
@@ -176,6 +198,29 @@ function SharcRestful()
             }
         });    
     }    
+    
+    
+    //Delete EOI
+    this.deleteEoi = function (eoiExperience)
+    {
+        var data = JSON.stringify(eoiExperience);
+        $.ajax({
+            type:'DELETE',
+            url: apiRoot + 'eois',
+            data: data,                       
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    presentNewEoi(result.data, true);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });    
+    }
     
     //Working with Route
     this.createNewRoute = function (routeExperience)
@@ -188,7 +233,7 @@ function SharcRestful()
             headers: { 'apiKey': designerInfo.apiKey},
             success: function(result) {                
                 if(result.status == SUCCESS){
-                    presentNewRoute(result.data);
+                    presentNewRoute(result.data, false);
                 }
                 else
                     showMessage(result.data);
@@ -210,7 +255,29 @@ function SharcRestful()
             headers: { 'apiKey': designerInfo.apiKey},
             success: function(result) {                
                 if(result.status == SUCCESS){
-                    presentNewRoute(result.data);
+                    presentNewRoute(result.data, false);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });    
+    }
+    
+    //Delete Route
+    this.deleteRoute = function (routeExperience)
+    {
+        var data = JSON.stringify(routeExperience);
+        $.ajax({
+            type:'DELETE',
+            url: apiRoot + 'routes',
+            data: data,                       
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    presentNewRoute(result.data, true);
                 }
                 else
                     showMessage(result.data);

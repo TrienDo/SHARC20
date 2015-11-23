@@ -12,6 +12,15 @@ class Utils
         return INTERNAL_SERVER_ERROR." ".$e->getMessage();
     }
     
+    public static function updateAssociatedList($id, $strList) {
+        $strList = " ".$strList." ";//fomalize the list "spaceIDspaceIDspace
+        if(strpos($strList,$id) == false)//not contain -> add
+        {
+            
+        }
+        //have to update id not in the list to remove
+    }
+    
     public static function echoResponse($response) {
 	    $app = \Slim\Slim::getInstance();
         if($response["status"] == SUCCESS)        

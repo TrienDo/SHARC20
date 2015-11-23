@@ -420,9 +420,10 @@ function createRouteByDrawing(isCreating)
     });    
 }  
 
-function presentNewRoute(data)
+function presentNewRoute(data, isDeleting)
 {
-    curRoute.id = data.id;
+    if(!isDeleting)
+        curRoute.id = data.id;
     showMapWithCorrectBound(map, maxZoomLevel);
     $("#noOfROU").text("Number of Routes: " + allRoutes.length);
     manageAllRoutes();
@@ -595,13 +596,7 @@ function deleteRoute()
     var tdIndex = par.children("td:nth-child(1)");
     tdIndex = parseInt(tdIndex.text()) - 1;
     curRoute = allRoutes[tdIndex];
-    
-    /*if(curRoute.mediaOrder.length>0)
-    {
-        showMessage("Please remove all the associated media before deleting this route");
-        return;        
-    } */ 
-        
+     
     $('#dialog-message').html('');        
     $('#dialog-message').dialog({ title: "Delete a route"});        
     $('#dialog-message').append('<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>This route and its associated media will be permanently deleted and cannot be recovered. Are you sure?</p>');               
@@ -616,14 +611,12 @@ function deleteRoute()
             },
             Yes: function() {                
                 $( this ).dialog("close");                    
-                //mDropBox.deleteRoute(curRoute);
-                deleteAllMediaAndEntity(curRoute, '["D","Routes","' + curRoute.id + '"]');
+                resfulManager.deleteRoute(curRoute);
                 allRoutePaths[tdIndex].setMap(null);
                 allRoutePaths.splice(tdIndex,1);
                 allRoutes.splice(tdIndex,1);
                 showStartEnd(null);
-                $("#noOfROU").text("Number of Routes: " + allRoutes.length);                 
-                manageAllRoutes();
+                $("#noOfROU").text("Number of Routes: " + allRoutes.length);
             }             
         }
     });   

@@ -106,6 +106,36 @@
                 $response["data"] = Utils::getExceptionMessage($e);
             }    
             return $response;                 
+        }
+        
+        /**
+         * Delete a Route -> delete only SharcRouteExperience & SharcMediaExperience
+         * @param String $objRoute: a json object containing info of both Routes                  
+         */
+        public static function deleteRoute($objRoute) {            
+            $response = array();
+            try{
+                //Delete media
+                SharcMediaExperience::where('experienceId', $objRoute['experienceId'])->where('entityId', $objRoute['id'])->where('entityType', 'POI')->delete();
+                $routeExperience = SharcRouteExperience::find($objRoute['id']);
+                if($routeExperience != null){
+                    $result = $routeExperience->delete(); 
+                    if ($result){ //= 1 success
+                        $response["status"] = SUCCESS;
+                        $response["data"] = $routeExperience->toArray();
+                    }   
+                    else {  //error
+                        $response["status"] = ERROR;
+                        $response["data"] = INTERNAL_SERVER_ERROR;                
+                    }                      
+                }
+                //update other table e.g. route/event                
+            }
+            catch(Exception $e) {
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }    
+            return $response;                 
         }  
     } 
 ?>

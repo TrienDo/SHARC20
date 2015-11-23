@@ -138,6 +138,21 @@
         Utils::echoResponse($response);
     });
     
+    $app->delete('/pois', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $jsonPoi = $app->request->getBody();        
+        $objPoi = json_decode($jsonPoi, true);
+        $objPoi['poiDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = PoiService::deletePoi($objPoi);
+        Utils::echoResponse($response);
+    });
+    
     //RESTful for Media    
     $app->post('/media', function () use ($app) {
         //Check authentication        
@@ -185,6 +200,21 @@
         Utils::echoResponse($response);
     });
     
+    $app->delete('/eois', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $jsonEoi = $app->request->getBody();        
+        $objEoi = json_decode($jsonEoi, true);
+        $objEoi['eoiDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = EoiService::deleteEoi($objEoi);
+        Utils::echoResponse($response);
+    });
+    
     //RESTful for Route
     $app->post('/routes', function () use ($app) {
         //Check authentication        
@@ -215,6 +245,22 @@
         $response = RouteService::updateRoute($objRoute);
         Utils::echoResponse($response);
     });
+    
+    $app->delete('/routes', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $jsonRoute = $app->request->getBody();        
+        $objRoute = json_decode($jsonRoute, true);
+        $objRoute['routeDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = RouteService::deleteRoute($objRoute);
+        Utils::echoResponse($response);
+    });
+    
     
     $app->get('/mediaForEntity/:designerId/:experienceId/:entityId/:entityType', function ($designerId, $experienceId, $entityId, $entityType) use ($app) {
         //Check authentication        
@@ -247,6 +293,16 @@
     $app->map('/hello', function () {
 		echo "Welcome to SHARC 2.0 RESTful Web services";
 	})->via('GET', 'POST');
+    
+    $app->map('/test/:list', function ($list) {
+        $arrId = explode(" ", $list);        
+        foreach ($arrId as $id ){
+            $eoi = SharcEoiExperience::find($id);
+            echo $eoi->poiList."\n";
+            echo $eoi->routeList."\n"."\n";
+        }
+	})->via('GET');
+ 
  
     $app->run();     
 ?>

@@ -108,5 +108,35 @@
             }    
             return $response;                 
         } 
+        
+        /**
+         * Delete a Poi -> delete only SharcPoiExperience & SharcMediaExperience
+         * @param String $objPoi: a json object containing info of both Pois                  
+         */
+        public static function deletePoi($objPoi) {            
+            $response = array();
+            try{
+                //Delete media
+                SharcMediaExperience::where('experienceId', $objPoi['experienceId'])->where('entityId', $objPoi['id'])->where('entityType', 'POI')->delete();
+                $poiExperience = SharcPoiExperience::find($objPoi['id']);
+                if($poiExperience != null){
+                    $result = $poiExperience->delete(); 
+                    if ($result){ //= 1 success
+                        $response["status"] = SUCCESS;
+                        $response["data"] = $poiExperience->toArray();
+                    }   
+                    else {  //error
+                        $response["status"] = ERROR;
+                        $response["data"] = INTERNAL_SERVER_ERROR;                
+                    }                      
+                }
+                //update other table e.g. route/event                
+            }
+            catch(Exception $e) {
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }    
+            return $response;                 
+        }
     } 
 ?>

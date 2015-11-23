@@ -102,6 +102,36 @@
                 $response["data"] = Utils::getExceptionMessage($e);
             }    
             return $response;                 
+        }
+        
+        /**
+         * Delete a Eoi -> delete only SharcEoiExperience & SharcMediaExperience
+         * @param String $objEoi: a json object containing info of both Eois                  
+         */
+        public static function deleteEoi($objEoi) {            
+            $response = array();
+            try{
+                //Delete media
+                SharcMediaExperience::where('experienceId', $objEoi['experienceId'])->where('entityId', $objEoi['id'])->where('entityType', 'EOI')->delete();
+                $eoiExperience = SharcEoiExperience::find($objEoi['id']);
+                if($eoiExperience != null){
+                    $result = $eoiExperience->delete(); 
+                    if ($result){ //= 1 success
+                        $response["status"] = SUCCESS;
+                        $response["data"] = $eoiExperience->toArray();
+                    }   
+                    else {  //error
+                        $response["status"] = ERROR;
+                        $response["data"] = INTERNAL_SERVER_ERROR;                
+                    }                      
+                }
+                //update other table e.g. route/event                
+            }
+            catch(Exception $e) {
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }    
+            return $response;                 
         }  
     } 
 ?>

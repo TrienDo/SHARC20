@@ -138,17 +138,18 @@ function createNewEOI(isCreating) {
                         $("#noOfEOI").text("Number of EOIs: " + allEOIs.length); 
                         resfulManager.createNewEoi(curEOI);                                                                  
                     }
-                    $(this).dialog("close");
-                    showAllEOIs();                    
+                    $(this).dialog("close");                                        
                 }             
             }
         });
     });
 }
 
-function presentNewEoi(data)
+function presentNewEoi(data, isDeleting)
 {
-    curEOI.id = data.id;
+    if(!isDeleting)
+        curEOI.id = data.id;
+    showAllEOIs();
 }
 function getPOIAndRoute()
 {
@@ -330,11 +331,7 @@ function deleteEOI()
     var tdIndex = par.children("td:nth-child(1)");
     tdIndex = parseInt(tdIndex.text()) - 1;
     curEOI = allEOIs[tdIndex];
-    /*if(curEOI.mediaOrder.length>0)
-    {
-        showMessage("Please remove all the associated media before deleting this EOI");
-        return;        
-    }*/  
+      
     
     $('#dialog-message').html('');        
     $('#dialog-message').dialog({ title: "Delete a POI"});        
@@ -350,11 +347,9 @@ function deleteEOI()
             },
             Yes: function() {                
                 $( this ).dialog("close");                    
-                //mDropBox.deleteEOI(curEOI);
-                deleteAllMediaAndEntity(curEOI, '["D","EOIs","' + curEOI.id + '"]');
+                resfulManager.deleteEoi(curEOI);
                 allEOIs.splice(tdIndex,1); 
-                 $("#noOfEOI").text("Number of EOIs: " + allEOIs.length);                        
-                showAllEOIs();
+                $("#noOfEOI").text("Number of EOIs: " + allEOIs.length);
             }             
         }
     });

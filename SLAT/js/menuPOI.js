@@ -231,13 +231,14 @@ function createPOI(isCreating,isFromPhoto,tdIndex)//
     });
 }
 
-function presentNewPoi(data)
+function presentNewPoi(data, isDeleting)
 {
-    curPOI.id = data.id;
+    if (!isDeleting)
+        curPOI.id = data.id;
     //Update screen
     showMapWithCorrectBound(map, maxZoomLevel);
     $("#dialog-message").dialog("close");
-    //showAllPOIs();
+    showAllPOIs();
 }
 
 function addMarkerPOIClickEvent(marker)
@@ -596,46 +597,38 @@ function deletePOI()
     var tdIndex = par.children("td:nth-child(1)");//get index of current row
     tdIndex = parseInt(tdIndex.text()) - 1;
     curPOI = allPOIs[tdIndex];
-    //if(curPOI.mediaOrder.length>0)
-    //{
-    //    showMessage("Please remove all the associated media before deleting this POI");        
-    //}
-    //else
-    {
-        $('#dialog-message').html('');        
-        $('#dialog-message').dialog({ title: "Delete a POI"});           
-        $('#dialog-message').append('<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>This POI and its associated media will be permanently deleted and cannot be recovered. Are you sure?</p>');               
-        $( "#dialog-message" ).dialog({
-            modal: true,            
-            height: 245,
-            width: 460,            
-            buttons: {             
-                Cancel: function() {
-                    $( this ).dialog("close");
-                    showAllPOIs();
-                },
-                Yes: function() {                
-                    $( this ).dialog("close");
-                    //showUploadingStatus("Please wait! Deleting POI with its media...");
-                    //Delete all media first                
-                    //mDropBox.deletePOI(curPOI);
-                    deleteAllMediaAndEntity(curPOI, '["D","POIs","' + curPOI.id + '"]');
-                    allPOIs.splice(tdIndex,1); 
-                    //Remove marker from map
-                    allPOIMarkers[tdIndex].setMap(null);
-                    allPOIMarkers.splice(tdIndex,1);
-                    //Remove Trigger zone
-                    allPOIZones[tdIndex].setMap(null);
-                    allPOIZones.splice(tdIndex,1);
-                    //Re assign id
-                    for(var i=tdIndex; i < allPOIMarkers.length; i++)
-                        allPOIMarkers[i].id = i;
-                    updatePOIDropdownList();
-                    showAllPOIs();                    
-                }             
-            }
-        });
-    }     
+    
+    $('#dialog-message').html('');        
+    $('#dialog-message').dialog({ title: "Delete a POI"});           
+    $('#dialog-message').append('<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>This POI and its associated media will be permanently deleted and cannot be recovered. Are you sure?</p>');               
+    $( "#dialog-message" ).dialog({
+        modal: true,            
+        height: 245,
+        width: 460,            
+        buttons: {             
+            Cancel: function() {
+                $( this ).dialog("close");
+                showAllPOIs();
+            },
+            Yes: function() {                
+                $( this ).dialog("close");
+                resfulManager.deletePoi(curPOI);
+                allPOIs.splice(tdIndex,1); 
+                //Remove marker from map
+                allPOIMarkers[tdIndex].setMap(null);
+                allPOIMarkers.splice(tdIndex,1);
+                //Remove Trigger zone
+                allPOIZones[tdIndex].setMap(null);
+                allPOIZones.splice(tdIndex,1);
+                //Re assign id
+                for(var i=tdIndex; i < allPOIMarkers.length; i++)
+                    allPOIMarkers[i].id = i;
+                updatePOIDropdownList();
+                showAllPOIs();                    
+            }             
+        }
+    });
+         
 }
 
 
