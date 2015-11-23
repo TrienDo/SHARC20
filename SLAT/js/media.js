@@ -598,21 +598,21 @@ function uploadAndAddMedia()
     $("#dialog-media").dialog("close");
 }
 
-function presentNewMedia(data)
+function presentNewMedia(data, count)//count = 1 / -1 when add/delete a media item
 {
     //allMedia.push(curMedia);   
         
     if(curMediaType == "POI")
     {
-        curPOI.mediaCount++;
+        curPOI.mediaCount += count;
     }
     else if(curMediaType == "EOI")
     {
-        curEOI.mediaCount++;
+        curEOI.mediaCount += count;
     }
     else if(curMediaType == "ROUTE")
     {
-        curRoute.mediaCount++;
+        curRoute.mediaCount += count;
     }
     //goBack();     
     //$("#dialog-status").dialog("close");

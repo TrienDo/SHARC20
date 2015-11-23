@@ -238,6 +238,9 @@
                     for ($i; $i< $objEois->count(); $i++) {
                         $rs = SharcEoiDesigner::where('id',$objEois[$i]->eoiDesignerId)->where('designerId',$designerId)->get();
                         $tmpEois[$i]["eoiDesigner"] = $rs[0]->toArray();
+                        $media = SharcMediaExperience::where('entityId',$objEois[$i]->id)->where('entityType','EOI')->get();
+                        $tmpEois[$i]["mediaCount"] = $media->count();
+                        $tmpEois[$i]["responseCount"] = 0;
                     }                    
                     $response["data"]["allEois"] = $tmpEois;
                     //Get all Routes of the experience
@@ -247,6 +250,9 @@
                     for ($i; $i< $objRoutes->count(); $i++) {
                         $rs = SharcRouteDesigner::where('id',$objRoutes[$i]->routeDesignerId)->where('designerId',$designerId)->get();
                         $tmpRoutes[$i]["routeDesigner"] = $rs[0]->toArray();
+                        $media = SharcMediaExperience::where('entityId',$objRoutes[$i]->id)->where('entityType','ROUTE')->get();
+                        $tmpRoutes[$i]["mediaCount"] = $media->count();
+                        $tmpRoutes[$i]["responseCount"] = 0;
                     }                    
                     $response["data"]["allRoutes"] = $tmpRoutes;
                     return $response;

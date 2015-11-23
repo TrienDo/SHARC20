@@ -40,6 +40,12 @@
         Utils::echoResponse($response);                
     });
     
+    $app->get('/users', function () use ($app) {
+          
+        echo UserService::all()->toJson();
+                        
+    });
+    
     //RESTful for SharcExperience
     $app->post('/experiences', function () use ($app) {
         //Check authentication        
@@ -162,6 +168,21 @@
         $objEoi['eoiDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
         $response = EoiService::addNewEoi($objEoi);
         Utils::echoResponse($response);
+    });    
+    
+    $app->put('/eois', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $jsonEoi = $app->request->getBody();        
+        $objEoi = json_decode($jsonEoi, true);
+        $objEoi['eoiDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = EoiService::updateEoi($objEoi);
+        Utils::echoResponse($response);
     });
     
     //RESTful for Route
@@ -177,6 +198,21 @@
         $objRoute = json_decode($jsonRoute, true);
         $objRoute['routeDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
         $response = RouteService::addNewRoute($objRoute);
+        Utils::echoResponse($response);
+    });
+    
+    $app->put('/routes', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $jsonRoute = $app->request->getBody();        
+        $objRoute = json_decode($jsonRoute, true);
+        $objRoute['routeDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = RouteService::updateRoute($objRoute);
         Utils::echoResponse($response);
     });
     

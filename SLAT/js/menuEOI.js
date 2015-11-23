@@ -30,14 +30,14 @@ function createNewEOI(isCreating) {
         
         if(!isCreating)//Editing -> fill information of the EOI to the dialog
         {
-            $("#eoiName").val(curEOI.name);
-            $("#eoiDesc").val(curEOI.desc);
+            $("#eoiName").val(curEOI.eoiDesigner.name);
+            $("#eoiDesc").val(curEOI.eoiDesigner.description);
             //$("#startDate").val(curEOI.startDate);
             //$("#endDate").val(curEOI.endDate);  
-            var selectedPOIs = curEOI.associatedPOI.split(" ");
+            var selectedPOIs = curEOI.poiList.split(" ");
             for(var i=0; i<selectedPOIs.length; i++)
                 $('#relPoi input[value="' + selectedPOIs[i] + '"]').prop('checked', true);
-            var selectedRoutes = curEOI.associatedRoute.split(" ");
+            var selectedRoutes = curEOI.routeList.split(" ");
             for(var i=0; i<selectedRoutes.length; i++)
                 $('#relRoute input[value="' + selectedRoutes[i] + '"]').prop('checked', true);          
         }   
@@ -122,21 +122,18 @@ function createNewEOI(isCreating) {
                     
                     if(!isCreating)
                     {                        
-                        curEOI.name = name;
-                        curEOI.desc = desc;
-                        curEOI.startDate = startDate;
-                        curEOI.endDate = endDate;
+                        curEOI.eoiDesigner.name = name;
+                        curEOI.eoiDesigner.description = desc;
+                        //curEOI.startDate = startDate;
+                        //curEOI.endDate = endDate;
                         curEOI.poiList = selectedPOIs.join(" ");
                         curEOI.routeList = selectedRoutes.join(" ");
-                        
-                        //Create update for EOIs table                       
-                        newRow = '["U","EOIs","' + curEOI.id + '",{"name":["P","' +  encodeURI(curEOI.name) + '"],"desc":["P","' +  encodeURI(curEOI.desc) + '"],"startDate":["P","' +  encodeURI(curEOI.startDate) + '"],"endDate":["P","' +  encodeURI(curEOI.endDate) + '"],"associatedPOI":["P","' +  curEOI.associatedPOI + '"],"associatedRoute":["P","' +  curEOI.associatedRoute + '"]}]';
-                        //mDropBox.updateEOI(curEOI);                                                                        
+                        resfulManager.updateEoi(curEOI);                                                                       
                     }
                     else
                     {                        
                         var eoiBank = new SharcEoiDesigner(0, name, desc, designerInfo.id);                        
-                        curEOI = new SharcEoiExperience(0, eoiBank, curProject.id, "", selectedPOIs.join(" "), selectedRoutes.join(" "));                        
+                        curEOI = new SharcEoiExperience(0, eoiBank, curProject.id, "", selectedPOIs.join(" "), selectedRoutes.join(" "),0,0);                        
                         allEOIs.push(curEOI);                             
                         $("#noOfEOI").text("Number of EOIs: " + allEOIs.length); 
                         resfulManager.createNewEoi(curEOI);                                                                  
@@ -225,11 +222,11 @@ function presentEOIs()
         {
             var name = allEOIs[i].eoiDesigner.name;
             var desc = allEOIs[i].eoiDesigner.description;
-            allEOIs[i].associatedPOI += "";//Make it a string
-            var poiCount = (allEOIs[i].associatedPOI == "" ? 0 : allEOIs[i].associatedPOI.split(" ").length);
-            allEOIs[i].associatedRoute += "";//Make it a string
-            var routeCount = (allEOIs[i].associatedRoute == "" ? 0 : allEOIs[i].associatedRoute.split(" ").length);
-            var mediaCount = 0;
+            allEOIs[i].poiList += "";//Make it a string
+            var poiCount = (allEOIs[i].poiList == "" ? 0 : allEOIs[i].poiList.split(" ").length);
+            allEOIs[i].routeList += "";//Make it a string
+            var routeCount = (allEOIs[i].routeList == "" ? 0 : allEOIs[i].routeList.split(" ").length);
+            var mediaCount = allEOIs[i].mediaCount;
             //var mediaCount = allEOIs[i].mediaOrder.length;
             //$("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + name + '</td><td>' + desc + '</td><td style="text-align:center;">' + poiCount + '</td><td style="text-align:center;">' + routeCount + '</td><td style="text-align:center;">' + mediaCount + '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/edit.png"> Edit this EOI</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Delete this EOI</button> <button class="btnView googleLookAndFeel">Manage this EOI\'s media</button></td></tr>');
             $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + name + '</td><td style="text-align:center;">' + poiCount + '</td><td style="text-align:center;">' + routeCount + '</td><td style="text-align:center;">' + mediaCount + '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/edit.png"> Edit this EOI</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Delete this EOI</button> <button class="btnView googleLookAndFeel">Manage this EOI\'s media</button></td></tr>');
@@ -261,7 +258,7 @@ function showDropdownEOI()
             selectList = selectList + '<option value = "-1">Please select</option>';
             for(var i=0; i < allEOIs.length; i++)
 			{
-				selectList = selectList + '<option value = "' + i + '">' + allEOIs[i].name + '</option>';
+				selectList = selectList + '<option value = "' + i + '">' + allEOIs[i].eoiDesigner.name + '</option>';
 			}
             selectList = selectList + '</select></div>';
             
@@ -371,7 +368,7 @@ function linkEOIs()
         $('#dialog-message').append('<table width="100%" id="tblData"><thead><tr><th>No</th><th>Name</th><th>Event details</th><th>Action</th></tr></thead><tbody></tbody></table>');
         for(var i=0; i < allEOIs.length; i++)
         {
-            $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + allEOIs[i].name  + '</td><td>' + allEOIs[i].desc + '</td><td nowrap style="text-align:center;"><img src="images/link.png" title="Edit association between EOI with POIs and Routes" class="btnSave"></td></tr>');
+            $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + allEOIs[i].eoiDesigner.name  + '</td><td>' + allEOIs[i].eoiDesigner.description + '</td><td nowrap style="text-align:center;"><img src="images/link.png" title="Edit association between EOI with POIs and Routes" class="btnSave"></td></tr>');
         } 
         $("#tblData").addClass("tableBorder");
         $("#tblData td").addClass("tableBorder");

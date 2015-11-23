@@ -177,7 +177,7 @@ function createRouteFromKML()
                     });
                     
                     var directed = $('#direction').is(':checked');                    
-                    curRoute = new SharcRouteExperience(0,null,curProject.id,desc,routePath.getPath(), selectedPOIs.join(" "), selectedEOIs.join(" "));
+                    curRoute = new SharcRouteExperience(0,null,curProject.id,desc,routePath.getPath(), selectedPOIs.join(" "), selectedEOIs.join(" "), 0, 0);
                     var routeBank = new SharcRouteDesigner(0,name,directed,$('#routeColour').val(), curRoute.getPolygon(), designerInfo.id);
                     curRoute.routeDesigner = routeBank;
                     
@@ -226,7 +226,7 @@ function createRouteByDrawing(isCreating)
                     +            '<div id="eoiList" style="max-height: 80px; width:150px; overflow: auto;">'
                     +                '<table border="0">';
         for(var i=0;i<allEOIs.length;i++)
-            content +=                  '<tr><td style="font-weight:normal;"><input type="checkbox" class="inputCheckbox" value="' + allEOIs[i].id + '"> ' + allEOIs[i].poiDesigner.name + '</td></tr>';                    	
+            content +=                  '<tr><td style="font-weight:normal;"><input type="checkbox" class="inputCheckbox" value="' + allEOIs[i].id + '"> ' + allEOIs[i].eoiDesigner.name + '</td></tr>';                    	
         content     +=                '</table>'                    
                     +            '</div>'
                     +        '</td>'                                  
@@ -322,15 +322,15 @@ function createRouteByDrawing(isCreating)
             $('#btnNewRoute').prop('disabled', true);
             $('#btnEditRoute').prop('disabled', false);
             $('#btnDeleteRoute').prop('disabled', false);            
-            $("#routeName").val(curRoute.name);
-            $("#routeDesc").val(curRoute.desc);            
-            $("#routeColour").val(curRoute.colour);
-            $('#direction').prop('checked', curRoute.directed);
+            $("#routeName").val(curRoute.routeDesigner.name);
+            $("#routeDesc").val(curRoute.description);            
+            $("#routeColour").val(curRoute.routeDesigner.colour);
+            $('#direction').prop('checked', curRoute.routeDesigner.directed);
             
-            var selectedPOIs = curRoute.associatedPOI.split(" ");
+            var selectedPOIs = curRoute.poiList.split(" ");
             for(var i=0; i<selectedPOIs.length; i++)
                 $('#poiList input[value="' + selectedPOIs[i] + '"]').prop('checked', true);
-            var selectedEOIs = curRoute.associatedEOI.split(" ");
+            var selectedEOIs = curRoute.eoiList.split(" ");
             for(var i=0; i<selectedEOIs.length; i++)
                 $('#eoiList input[value="' + selectedEOIs[i] + '"]').prop('checked', true); 
                 
@@ -388,19 +388,20 @@ function createRouteByDrawing(isCreating)
                        
                     if(!isCreating)
                     {                        
-                        curRoute.name = name;
-                        curRoute.desc = desc;
-                        curRoute.colour = $('#routeColour').val();
+                        curRoute.description = desc;
                         curRoute.poiList = selectedPOIs.join(" ");
                         curRoute.eoiList = selectedEOIs.join(" ");
                         curRoute.polygon = routePath.getPath();
-                        curRoute.directed = directed;
-                        newRow = '["U","Routes","' + curRoute.id + '",{"name":["P","' +  encodeURI(curRoute.name) + '"],"desc":["P","' +  encodeURI(curRoute.desc) + '"],"directed":["P","' +  directed + '"],"colour":["P","' +  curRoute.colour.substring(1) + '"],"polygon":["P","' +  curRoute.getPolygon() + '"],"associatedPOI":["P","' +  curRoute.associatedPOI + '"],"associatedEOI":["P","' +  curRoute.associatedEOI + '"]}]';
-                        //mDropBox.updateRoute(curRoute);                                                                        
+                        
+                        curRoute.routeDesigner.name = name;
+                        curRoute.routeDesigner.directed = directed;
+                        curRoute.routeDesigner.colour = $('#routeColour').val();
+                        curRoute.routeDesigner.path = curRoute.getPolygon();
+                        resfulManager.updateRoute(curRoute);                                                                        
                     }
                     else
                     {
-                        curRoute = new SharcRouteExperience(0,null,curProject.id,desc,routePath.getPath(),selectedPOIs.join(" "), selectedEOIs.join(" "));
+                        curRoute = new SharcRouteExperience(0,null,curProject.id,desc,routePath.getPath(),selectedPOIs.join(" "), selectedEOIs.join(" "),0,0);
                         var routeBank = new SharcRouteDesigner(0,name,directed,$('#routeColour').val(), curRoute.getPolygon(), designerInfo.id);
                         curRoute.routeDesigner = routeBank;
                     
@@ -486,11 +487,11 @@ function presentAllRoutes()
         {
             var name = allRoutes[i].routeDesigner.name;
             var desc = allRoutes[i].description;
-            allRoutes[i].associatedPOI += "";            
-            var poiCount = (allRoutes[i].associatedPOI == "" ? 0 : allRoutes[i].associatedPOI.split(" ").length);
-            allRoutes[i].associatedEOI += "";
-            var eoiCount = (allRoutes[i].associatedEOI == "" ? 0 : allRoutes[i].associatedEOI.split(" ").length);
-            var mediaCount = 1;//allRoutes[i].mediaOrder.length;
+            allRoutes[i].poiList += "";            
+            var poiCount = (allRoutes[i].poiList == "" ? 0 : allRoutes[i].poiList.split(" ").length);
+            allRoutes[i].eoiList += "";
+            var eoiCount = (allRoutes[i].eoiList == "" ? 0 : allRoutes[i].eoiList.split(" ").length);
+            var mediaCount = allRoutes[i].mediaCount;
             $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + name  + '</td><td>' + desc  + '</td><td style="text-align:center;">' + poiCount  + '</td><td style="text-align:center;">' + eoiCount + '</td><td style="text-align:center;">' + mediaCount + '</td><td nowrap style="text-align:center;"><input disabled type="color" style="width:35px;" value="' + allRoutes[i].routeDesigner.colour + '"/></td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/edit.png"> Edit this route</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Delete this route</button> <button class="btnView googleLookAndFeel">Manage this route\'s media</button></td></tr>');
         } 
         $("#tblData").addClass("tableBorder");
@@ -520,7 +521,7 @@ function showDropdownRoute()
             selectList = selectList + '<option value = "-1">Please select</option>';
             for(var i=0; i < allRoutes.length; i++)
 			{
-				selectList = selectList + '<option value = "' + i + '">' + allRoutes[i].name + '</option>';
+				selectList = selectList + '<option value = "' + i + '">' + allRoutes[i].routeDesigner.name + '</option>';
 			}
             selectList = selectList + '</select></div>';
             
@@ -637,7 +638,7 @@ function linkRoutes()
         $('#dialog-message').append('<table width="100%" id="tblData"><thead><tr><th>No</th><th>Name</th><th>Description</th><th>Colour</th><th>Action</th></tr></thead><tbody></tbody></table>');
         for(var i=0; i < allRoutes.length; i++)
         {
-            $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + allRoutes[i].name  + '</td><td>' + allRoutes[i].desc  + '</td><td nowrap style="text-align:center;"><input disabled type="color" style="width:35px;" value="' + allRoutes[i].colour + '"/></td><td nowrap style="text-align:center;"><img src="images/link.png" title="Edit association between Routes with POIs and EOIs" class="btnSave"></td></tr>');
+            $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + allRoutes[i].routeDesigner.name  + '</td><td>' + allRoutes[i].description  + '</td><td nowrap style="text-align:center;"><input disabled type="color" style="width:35px;" value="' + allRoutes[i].routeDesigner.colour + '"/></td><td nowrap style="text-align:center;"><img src="images/link.png" title="Edit association between Routes with POIs and EOIs" class="btnSave"></td></tr>');
         } 
         $("#tblData").addClass("tableBorder");
         $("#tblData td").addClass("tableBorder");

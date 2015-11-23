@@ -225,7 +225,7 @@ function renderEOIs(retEOIs)
     for(i = 0; i < retEOIs.length; i++) {
         //Get info
         var eoiDesigner = new SharcEoiDesigner(retEOIs[i].eoiDesigner.id, retEOIs[i].eoiDesigner.name,retEOIs[i].eoiDesigner.description, retEOIs[i].eoiDesigner.designerId);
-        curEOI = new SharcEoiExperience(retEOIs[i].id, eoiDesigner, retEOIs[i].experienceId,retEOIs[i].note, retEOIs[i].poiList, retEOIs[i].routeList);
+        curEOI = new SharcEoiExperience(retEOIs[i].id, eoiDesigner, retEOIs[i].experienceId,retEOIs[i].note, retEOIs[i].poiList, retEOIs[i].routeList, retEOIs[i].mediaCount, retEOIs[i].responseCount);
         allEOIs.push(curEOI);                
     }                                                             
 }
@@ -274,7 +274,7 @@ function renderRoutes(retRoutes)
                 tmpRouteMarker.setMap(map);
             allRouteMarkers.push(tmpRouteMarker);
         }
-        curRoute = new SharcRouteExperience(retRoutes[i].id, routeDesigner, retRoutes[i].experienceId,retRoutes[i].description, routePath.getPath(), retRoutes[i].poiList, retRoutes[i].eoiList);
+        curRoute = new SharcRouteExperience(retRoutes[i].id, routeDesigner, retRoutes[i].experienceId,retRoutes[i].description, routePath.getPath(), retRoutes[i].poiList, retRoutes[i].eoiList,retRoutes[i].mediaCount, retRoutes[i].responseCount);
         allRoutes.push(curRoute);                
     }                                                             
 }

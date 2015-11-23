@@ -124,7 +124,7 @@ function SharcEoiDesigner(id, name, description, designerId)
     this.designerId = designerId;
 }
 
-function SharcEoiExperience(id, eoiDesigner,experienceId, note, poiList, routeList)
+function SharcEoiExperience(id, eoiDesigner,experienceId, note, poiList, routeList, mediaCount, responseCount)
 {
     this.id = id;
     this.eoiDesigner = eoiDesigner;
@@ -132,6 +132,8 @@ function SharcEoiExperience(id, eoiDesigner,experienceId, note, poiList, routeLi
     this.note = note; 
     this.poiList = poiList;
     this.routeList = routeList;   
+    this.mediaCount = mediaCount;
+    this.responseCount = responseCount;
 }
 
 function SharcRouteDesigner(id, name, directed, colour, path, designerId)
@@ -144,7 +146,7 @@ function SharcRouteDesigner(id, name, directed, colour, path, designerId)
     this.designerId = designerId;
 }
 
-function SharcRouteExperience(id, routeDesigner,experienceId, description, polygon, poiList, eoiList)
+function SharcRouteExperience(id, routeDesigner,experienceId, description, polygon, poiList, eoiList, mediaCount, responseCount)
 {
     this.id = id;
     this.routeDesigner = routeDesigner;
@@ -152,7 +154,9 @@ function SharcRouteExperience(id, routeDesigner,experienceId, description, polyg
     this.description = description; 
     this.polygon = polygon;
     this.poiList = poiList;
-    this.eoiList = eoiList;   
+    this.eoiList = eoiList; 
+    this.mediaCount = mediaCount;
+    this.responseCount = responseCount;  
     this.getPolygon = function()
     {
         //Polygon = MVCArray -> Get Array() of latlng
@@ -215,56 +219,6 @@ function POIType(mID,mName,mIcon,mDesc)
     this.desc = mDesc;
     this.associatedPOI = "";    //Not in use
     this.state = "new";         //Not in use
-}
- 
-
-function Route(mID,mName,mDesc,mColour,mSelectedPOIs,mPolygon,mSelectedEOIs,mDirected)
-{
-    this.id = mID;
-    this.name = mName;    
-    this.desc = mDesc;
-    this.directed = mDirected;
-    this.colour = mColour;
-    this.polygon = mPolygon; 
-    this.mediaOrder = new Array();
-    this.mainMedia = "";
-    this.associatedMedia = new Array();       
-    this.associatedPOI = mSelectedPOIs;    
-    this.associatedEOI = mSelectedEOIs;
-    this.state = "new"; 
-    this.getPolygon = function()
-    {
-        //Polygon = MVCArray -> Get Array() of latlng
-        var tmp = this.polygon.getArray().toString();//"(66.99025646736109, -24.36492919921875),(66.64426812270932, -12.06024169921875)"
-        tmp  = tmp.replace(/\(/g,"");//Replace ( with blank
-        tmp  = tmp.replace(/\)/g,"");//Replace ) with blank
-        tmp = tmp.replace(/ /g,"");//Replace space with blank
-        tmp = tmp.replace(/,/g," ");//Replace , with space
-        return tmp;
-    } 
-    this.getKmlPath = function()
-    {
-        var path = this.polygon.getArray();
-        //KML colour = AABBGGRR
-        var kmlPath = "<Placemark><Style><LineStyle><color>FF" + this.colour.substring(5) + this.colour.substring(3,5) + this.colour.substring(1,3) + "</color><width>3</width></LineStyle></Style><gx:MultiTrack><altitudeMode>absolute</altitudeMode><gx:interpolate>1</gx:interpolate><gx:Track>";
-        for(var i = 0; i < path.length; i++)
-        {
-            kmlPath += "<gx:coord>" +  path[i].lng() + " " +  path[i].lat() + " 0</gx:coord>";
-        }
-        kmlPath += "</gx:Track></gx:MultiTrack></Placemark>";
-        return kmlPath;
-    } 
-    this.getDistance =function()
-    {
-        var tmp = this.polygon.getArray();        
-        var distance = 0.0;		
-		for (i=1; i < tmp.length; i++)
-		{			
-			distance += getDistanceLong(tmp[i-1].lat(), tmp[i-1].lng(), tmp[i].lat(), tmp[i-1].lng());
-		}
-        distance/=1000;//to km
-        return distance.toFixed(2);//get two decimal places
-    }     
 }
 
 //Model for a Placemark from KML file

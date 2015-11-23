@@ -58,6 +58,54 @@
                 $response["data"] = Utils::getExceptionMessage($e);
             }    
             return $response;                 
-        } 
+        }
+        
+        /**
+         * Update a Route = 1 SharcRouteDesigner + 1 SharcRouteExperience
+         * @param String $objRoute: a json object containing info of both Routes                  
+         */
+        public static function updateRoute($objRoute) {            
+            $response = array();
+            try{
+                $routeDesigner = SharcRouteDesigner::find($objRoute['routeDesigner']['id']);
+                if($routeDesigner != null) {
+                
+                    $routeDesigner->name = $objRoute['routeDesigner']['name'];                   
+                    $routeDesigner->directed = $objRoute['routeDesigner']['directed'];
+                    $routeDesigner->colour = $objRoute['routeDesigner']['colour'];
+                    $routeDesigner->path = $objRoute['routeDesigner']['path'];
+                    
+                    $result = $routeDesigner->save(); 
+                    if (!$result){                     
+                        $response["status"] = ERROR;
+                        $response["data"] = INTERNAL_SERVER_ERROR; 
+                        return $response;                
+                    }
+                }           
+                
+                $routeExperience = SharcRouteExperience::find($objRoute['id']);
+                if($routeExperience != null){                    
+                    $routeExperience->description = $objRoute['description'];
+                    $routeExperience->poiList = $objRoute['poiList'];
+                    $routeExperience->eoiList = $objRoute['eoiList'];                    
+                    
+                    $result = $routeExperience->save(); 
+                    if ($result){ //= 1 success
+                        $response["status"] = SUCCESS;
+                        $response["data"] = $routeExperience->toArray();
+                    }   
+                    else {  //error
+                        $response["status"] = ERROR;
+                        $response["data"] = INTERNAL_SERVER_ERROR;                
+                    }                      
+                }
+                //update other table e.g. poi/event                
+            }
+            catch(Exception $e) {
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }    
+            return $response;                 
+        }  
     } 
 ?>

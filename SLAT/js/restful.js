@@ -153,6 +153,28 @@ function SharcRestful()
                 showMessage(textStatus + ". " + errorThrown);
             }
         });    
+    }
+    
+    //Update EOI
+    this.updateEoi = function (eoiExperience)
+    {
+        var data = JSON.stringify(eoiExperience);
+        $.ajax({
+            type:'PUT',
+            url: apiRoot + 'eois',
+            data: data,                       
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    presentNewEoi(result.data);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });    
     }    
     
     //Working with Route
@@ -161,6 +183,28 @@ function SharcRestful()
         var data = JSON.stringify(routeExperience);
         $.ajax({
             type:'POST',
+            url: apiRoot + 'routes',
+            data: data,                       
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    presentNewRoute(result.data);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });    
+    }
+    
+    //Update Route
+    this.updateRoute = function (routeExperience)
+    {
+        var data = JSON.stringify(routeExperience);
+        $.ajax({
+            type:'PUT',
             url: apiRoot + 'routes',
             data: data,                       
             headers: { 'apiKey': designerInfo.apiKey},
@@ -189,7 +233,51 @@ function SharcRestful()
             headers: { 'apiKey': designerInfo.apiKey},
             success: function(result) {                
                 if(result.status == SUCCESS){
-                    presentNewMedia(result.data);
+                    presentNewMedia(result.data, 1);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });   
+    }
+    
+    this.updateMedia = function(mediaExperience)
+    {
+        $("#dialog-status").dialog("close");
+        var data = JSON.stringify(mediaExperience);
+        $.ajax({
+            type:'PUT',
+            url: apiRoot + 'media',
+            data: data,                       
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    presentNewMedia(result.data, 0);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });   
+    }
+    
+    this.deleteMedia = function(mediaExperience)
+    {
+        $("#dialog-status").dialog("close");
+        var data = JSON.stringify(mediaExperience);
+        $.ajax({
+            type:'DELETE',
+            url: apiRoot + 'media',
+            data: data,                       
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    presentNewMedia(result.data, -1);
                 }
                 else
                     showMessage(result.data);
