@@ -333,18 +333,16 @@ function SharcRestful()
         });   
     }
     
-    this.deleteMedia = function(mediaExperience)
+    this.deleteMedia = function(mediaId)
     {
-        $("#dialog-status").dialog("close");
-        var data = JSON.stringify(mediaExperience);
+        //$("#dialog-status").dialog("close");        
         $.ajax({
             type:'DELETE',
-            url: apiRoot + 'media',
-            data: data,                       
+            url: apiRoot + 'media/:' + mediaId,            
             headers: { 'apiKey': designerInfo.apiKey},
             success: function(result) {                
                 if(result.status == SUCCESS){
-                    presentNewMedia(result.data, -1);
+                    //presentNewMedia(result.data, 0);
                 }
                 else
                     showMessage(result.data);

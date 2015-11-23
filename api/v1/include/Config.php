@@ -24,7 +24,9 @@
     define('EXPERIENCES_NOT_FOUND', "There are no experiences at the moment.");
     //Constants for Users
     define('USER_NOT_AUTHENTICATED', "User not authenticated.");
-    
+    //Constants for Media
+    define('MEDIA_NOT_FOUND', "No media with the submitted Id.");
+    define('MEDIA_NOT_AUTHORIZED', "You do not have permission to delete this media.");
     
     
         

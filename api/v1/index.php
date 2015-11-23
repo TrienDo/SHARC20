@@ -153,22 +153,6 @@
         Utils::echoResponse($response);
     });
     
-    //RESTful for Media    
-    $app->post('/media', function () use ($app) {
-        //Check authentication        
-        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
-        if($rs["status"] != SUCCESS){
-            Utils::echoResponse($rs);
-            return;
-        }    
-        //Get a user sent from client and convert it to a json object
-        $jsonMedia = $app->request->getBody();        
-        $objMedia = json_decode($jsonMedia, true);
-        $objMedia['mediaDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
-        $response = MediaService::addNewMedia($objMedia);
-        Utils::echoResponse($response);
-    });
-    
     //RESTful for Eoi
     $app->post('/eois', function () use ($app) {
         //Check authentication        
@@ -261,6 +245,36 @@
         Utils::echoResponse($response);
     });
     
+    //RESTful for Media    
+    $app->post('/media', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $jsonMedia = $app->request->getBody();        
+        $objMedia = json_decode($jsonMedia, true);
+        $objMedia['mediaDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = MediaService::addNewMedia($objMedia);
+        Utils::echoResponse($response);
+    });
+    
+    $app->delete('/media/:mediaId', function ($mediaId) use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object                
+        $objMedia['mediaId'] = $mediaId;
+        $objMedia['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = MediaService::deleteMedia($objMedia);
+        Utils::echoResponse($response);
+    });
+    
     
     $app->get('/mediaForEntity/:designerId/:experienceId/:entityId/:entityType', function ($designerId, $experienceId, $entityId, $entityType) use ($app) {
         //Check authentication        
@@ -295,12 +309,16 @@
 	})->via('GET', 'POST');
     
     $app->map('/test/:list', function ($list) {
-        $arrId = explode(" ", $list);        
+        $rs = SharcMediaExperience::find($list);
+        echo $rs == null ? "true" : "false";
+        
+        /*$arrId = explode(" ", $list);        
         foreach ($arrId as $id ){
             $eoi = SharcEoiExperience::find($id);
             echo $eoi->poiList."\n";
             echo $eoi->routeList."\n"."\n";
         }
+        */
 	})->via('GET');
  
  

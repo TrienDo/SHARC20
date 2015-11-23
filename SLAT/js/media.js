@@ -724,12 +724,14 @@ function viewAllMediaItems(data)
 {
     $('#dialog-message').html('');        
     //Title shows name of the entity and the number of media 
-    $('#dialog-message').dialog({ title: getCurrentEntityName() + " (No. of media: " + data.length + ")"});
+    var entityName = getCurrentEntityName();
+    var count = data.length;
+    $('#dialog-message').dialog({ title: entityName + " (No. of media: " + count + ")"});
     //Show all media items in an unordered list
-    var content = getPOIMediaContentWithOptions(data);// + getResponseContent(tmpObject);
+    var content = getMediaContentWithOptions(data);// + getResponseContent(tmpObject);
     $('#dialog-message').append(content);
     
-    var count = data.length;    
+        
     var buttonList = $("#uList").find("button");
     //Disable the Up button of the first item 
     $(buttonList[0]).prop('disabled', true);
@@ -804,7 +806,7 @@ function viewAllMediaItems(data)
     $(".reorder-delete").click(function(){
         var $current = $(this).closest('li');
         var selectedID = $current.index();
-        
+        var selectedMediaId = $current.attr("id");
         $('#dialog-media').html('');        
         $('#dialog-media').dialog({ title: "Deleting a media item"});        
         $('#dialog-media').append('<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>This media item will be permanently deleted and cannot be recovered. Are you sure?</p>');               
@@ -817,13 +819,7 @@ function viewAllMediaItems(data)
                     $( this ).dialog("close");
                 },
                 Yes: function() {
-                    isChangingMediaOrder = true;                    
-                    curMedia = tmpObject.associatedMedia[tmpObject.mediaOrder[selectedID]];
-                    mDropBox.deleteMedia(curMedia.id);
-                    delete (tmpObject.associatedMedia[tmpObject.mediaOrder[selectedID]]);        
-                    //tmpObject.associatedMedia.splice($("#allMedia").val(),1);
-                    tmpObject.mediaOrder.splice(selectedID,1); 
-                    
+                    resfulManager.deleteMedia(selectedMediaId);
                     //If the current item is the first item -> The item below it will become the first item -> Disable its Up button 
                     if(selectedID == 0)
                     {
@@ -840,7 +836,7 @@ function viewAllMediaItems(data)
                     }
                        
                     $current.remove();
-                    $('#dialog-message').dialog({ title: tmpObject.name + " (No. of media: " + tmpObject.mediaOrder.length + ")"});
+                    $('#dialog-message').dialog({ title: entityName + " (No. of media: " + (--count) + ")"});
                     $( this ).dialog("close");
                 }             
             }
@@ -957,7 +953,7 @@ function viewAllMediaItems(data)
 //      - Caption (or title/description) which is placed above the content for text media and below the content for other media
 //      - availble actions: Move Up - Move Down - Edit - Delete 
 
-function getPOIMediaContentWithOptions(mediaExperience)//For displaying media pane
+function getMediaContentWithOptions(mediaExperience)//For displaying media pane
 {
     var content = '<ul id="uList" style="list-style:none; padding-left:0;display:table; margin:0 auto;">';
     var tmpMedia;
@@ -966,14 +962,14 @@ function getPOIMediaContentWithOptions(mediaExperience)//For displaying media pa
         tmpMedia = mediaExperience[i].mediaDesigner;
         
         if(tmpMedia.contentType == "text")
-            content += '<li id="' + i + '"><div class="formLabel">' + mediaExperience[i].caption + '</div><div>' + tmpMedia.content.replace(/\r\n|\r|\n/g,"<br />") +'</div>';//replace CRs with br
+            content += '<li id="' + mediaExperience[i].id + '"><div class="formLabel">' + mediaExperience[i].caption + '</div><div>' + tmpMedia.content.replace(/\r\n|\r|\n/g,"<br />") +'</div>';//replace CRs with br
             //content += '<li id="' + i + '"><div class="mediaPlacehold"><textarea class="textMediaBox">' + tmpMedia.content +'</textarea></div>';
         else if(tmpMedia.contentType == "image")
-            content += '<li id="' + i + '"><img class="imgMedia" width="318" src="' + tmpMedia.content + '"/>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';        
+            content += '<li id="' + mediaExperience[i].id + '"><img class="imgMedia" width="318" src="' + tmpMedia.content + '"/>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';        
         else if(tmpMedia.contentType == "audio")
-            content += '<li id="' + i + '"><div class="mediaPlacehold"><audio width="318" height="50" controls ><source src="' + tmpMedia.content + '" type="audio/mpeg"></audio></div>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';
+            content += '<li id="' + mediaExperience[i].id + '"><div class="mediaPlacehold"><audio width="318" height="50" controls ><source src="' + tmpMedia.content + '" type="audio/mpeg"></audio></div>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';
         else if(tmpMedia.contentType == "video")
-            content += '<li id="' + i + '"><div class="mediaPlacehold"><video width="318" height="200" controls> <source src="' + tmpMedia.content + '"></video></div>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';
+            content += '<li id="' + mediaExperience[i].id + '"><div class="mediaPlacehold"><video width="318" height="200" controls> <source src="' + tmpMedia.content + '"></video></div>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';
         //content += '<div class="formLabel">' + tmpMedia.name + '</div><div style="text-align:center"><a href="#" class="reorder-up"><img  title="Move this media item up" class="actionImage" src="images/media_up.png"/></a><a href="#" class="reorder-down"><img class="actionImage" src="images/media_down.png" title="Move this media item down"/></a><a href="#" class="reorder-edit"><img class="actionImage" src="images/edit.png" title="Edit this media item"/></a><a href="#" class="reorder-delete"><img class="actionImage" src="images/delete.png" title="Delete this media item up"/></a></div><hr/>';
         //content += '<div style="text-align:center">' + tmpMedia.noOfLike + (tmpMedia.noOfLike > 1 ? ' Likes': ' Like') + '[ and xx Comments] <button class="googleLookAndFeel"><img class="actionImage" src="images/media_up.png"/>[View comments]</button></div><hr style="width:50%"/>';
         content += '<div style="text-align:center"><button class="reorder-up googleLookAndFeel"><img class="actionImage" src="images/media_up.png"/>Up</button><button class="reorder-down googleLookAndFeel"><img class="actionImage" src="images/media_down.png"/>Down</button><button class="reorder-edit googleLookAndFeel"><img class="actionImage" src="images/edit.png"/>Edit</button><button class="reorder-delete googleLookAndFeel"><img class="actionImage" src="images/delete.png" title="Delete this media item up"/>Delete</button></div><hr/>';

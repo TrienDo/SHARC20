@@ -131,5 +131,38 @@
             return $response;    
         }
         
+        /**
+         * Delete a Media item = delete SharcMediaExperience only
+         * @param String $objMedia: a json object containing info of Media ID and designer ID                  
+         */
+        public static function deleteMedia($objMedia) {
+            $response = array();
+            try{
+                $mediaExperience = SharcMediaExperience::find($objMedia['mediaId']);
+                if($mediaExperience != null){
+                    //Identify permission
+                    $mediaDesigner = SharcMediaDesigner::find($mediaExperience->mediaDesignerId);
+                    if($mediaDesigner->designerId == $objMedia['designerId']){
+                        $mediaExperience->delete();
+                        $response["status"] = SUCCESS;
+                        $response["data"] = $mediaExperience->toArray();
+                    }
+                    else{
+                        $response["status"] = FAILED;
+                        $response["data"] = MEDIA_NOT_AUTHORIZED;
+                    }
+                }   
+                else {  //error
+                    $response["status"] = FAILED;
+                    $response["data"] = MEDIA_NOT_FOUND;                                    
+                }               
+            }
+            catch(Exception $e) {
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }    
+            return $response;                 
+        }
+        
     } 
 ?>
