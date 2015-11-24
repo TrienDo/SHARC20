@@ -291,7 +291,7 @@ function SharcRestful()
     //Working with Media
     this.addMedia = function(mediaExperience)
     {
-        $("#dialog-status").dialog("close");
+        
         var data = JSON.stringify(mediaExperience);
         $.ajax({
             type:'POST',
@@ -311,9 +311,27 @@ function SharcRestful()
         });   
     }
     
+    this.getMedia = function(mediaExperienceId)
+    {        
+        $.ajax({
+            type:'GET',
+            url: apiRoot + 'media/' + mediaExperienceId,                                
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    viewEditMediaItem(result.data);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });   
+    }
+    
     this.updateMedia = function(mediaExperience)
-    {
-        $("#dialog-status").dialog("close");
+    {        
         var data = JSON.stringify(mediaExperience);
         $.ajax({
             type:'PUT',
@@ -334,15 +352,14 @@ function SharcRestful()
     }
     
     this.deleteMedia = function(mediaId)
-    {
-        //$("#dialog-status").dialog("close");        
+    {               
         $.ajax({
             type:'DELETE',
-            url: apiRoot + 'media/:' + mediaId,            
+            url: apiRoot + 'media/' + mediaId,            
             headers: { 'apiKey': designerInfo.apiKey},
             success: function(result) {                
                 if(result.status == SUCCESS){
-                    //presentNewMedia(result.data, 0);
+                    presentNewMedia(result.data, -1);
                 }
                 else
                     showMessage(result.data);

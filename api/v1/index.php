@@ -261,6 +261,32 @@
         Utils::echoResponse($response);
     });
     
+    $app->get('/media/:mediaId', function ($mediaId) use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }
+        $response = MediaService::getMedia($mediaId, $rs['data']->id);
+        Utils::echoResponse($response);
+    });
+    
+    $app->put('/media', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $jsonMedia = $app->request->getBody();        
+        $objMedia = json_decode($jsonMedia, true);
+        $objMedia['mediaDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = MediaService::updateMedia($objMedia);
+        Utils::echoResponse($response);
+    });
+    
     $app->delete('/media/:mediaId', function ($mediaId) use ($app) {
         //Check authentication        
         $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
@@ -309,8 +335,11 @@
 	})->via('GET', 'POST');
     
     $app->map('/test/:list', function ($list) {
-        $rs = SharcMediaExperience::find($list);
-        echo $rs == null ? "true" : "false";
+        $rs = SharcMediaExperience::where('experienceId', $list)->max('order');
+        if($rs == null)
+            echo "0";
+        else
+            echo $rs;
         
         /*$arrId = explode(" ", $list);        
         foreach ($arrId as $id ){

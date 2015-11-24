@@ -452,12 +452,19 @@ td
 .textMediaBox
 {
     width:310px; 
-    height:190px;
+    padding:2px;
+    border:1px solid black;   
+    border-radius: 5px;
 }
 
 .leftButtonAddMedia
 {
 	margin-right: 85px !important;
+}
+
+.leftButtonImport
+{
+	margin-right: 325px !important;
 }
 
 /* Align Close button */

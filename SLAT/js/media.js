@@ -106,6 +106,7 @@ function selectMediaType()
                     curMediaBank = new SharcMediaDesigner((new Date()).getTime() + "", type, "", 0, designerInfo.id); 
                     curMedia = new SharcMediaExperience(0, curMediaBank, curMediaType, 0, curProject.id, "", "", false, true,0);
                     curBrowsingType = type;
+                    $( this ).dialog("close");
                     switch (type)
                     {
                         case "text":
@@ -121,73 +122,13 @@ function selectMediaType()
                             showVideoDialog();
                             break;
                     } 
-                    $( this ).dialog("close");                    
                 }             
             }
         });
     });
 }
 
-function openHtmlEditor()
-{
-    $('#dialog-message').html('');        
-    $('#dialog-message').dialog({ title: "Add text media" });
-    var content = '<p><b>You can edit the media content like a Microsoft word document in the form below and click the "Save" button at the end of the dialog</b></p>'
-                + '<input type="file" hidden="hidden" id="importHtmlFile" accept=".html, .htm"/>'
-                + '<form method="post" action="dump.php">'
-                + '<textarea rows="15" cols="20" name="content" id="txtcontent" > </textarea>' 
-                + '</form>';        
-    $('#dialog-message').append(content); 
-    //HTML editor
-    tinyMCE.remove();
-     tinyMCE.init({
-		selector: "textarea",
-		plugins: [
-			"advlist autolink lists link image charmap print preview anchor",
-			"searchreplace visualblocks code fullscreen textcolor",
-			"insertdatetime media table contextmenu paste"
-		],
-        menu: {			
-			edit: {title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall'},						
-			format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
-			table: {title: 'Table', items: 'inserttable tableprops deletetable | cell row column'},
-			tools: {title: 'Tools', items: 'spellchecker code'}
-		},
-		//toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
-		toolbar: "insertfile undo redo | styleselect | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent",
-		convert_urls: false
-	});
-    $('#importHtmlFile').change(function(){
-    		var reader = new FileReader();  // Create a FileReader object         
-        	reader.readAsText(this.files[0]);           // Read the file
-        	reader.onload = function() 
-        	{    
-        		var htmlContent = reader.result;   // This is the file contents
-        	    tinyMCE.activeEditor.setContent(htmlContent);
-        	};    	            			
-    	});   
-    tinyMCE.activeEditor.setContent("Please type your text here");  
-    $( "#dialog-message" ).dialog({
-            modal: true,
-            height: 500,
-            width: 720,
-            position: ['center','middle'],
-            buttons: {                
-                Cancel: function(){                    
-                    $( this ).dialog("close");
-                    goBack()
-                }, 
-                "Import an HTML file": function(){
-                    $("#importHtmlFile").trigger("click");
-                },  
-                Save: function() {
-                    var content = tinyMCE.activeEditor.getContent();
-                    alert(content);
-                    $( this ).dialog("close");                    
-                }             
-            }
-        });
-}
+
 //Go back to the "manage POIs/EOIs/Routes" dialog: from main UI - POI - EOI - Route 
 function goBack()
 {
@@ -243,51 +184,73 @@ function removeMediaFromArray(delId)
         }
     }
 }
+
 //Add a text media item
 function showTextDialog()
 {
     $('#dialog-media').html('');        
-    $('#dialog-media').dialog({ title: "Adding text"});
-    var content = '<div class="mediaPlacehold" id="mediaContent"><textarea class="textMediaBox" id="mediaPOI">Please type your text here</textarea></div>'    
-                + '<div class="formLabel">Title (optional)</div><div><input type="text" id="mediaCaption" class="inputText"/></div>';
-    $('#dialog-media').append(content);
-    $("#mediaPOI").focus(function() {
-        var $this = $(this);
-        $this.select();
-    
-        // Work around Chrome's little problem
-        $this.mouseup(function() {
-            // Prevent further mouseup intervention
-            $this.unbind("mouseup");
-            return false;
-        });
-    });
+    $('#dialog-media').dialog({ title: "Add text media" });
+    var content = '<p><b>You can edit the media content like a Microsoft word document in the form below and click the "Save" button at the end of the dialog</b></p>'
+                + '<input type="file" hidden="hidden" id="importHtmlFile" accept=".html, .htm"/>'
+                + '<form method="post" action="dump.php">'
+                + '<textarea rows="15" cols="20" name="content" id="txtcontent" > </textarea>' 
+                + '</form>';        
+    $('#dialog-media').append(content); 
+    //HTML editor
+    tinyMCE.remove();
+     tinyMCE.init({
+		selector: "textarea",
+		plugins: [
+			"advlist autolink lists link image charmap print preview anchor",
+			"searchreplace visualblocks code fullscreen textcolor",
+			"insertdatetime media table contextmenu paste"
+		],
+        menu: {			
+			edit: {title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall'},						
+			format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
+			table: {title: 'Table', items: 'inserttable tableprops deletetable | cell row column'},
+			tools: {title: 'Tools', items: 'spellchecker code'}
+		},
+		//toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
+		toolbar: "insertfile undo redo | styleselect | bold italic | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent",
+		convert_urls: false
+	});
+    $('#importHtmlFile').change(function(){
+    		var reader = new FileReader();  // Create a FileReader object         
+        	reader.readAsText(this.files[0]);           // Read the file
+        	reader.onload = function() 
+        	{    
+        		var htmlContent = reader.result;   // This is the file contents
+        	    tinyMCE.activeEditor.setContent(htmlContent);
+        	};    	            			
+    	});   
+    tinyMCE.activeEditor.setContent("Please type your text here");  
     $( "#dialog-media" ).dialog({
-        modal: true,
-        width: 350,
-        height: 380,        
-        buttons: [                
-            {   text: "Cancel", 
-                //class: "mapPOIButton",           
-                click: function() {
-                    $( this ).dialog( "close" );
-                    goBack();
-                }
-            },                                      
-            {   text: "Back",                
-                click: function() {
-                    selectMediaType();
-                    $( this ).dialog( "close" );
-                }
-            },
-            {
-                text: "Add",                
-                click: function() {
-                    uploadAndAddMedia();                                      
-                }
-            }                  
-        ]      
-    });
+            modal: true,
+            height: 500,
+            width: 720,
+            position: ['center','middle'],
+            buttons: {                
+                Import: {
+                    text: "Import an HTML file",
+                    class: 'leftButtonImport',
+                    click: function(){
+                        $("#importHtmlFile").trigger("click");
+                    }
+                },
+                Cancel: function(){                    
+                    $( this ).dialog("close");
+                    goBack()
+                }, 
+                Back: function(){                 
+                    selectMediaType();                    
+                },  
+                Add: function() {
+                    curMediaData = tinyMCE.activeEditor.getContent();
+                    uploadAndAddMedia();
+                }             
+            }
+        });
 }
 
 //Add a photo media item
@@ -298,11 +261,13 @@ function showImageDialog()
     var content = '<div class="formLabel"><input type="file" id="inputMedia" accept="image/*" class="formLabel"/></div>'
                 + '<div class="mediaPlacehold" id="mediaContent"><img id="mediaPOI" class="imgBox" src="images/placeholder.png"/></div>'    
                 + '<div class="formLabel">Caption (optional)</div><div><input type="text" id="mediaCaption" class="inputText"/></div>';
+    if(curMediaType == "POI")            
+        content += '<p><input type="checkbox" class="inputCheckbox" id="mainMedia" value="mainMedia"/> Use this photo as the thumbnail for the POI</p>';
     $('#dialog-media').append(content);
     $( "#dialog-media" ).dialog({
         modal: true,
         width: 350,
-        height: 450,        
+        height: 480,        
         buttons: [                
             {   text: "Cancel",                
                 click: function() {
@@ -521,28 +486,22 @@ function showVideoDialog()
     });  
 }
 
+
 //upload media file to Dropbox and add info about the media to the Media table in datastore in Dropbox
 function uploadAndAddMedia()
 {   
-    var name = $.trim($('#mediaCaption').val());
-    var desc = "";
-    if(name!= "" && !isValidName(name))
-    {
-        showMessage("Invalid name! Name cannot be blank and should contain only numbers, characters, hyphen, underscore, period, and space.");
-        return;
-    }
+    var name = "";    
+    if(curMediaBank.contentType != "text"){
+        name = $.trim($('#mediaCaption').val());
     
-    if(curMedia.type == "text")
-    {
-        desc = $.trim($("#mediaPOI").val());
-        if(desc!="" && !isValidDescription(desc))
-        {
-            showMessage("Invalid content! Content should contain only numbers, characters, hyphen, underscore, comma, period, colon, and space.");
+        if(name!= "" && !isValidName(name)) {
+            showMessage("Invalid name! Name cannot be blank and should contain only numbers, characters, hyphen, underscore, period, and space.");
             return;
         }
     }
-     
+             
     curMedia.caption = name;
+    
     if(curMediaType == "POI")
         curMedia.entityId = curPOI.id;
     else if(curMediaType == "EOI")
@@ -552,8 +511,7 @@ function uploadAndAddMedia()
                
     if(curMediaBank.contentType == "text")
     {
-        curMediaBank.content = desc;        
-        cloudManager.insertTextMedia();
+        cloudManager.uploadMedia(curMediaBank.id + ".html", curMediaData);
     }
     else if(curMediaBank.contentType == "audio")    
     {
@@ -572,12 +530,14 @@ function uploadAndAddMedia()
     }
     else if(curMediaBank.contentType == "image")
     {
-        var fileName = $("#inputMedia").val();
+        var fileName = $("#inputMedia").val();        
         if(fileName == "")
         {
             showMessage("Please select a media file!");
             return;
-        }                
+        }
+        if($('#mainMedia').is(':checked'))
+            curMedia.mainMedia = 1;                
         //always saved as a jpg image
         cloudManager.uploadMedia(curMediaBank.id + ".jpg", curMediaData);
     }
@@ -605,6 +565,11 @@ function presentNewMedia(data, count)//count = 1 / -1 when add/delete a media it
     if(curMediaType == "POI")
     {
         curPOI.mediaCount += count;
+        if(data.mainMedia == 1 && count >=0){
+            var icon = new google.maps.MarkerImage(curMedia.mediaDesigner.content, null, null, new google.maps.Point(16,12), new google.maps.Size(32, 24));
+            setPoiThumbnail(curPOI, icon);
+        }
+        selectedPOIMarker.setMap(null);            
     }
     else if(curMediaType == "EOI")
     {
@@ -615,7 +580,8 @@ function presentNewMedia(data, count)//count = 1 / -1 when add/delete a media it
         curRoute.mediaCount += count;
     }
     //goBack();     
-    //$("#dialog-status").dialog("close");
+    if(count == 1)
+        $("#dialog-status").dialog("close");
 }
 //Edit a media item
 function viewEditMediaItem(curMedia)
@@ -624,16 +590,16 @@ function viewEditMediaItem(curMedia)
     $('#dialog-media').dialog({ title: "Edit a media item"});
     
     var content = ""; 
-    if(curMedia.type == "text")
-        content = '<div class="mediaPlacehold" id="mediaContent"><textarea class="textMediaBox" id="mediaPOI">' + curMedia.content +'</textarea></div>' + content;
-    else if(curMedia.type == "image")
-        content = '<div class="mediaPlacehold"><img class="imgBox" src="' + curMedia.content + '"/></div>' + content;
-    else if(curMedia.type == "audio")
-        content = '<div class="mediaPlacehold"><audio width="318" height="200" controls ><source src="' + curMedia.content + '" type="audio/mpeg"></audio></div>' + content;
-    else if(curMedia.type == "video")
-        content = '<div class="mediaPlacehold"><video width="318" height="200" controls> <source src="' + curMedia.content + '"></video></div>' + content;
+    if(curMedia.mediaDesigner.contentType == "text")
+        content = '<div class="mediaPlacehold" id="mediaContent"><object class="textMediaBox" id="mediaPOI" type="text/html" data="' + curMedia.mediaDesigner.content + '" ></object></div>' + content;
+    else if(curMedia.mediaDesigner.contentType == "image")
+        content = '<div class="mediaPlacehold"><img class="imgBox" src="' + curMedia.mediaDesigner.content + '"/></div>' + content;
+    else if(curMedia.mediaDesigner.contentType == "audio")
+        content = '<div class="mediaPlacehold"><audio width="318" height="200" controls ><source src="' + curMedia.mediaDesigner.content + '" type="audio/mpeg"></audio></div>' + content;
+    else if(curMedia.mediaDesigner.contentType == "video")
+        content = '<div class="mediaPlacehold"><video width="318" height="200" controls> <source src="' + curMedia.mediaDesigner.content + '"></video></div>' + content;
     
-    content = content + '<div class="formLabel">Name</div><div><input type="text" id="mediaCaption" class="inputText" value="' + curMedia.name + '" /></div>';
+    content = content + '<div class="formLabel">Name</div><div><input type="text" id="mediaCaption" class="inputText" value="' + curMedia.caption + '" /></div>';
                 
       
     $('#dialog-media').append(content);
@@ -660,7 +626,7 @@ function viewEditMediaItem(curMedia)
                         return;
                     }
                     
-                    if(curMedia.type == "text")
+                    /*if(curMedia.type == "text")
                     {
                         desc = $.trim($("#mediaPOI").val());
                         if(desc!="" && !isValidDescription(desc))
@@ -668,9 +634,9 @@ function viewEditMediaItem(curMedia)
                             showMessage("Invalid content! Content should contain only numbers, characters, hyphen, underscore, comma, period, colon, and space.");
                             return;
                         }
-                    }    
-                                        
-                    mDropBox.updateMedia(curMedia.id,name,desc);
+                    } */   
+                    curMedia.caption = name;                    
+                    resfulManager.updateMedia(curMedia);
                     $( this ).dialog( "close" );                    
                     goBack();                                      
                 }
@@ -847,10 +813,9 @@ function viewAllMediaItems(data)
     //Edit a media item
     $(".reorder-edit").click(function(){
         var $current = $(this).closest('li')
-        var selectedID = $current.index();
-        curMedia = tmpObject.associatedMedia[tmpObject.mediaOrder[selectedID]];
-        callFrom = VIEW_FORM;
-        viewEditMediaItem(curMedia);    
+        //var selectedID = $current.index();
+        resfulManager.getMedia($current.attr("id"));
+        callFrom = VIEW_FORM;           
         $("#dialog-message").dialog("close");         
         return false;
     });
@@ -962,8 +927,7 @@ function getMediaContentWithOptions(mediaExperience)//For displaying media pane
         tmpMedia = mediaExperience[i].mediaDesigner;
         
         if(tmpMedia.contentType == "text")
-            content += '<li id="' + mediaExperience[i].id + '"><div class="formLabel">' + mediaExperience[i].caption + '</div><div>' + tmpMedia.content.replace(/\r\n|\r|\n/g,"<br />") +'</div>';//replace CRs with br
-            //content += '<li id="' + i + '"><div class="mediaPlacehold"><textarea class="textMediaBox">' + tmpMedia.content +'</textarea></div>';
+            content += '<li id="' + mediaExperience[i].id + '"><div><object class="textMediaBox" id="mediaPOI" type="text/html" data="' + tmpMedia.mediaDesigner.content + '" ></object></div>';
         else if(tmpMedia.contentType == "image")
             content += '<li id="' + mediaExperience[i].id + '"><img class="imgMedia" width="318" src="' + tmpMedia.content + '"/>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';        
         else if(tmpMedia.contentType == "audio")

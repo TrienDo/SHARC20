@@ -809,6 +809,22 @@ function updatePoiThumbnail(tmpPOI)
         allPOIMarkers[markerIndex].setIcon(poiIcon);
 }
 
+function setPoiThumbnail(tmpPOI, icon)
+{
+    //get marker
+    var markerIndex = -1;
+    for(var i=0; i < allPOIs.length; i++)
+    {
+        if(allPOIs[i].id == tmpPOI.id)
+        {
+            markerIndex = i;
+            break;
+        }
+    } 
+    if(markerIndex != -1)                        
+        allPOIMarkers[markerIndex].setIcon(icon);
+}
+
 //Highlight a selected POI by a blinking circle
 function highlightPOI(selectedPOI)
 {	    

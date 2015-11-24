@@ -10,7 +10,34 @@
         function __construct() {
                 
         }
-      
+        
+        /**
+         * Get a Media item = get SharcMediaExperience + SharcMediaDesigner
+         * @param int $mediaExperienceId: id of the SharcMediaExperience                
+         * @param int $designerId: id of the Designer
+         */
+        public static function getMedia($mediaExperienceId, $designerId) {
+            $response = array();
+            try{
+                $mediaExperience = SharcMediaExperience::find($mediaExperienceId);
+                if($mediaExperience != null){
+                    $mediaDesigner = SharcMediaDesigner::where('id',$mediaExperience->mediaDesignerId)->where('designerId',$designerId)->get();
+                    $mediaExperience["mediaDesigner"] = $mediaDesigner[0]->toArray();
+                    $response["status"] = SUCCESS;
+                    $response["data"] = $mediaExperience->toArray();
+                }   
+                else {  //error
+                    $response["status"] = FAILED;
+                    $response["data"] = MEDIA_NOT_FOUND;                                    
+                }               
+            }
+            catch(Exception $e) {
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }    
+            return $response;                 
+        }
+        
         
         /**
          * Create a new Media = 1 SharcMediaDesigner + 1 SharcMediaExperience
@@ -33,10 +60,16 @@
                     $response["data"] = INTERNAL_SERVER_ERROR; 
                     return $response;                
                 }   
-                         
-                //'mediaDesignerId', 'entityType','entityId', 'experienceId','caption', 'context', 'mainMedia', 'visible', 'order'
-                //calculate order
-                $rs = SharcMediaExperience::where('experienceId', $objMedia['experienceId'])->where('entityType',$objMedia['entityType'])->where('entityId',$objMedia['entityId'])->get();
+                
+                //if mainMedia == 1 -> reset all other media to 0 
+                if($objMedia['mainMedia'] == 1)        
+                    SharcMediaExperience::where('experienceId', $objMedia['experienceId'])->where('entityType',$objMedia['entityType'])->where('entityId',$objMedia['entityId'])->update(array('mainMedia' => 0));
+                //calculate order = get max order + 1
+                $maxOrder = SharcMediaExperience::where('experienceId', $objMedia['experienceId'])->where('entityType',$objMedia['entityType'])->where('entityId',$objMedia['entityId'])->max('order');
+                if($maxOrder == null)
+                    $maxOrder = 0;
+                else
+                    $maxOrder = $maxOrder + 1;
                 $mediaExperience = SharcMediaExperience::create(array(
                     'mediaDesignerId' => $mediaDesigner->id,
                     'entityType' => $objMedia['entityType'],                  
@@ -46,7 +79,7 @@
                     'context' => $objMedia['context'],
                     'mainMedia' => $objMedia['mainMedia'],
                     'visible' => $objMedia['visible'],
-                    'order' => $rs->count()
+                    'order' => $maxOrder
                 ));
                 
                                 
@@ -118,7 +151,7 @@
                 $response["status"] = SUCCESS;
                 //Get mediadesigner for each mediaexperience
                 $i = 0;
-                for ($i; $i< $mediaExperience->count(); $i++) {
+                for ($i = 0; $i< $mediaExperience->count(); $i++) {
                     $mediaDesigner = SharcMediaDesigner::where('id',$mediaExperience[$i]->mediaDesignerId)->where('designerId',$designerId)->get();
                     $mediaExperience[$i]["mediaDesigner"] = $mediaDesigner[0]->toArray();
                 }                    
@@ -156,6 +189,54 @@
                     $response["status"] = FAILED;
                     $response["data"] = MEDIA_NOT_FOUND;                                    
                 }               
+            }
+            catch(Exception $e) {
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }    
+            return $response;                 
+        }
+        
+        /**
+         * Update a Media = 1 SharcMediaDesigner + 1 SharcMediaExperience
+         * @param String $objMedia: a json object containing info of both Medias                  
+         */
+        public static function updateMedia($objMedia) {            
+            $response = array();
+            try{
+                /*$mediaDesigner = SharcMediaDesigner::find($objMedia['mediaDesigner']['id']);
+                if($mediaDesigner != null) {
+                
+                    $mediaDesigner->name = $objMedia['mediaDesigner']['name'];                   
+                    $mediaDesigner->directed = $objMedia['mediaDesigner']['directed'];
+                    $mediaDesigner->colour = $objMedia['mediaDesigner']['colour'];
+                    $mediaDesigner->path = $objMedia['mediaDesigner']['path'];
+                    
+                    $result = $mediaDesigner->save(); 
+                    if (!$result){                     
+                        $response["status"] = ERROR;
+                        $response["data"] = INTERNAL_SERVER_ERROR; 
+                        return $response;                
+                    }
+                } */          
+                
+                $mediaExperience = SharcMediaExperience::find($objMedia['id']);
+                if($mediaExperience != null){                    
+                    $mediaExperience->caption = $objMedia['caption'];
+                    $mediaExperience->mainMedia = $objMedia['mainMedia'];
+                    $mediaExperience->visible = $objMedia['visible'];
+                    $mediaExperience->order = $objMedia['order'];
+                    $result = $mediaExperience->save(); 
+                    if ($result){ //= 1 success
+                        $response["status"] = SUCCESS;
+                        $response["data"] = $mediaExperience->toArray();
+                    }   
+                    else {  //error
+                        $response["status"] = ERROR;
+                        $response["data"] = INTERNAL_SERVER_ERROR;                
+                    }                      
+                }
+                //update other table e.g. poi/event                
             }
             catch(Exception $e) {
                 $response["status"] = ERROR;
