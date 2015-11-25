@@ -334,12 +334,14 @@
 		echo "Welcome to SHARC 2.0 RESTful Web services";
 	})->via('GET', 'POST');
     
-    $app->map('/test/:list', function ($list) {
-        $rs = SharcMediaExperience::where('experienceId', $list)->max('order');
-        if($rs == null)
-            echo "0";
+    $app->map('/test/:experienceId/:entityType/:entityId', function ($experienceId, $entityType, $entityId) {
+        $maxOrder = SharcMediaExperience::where('experienceId', $experienceId)->where('entityType',$entityType)->where('entityId',$entityId)->max('order');
+        echo "Hey".$maxOrder."Bye";
+        if($maxOrder === null)
+            $maxOrder = 0;
         else
-            echo $rs;
+            $maxOrder = $maxOrder + 1;
+        echo $maxOrder;
         
         /*$arrId = explode(" ", $list);        
         foreach ($arrId as $id ){

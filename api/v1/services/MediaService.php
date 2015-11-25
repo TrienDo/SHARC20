@@ -66,7 +66,7 @@
                     SharcMediaExperience::where('experienceId', $objMedia['experienceId'])->where('entityType',$objMedia['entityType'])->where('entityId',$objMedia['entityId'])->update(array('mainMedia' => 0));
                 //calculate order = get max order + 1
                 $maxOrder = SharcMediaExperience::where('experienceId', $objMedia['experienceId'])->where('entityType',$objMedia['entityType'])->where('entityId',$objMedia['entityId'])->max('order');
-                if($maxOrder == null)
+                if($maxOrder === null)
                     $maxOrder = 0;
                 else
                     $maxOrder = $maxOrder + 1;
@@ -83,10 +83,10 @@
                 ));
                 
                                 
-                $result = $mediaExperience->save(); 
+                $result = $mediaExperience->save();
                 if ($result){ //= 1 success
-                    $response["status"] = SUCCESS; 
-                    //$mediaExperience->$mediaDesigner          
+                    $response["status"] = SUCCESS;
+                    $mediaExperience["mediaDesigner"] = $mediaDesigner->toArray();//need to return this info too for presentation          
                     $response["data"] = $mediaExperience->toArray();
                 }   
                 else {  //error
@@ -204,24 +204,30 @@
         public static function updateMedia($objMedia) {            
             $response = array();
             try{
-                /*$mediaDesigner = SharcMediaDesigner::find($objMedia['mediaDesigner']['id']);
+                $mediaDesigner = SharcMediaDesigner::find($objMedia['mediaDesigner']['id']);
                 if($mediaDesigner != null) {
                 
-                    $mediaDesigner->name = $objMedia['mediaDesigner']['name'];                   
+                    /*$mediaDesigner->name = $objMedia['mediaDesigner']['name'];                   
                     $mediaDesigner->directed = $objMedia['mediaDesigner']['directed'];
                     $mediaDesigner->colour = $objMedia['mediaDesigner']['colour'];
                     $mediaDesigner->path = $objMedia['mediaDesigner']['path'];
                     
-                    $result = $mediaDesigner->save(); 
+                    $result = $mediaDesigner->save();
+                     
                     if (!$result){                     
                         $response["status"] = ERROR;
                         $response["data"] = INTERNAL_SERVER_ERROR; 
                         return $response;                
                     }
-                } */          
+                    */
+                }           
                 
                 $mediaExperience = SharcMediaExperience::find($objMedia['id']);
                 if($mediaExperience != null){                    
+                    //if mainMedia == 1 -> reset all other media to 0 
+                    if($objMedia['mainMedia'] == 1)        
+                        SharcMediaExperience::where('experienceId', $objMedia['experienceId'])->where('entityType',$objMedia['entityType'])->where('entityId',$objMedia['entityId'])->update(array('mainMedia' => 0));
+                    
                     $mediaExperience->caption = $objMedia['caption'];
                     $mediaExperience->mainMedia = $objMedia['mainMedia'];
                     $mediaExperience->visible = $objMedia['visible'];
@@ -229,6 +235,7 @@
                     $result = $mediaExperience->save(); 
                     if ($result){ //= 1 success
                         $response["status"] = SUCCESS;
+                        $mediaExperience["mediaDesigner"] = $mediaDesigner->toArray();//need to return this info too for presentation
                         $response["data"] = $mediaExperience->toArray();
                     }   
                     else {  //error

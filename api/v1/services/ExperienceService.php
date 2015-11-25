@@ -226,6 +226,18 @@
                     for ($i; $i< $objPois->count(); $i++) {
                         $rs = SharcPoiDesigner::where('id',$objPois[$i]->poiDesignerId)->where('designerId',$designerId)->get();
                         $tmpPois[$i]["poiDesigner"] = $rs[0]->toArray();
+                        //Thumbnail
+                        $media = SharcMediaExperience::where('entityId',$objPois[$i]->id)->where('entityType','POI')->where('mainMedia',1)->get();
+                        if($media->count() > 0){                        
+                            $mediaDesigner = SharcMediaDesigner::where('id',$media[0]->mediaDesignerId)->where('designerId',$designerId)->get();
+                            if($mediaDesigner->count() > 0)
+                                $tmpPois[$i]["thumbnail"] = $mediaDesigner[0]->content;
+                            else
+                                $tmpPois[$i]["thumbnail"] = "";
+                        }
+                        else
+                            $tmpPois[$i]["thumbnail"] = "";
+                                                        
                         $media = SharcMediaExperience::where('entityId',$objPois[$i]->id)->where('entityType','POI')->get();
                         $tmpPois[$i]["mediaCount"] = $media->count();
                         $tmpPois[$i]["responseCount"] = 0; 

@@ -61,6 +61,11 @@ function getFirstImage(tmpPOI)
     */
 }
 
+function getImageMarker(iconPath) {
+    return new google.maps.MarkerImage(iconPath, null, null, new google.maps.Point(16,12), new google.maps.Size(32, 24));
+}
+
+
 //Show the map with suitable zoom level to contain the whole experience
 function showMapWithCorrectBound(inMap, maxZoom)//inMap can be map of main UI or of (POI, Route) dialog 
 {

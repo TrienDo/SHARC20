@@ -535,9 +535,8 @@ function uploadAndAddMedia()
         {
             showMessage("Please select a media file!");
             return;
-        }
-        if($('#mainMedia').is(':checked'))
-            curMedia.mainMedia = 1;                
+        }        
+        curMedia.mainMedia = $('#mainMedia').is(':checked');                
         //always saved as a jpg image
         cloudManager.uploadMedia(curMediaBank.id + ".jpg", curMediaData);
     }
@@ -565,8 +564,8 @@ function presentNewMedia(data, count)//count = 1 / -1 when add/delete a media it
     if(curMediaType == "POI")
     {
         curPOI.mediaCount += count;
-        if(data.mainMedia == 1 && count >=0){
-            var icon = new google.maps.MarkerImage(curMedia.mediaDesigner.content, null, null, new google.maps.Point(16,12), new google.maps.Size(32, 24));
+        if(data.mainMedia == 1 && count >=0){//update or add 
+            var icon = getImageMarker(data.mediaDesigner.content);
             setPoiThumbnail(curPOI, icon);
         }
         selectedPOIMarker.setMap(null);            
@@ -591,7 +590,7 @@ function viewEditMediaItem(curMedia)
     
     var content = ""; 
     if(curMedia.mediaDesigner.contentType == "text")
-        content = '<div class="mediaPlacehold" id="mediaContent"><object class="textMediaBox" id="mediaPOI" type="text/html" data="' + curMedia.mediaDesigner.content + '" ></object></div>' + content;
+        content = '<div><object class="textMediaBox" id="mediaPOI" type="text/html" data="' + curMedia.mediaDesigner.content + '" ></object></div>' + content;
     else if(curMedia.mediaDesigner.contentType == "image")
         content = '<div class="mediaPlacehold"><img class="imgBox" src="' + curMedia.mediaDesigner.content + '"/></div>' + content;
     else if(curMedia.mediaDesigner.contentType == "audio")
@@ -600,6 +599,13 @@ function viewEditMediaItem(curMedia)
         content = '<div class="mediaPlacehold"><video width="318" height="200" controls> <source src="' + curMedia.mediaDesigner.content + '"></video></div>' + content;
     
     content = content + '<div class="formLabel">Name</div><div><input type="text" id="mediaCaption" class="inputText" value="' + curMedia.caption + '" /></div>';
+    
+    if(curMediaType == "POI" && curMedia.mediaDesigner.contentType == "image"){            
+        if(curMedia.mainMedia)
+        	content += '<p><input type="checkbox" checked class="inputCheckbox" id="mainMedia" value="mainMedia"/> Use this photo as the thumbnail for the POI</p>';
+        else
+        	content += '<p><input type="checkbox" class="inputCheckbox" id="mainMedia" value="mainMedia"/> Use this photo as the thumbnail for the POI</p>';
+    }
                 
       
     $('#dialog-media').append(content);
@@ -635,6 +641,8 @@ function viewEditMediaItem(curMedia)
                             return;
                         }
                     } */   
+                    
+                    curMedia.mainMedia = $('#mainMedia').is(':checked');
                     curMedia.caption = name;                    
                     resfulManager.updateMedia(curMedia);
                     $( this ).dialog( "close" );                    
@@ -927,7 +935,7 @@ function getMediaContentWithOptions(mediaExperience)//For displaying media pane
         tmpMedia = mediaExperience[i].mediaDesigner;
         
         if(tmpMedia.contentType == "text")
-            content += '<li id="' + mediaExperience[i].id + '"><div><object class="textMediaBox" id="mediaPOI" type="text/html" data="' + tmpMedia.mediaDesigner.content + '" ></object></div>';
+            content += '<li id="' + mediaExperience[i].id + '"><div><object class="textMediaBox" id="mediaPOI" type="text/html" data="' + tmpMedia.content + '" ></object></div>';
         else if(tmpMedia.contentType == "image")
             content += '<li id="' + mediaExperience[i].id + '"><img class="imgMedia" width="318" src="' + tmpMedia.content + '"/>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';        
         else if(tmpMedia.contentType == "audio")

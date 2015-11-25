@@ -229,7 +229,8 @@ function initialize()
             ulWidth : 300,
             effects : {
             effectSpeedOpen : 300,
-            effectTypeClose : 'slide'
+            //effectTypeClose : 'slide'
+            effectTypeClose : 0
         },
         animatedText : false
     });
