@@ -8,6 +8,7 @@ var hashProjects = new Array(); //For creating a new experience
 var allProjects = new Array();//For managing experiences
 var curProject = null;
 //Create a new experience
+var presentAllExperience = "";//temp call back function for presenting list of experience 1: for names only 2: all details
 function createProject() {   
     //Create a dialog for the user to enter details about the experience
     $(function() {        
@@ -67,10 +68,11 @@ function startDesigningExperience(data)
 //Open an existing experience
 function openProject()
 {	
+     presentAllExperience = presentExperienceNames;
      resfulManager.getExperienceList();
 }
 
-function presentAllProject(data)
+function presentExperienceNames(data)
 {
     //Create a dialog for the user to select an experience from a list of experiences         
     var selectList = '<div class="formLabel">Please select an experience</div><div><select id="allProjects" class="inputText">';
@@ -282,84 +284,58 @@ function renderRoutes(retRoutes)
         allRoutes.push(curRoute);                
     }                                                             
 }
+
 //Manage all experiences of the "logged in" user
 function manageProjects()
 {	
-    $.post(
-        'php/listProjects.php',
-        {            
-            proAuthID: designerInfo.id         
-        },
-        function(data,status){            
-            var result = JSON.parse(data);//JSON object return by listProjects.php
-            //result.success = 0 or 1 
-            //result.projects = arrays of name and description of experiences
-			if(result.success == 1) //there are available experiences 
-			{				
-				//Create a dialog for the user to select an experience from a list of experiences
-                allProjects = result.projects;
-                presentProjects(result.projects);
-                $( "#dialog-message").dialog({
-                    modal: true,
-                    height: getHeightForDialog(result.projects.length),
-                    width: 930,
-                    position: ['center','middle'],
-                    buttons: {                
-                        Close: {
-                            class: 'rightButtonClosePOI',
-                            text:"Close",
-                            click: function() {                
-                                $(this).dialog("close");                    
-                            }
-                        }                 
-                    }
-                });
-                				
-			}
-            else//No experience is available -> ask the user whether she wants to create a new one
-            {
-                if(confirm("No available experiences! Do you want to create a new experience?") == true) {
-                    createProject();
-                }   
-            }		
-        }
-    );   
+    presentAllExperience = presentExperiencesDetail;
+    resfulManager.getExperienceList();
 }
 
 //Present information of each experience in a row of a table
-function presentProjects(projects)
+function presentExperiencesDetail(projects)
 {
     try
     {
+        allProjects = projects; 
         $('#dialog-message').html('');        
         $('#dialog-message').dialog({ title: "Manage experiences" });
         $('#dialog-message').append('<table width="100%" id="tblData"><thead><tr><th>No.</th><th class="tableNameColumn">Name</th><th>Description</th><th>Created date</th><th>Published</th><th>Moderation mode</th><th class="tableNameColumn">Action</th></tr></thead><tbody></tbody></table>');
         for(var i=0; i < projects.length; i++)
         {
-            var access = projects[i].proAccess.split("#");
-            var published = (access[0] == 1 ? "Yes" : "No");
-            var moderation = "0";
-            if(access.length > 1)
-            {
-                moderation = access[1];
-            }
-            projects[i].proAccess = access[0] + "#" + moderation;
+            var published = projects[i].isPublished == 1 ? "Yes" : "No";
+            var moderation = projects[i].moderationMode;
             if(moderation == "0")
-                moderation = "Moderation";
-            else if(moderation == "1")
                 moderation = "No Moderation";
+            else if(moderation == "1")
+                moderation = "Moderation";
             else if(moderation == "2")
                 moderation = "Responses are not allowed";
-            $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + projects[i].proName + '</td><td>' + projects[i].proDesc + '</td><td style="text-align:center;">' + projects[i].proDate + '</td><td style="text-align:center;">' + published + '</td><td style="text-align:center;">' + moderation + '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/edit.png"> Edit info of this experience</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Delete this experience</button></td></tr>');
+            $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + projects[i].name + '</td><td>' + projects[i].description + '</td><td style="text-align:center;">' + projects[i].createdDate + '</td><td style="text-align:center;">' + published + '</td><td style="text-align:center;">' + moderation + '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/edit.png"> Edit info of this experience</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Delete this experience</button></td></tr>');
         } 
         $("#tblData").addClass("tableBorder");
         $("#tblData td").addClass("tableBorder");
         $("#tblData th").addClass("tableHeader");
         $(".btnEdit").bind("click", editProject);	
         $(".btnDelete").bind("click", deleteProject);
+        
+        $( "#dialog-message").dialog({
+            modal: true,
+            height: getHeightForDialog(projects.length),
+            width: 930,
+            position: ['center','middle'],
+            buttons: {                
+                Close: {
+                    class: 'rightButtonClosePOI',
+                    text:"Close",
+                    click: function() {                
+                        $(this).dialog("close");                    
+                    }
+                }                 
+            }
+        });
     }
-    catch(e)
-    {
+    catch(e){
         showMessage("Error when presenting all POIs: " + e.message);
     }
 }
@@ -384,14 +360,12 @@ function showDetails(tmpProject, isManaging)
     $('#dialog-media').dialog({ title: "Edit information of an experience"});
     var content = '<div class="formLabel">Experience name<input type="text" id="proNameEdit" class="inputText"/></div>'    
                 + '<div class="formLabel">Experience description (please consider including accessibility issues and whether this route is affected by season, weather, etc)</div><div><textarea rows="5" cols="42" id="proDescEdit" ></textarea></div>'
-                + '<div class="formLabel">Moderation mode for responses</div><div><input type="radio" name="proModerationMode" value="0">Moderation</input><br/><input type="radio" name="proModerationMode" value="1">No Moderation</input><br/><input type="radio" name="proModerationMode" value="2">Responses are not allowed</input></div>';
+                + '<div class="formLabel">Moderation mode for responses</div><div><input type="radio" name="proModerationMode" value="0">No Moderation (accepted all responses)</input><br/><input type="radio" name="proModerationMode" value="1">Moderation</input><br/><input type="radio" name="proModerationMode" value="2">Responses are not allowed</input></div>';
     $('#dialog-media').append(content);  
-    $("#proNameEdit").val(tmpProject.proName); 
-    $("#proDescEdit").val(tmpProject.proDesc);
-    if(tmpProject.proAccess.length == 1)
-        tmpProject.proAccess += "#0"; 
-    var moderation = tmpProject.proAccess.split("#");
-    $("input[name=proModerationMode][value=" + moderation[1] + "]").attr('checked', 'checked');
+    $("#proNameEdit").val(tmpProject.name); 
+    $("#proDescEdit").val(tmpProject.description);
+    $("input[name=proModerationMode][value=" + tmpProject.moderationMode + "]").attr('checked', 'checked');
+    
     $( "#dialog-media" ).dialog({
         modal: true,
         width: 350,
@@ -406,38 +380,21 @@ function showDetails(tmpProject, isManaging)
             {
                 text: "Save",                
                 click: function() {
-                    tmpProject.proName = $("#proNameEdit").val();
-                    tmpProject.proDesc = $("#proDescEdit").val();
-                    tmpProject.proAccess = tmpProject.proAccess.substring(0,2) + $('input:radio[name=proModerationMode]:checked').val();
-                    saveProjectInfo(tmpProject);
+                    tmpProject.name = $("#proNameEdit").val();
+                    tmpProject.description = $("#proDescEdit").val();
+                    tmpProject.moderationMode = $('input:radio[name=proModerationMode]:checked').val();
+                    
+                    $("#curProject").text("Current experience: " + tmpProject.name);
+                    $("#proDesc").text("Current experience: " + tmpProject.description);  
+                    
+                    resfulManager.saveExperience(tmpProject);
                     if(isManaging)
-                        presentProjects(allProjects) 
+                        presentExperiencesDetail(allProjects) 
                     $( this ).dialog( "close" );                                        
                 }
             }                  
         ]      
     });
-}
-
-function saveProjectInfo(curProject)
-{
-    $.post(
-        'php/updateProjectInfo.php',
-        {            
-            proAuthID: designerInfo.id,
-            proPath: curProject.proPath,
-            proName: curProject.proName,
-            proDesc: curProject.proDesc,
-            proAccess: curProject.proAccess               
-        },
-        function(data,status){
-			var result = JSON.parse(data);//JSON object return by listProjects.php
-            if(result.success != 1) //there are available experiences 
-			{
-                showMessage("Error when updating the experience details: " + result.message);       
-            }		
-        }
-    );   
 }
 
 function deleteProject()

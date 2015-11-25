@@ -20,6 +20,7 @@ function SharcRestful()
         );    
     }
     
+    //Working with Experience
     this.createExperience = function(experienceInfo)
     {
         var data = JSON.stringify(experienceInfo);
@@ -27,12 +28,26 @@ function SharcRestful()
             type:'POST',
             url: apiRoot + 'experiences',
             data: data,
-            //dataType: 'html',
             headers: { 'apiKey': designerInfo.apiKey},
             success: function(result) {                
                 if(result.status == SUCCESS)
                     startDesigningExperience(result.data)
                 else
+                    showMessage(result.data);
+            }
+        });
+    }
+    
+    this.saveExperience = function(experienceInfo)
+    {
+        var data = JSON.stringify(experienceInfo);
+        $.ajax({
+            type:'PUT',
+            url: apiRoot + 'experiences/' + experienceInfo.id,
+            data: data,
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status != SUCCESS)                    
                     showMessage(result.data);
             }
         });
@@ -47,7 +62,7 @@ function SharcRestful()
             success: function(result) {                
                 if(result.status == SUCCESS){
                     if(result.data.length > 0)
-                        presentAllProject(result.data);
+                        presentAllExperience(result.data);
                     else 
                         askToCreateNewProject();
                 }
@@ -59,8 +74,7 @@ function SharcRestful()
             }
 
         });    
-    }
-                       
+    }                  
     
     this.loadExperience = function (experienceId)
     {

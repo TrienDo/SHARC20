@@ -22,6 +22,7 @@
     define('EXPERIENCE_EXIST', "This name already exists. Please use another name for your experience.");
     define('EXPERIENCE_NOT_EXIST', "Could not find any experience with the submitted parameters.");
     define('EXPERIENCES_NOT_FOUND', "There are no experiences at the moment.");
+    define('EXPERIENCE_NOT_AUTHORIZED', "You do not have permission to delete this experience.");
     //Constants for Users
     define('USER_NOT_AUTHENTICATED', "User not authenticated.");
     //Constants for Media

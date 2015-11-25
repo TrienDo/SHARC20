@@ -62,10 +62,18 @@
         Utils::echoResponse($response);
     });
     
+        
     $app->put('/experiences/:id', function ($id) use ($app) {        
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }
+        
         $jsonExperience = $app->request->getBody();         
         $objExperience = json_decode($jsonExperience, true);     
-        $response = ExperienceService::updateExperience($id,$objExperience);
+        $response = ExperienceService::updateExperience($id,$objExperience,$rs['data']->id);
         Utils::echoResponse($response);
     });
     

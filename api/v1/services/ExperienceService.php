@@ -65,10 +65,16 @@
          * @param int $id: id of the SharcExperience
          * @param String $objExperience: a json object of SharcExperience
          */
-        public static function updateExperience($id, $objExperience) {
+        public static function updateExperience($id, $objExperience, $designerId) {
             $response = array();
             try{
-                $experience = SharcExperience::find($id);            
+                $experience = SharcExperience::find($id); 
+                if($experience->designerId != $designerId){
+                    $response["status"] = FAILED;            
+                    $response["data"] = EXPERIENCE_NOT_AUTHORIZED; 
+                    return $response;
+                }
+                           
                 if ($experience != null){ //Not exists -> add a new experience
                     $experience->name = $objExperience['name'];                   
                     $experience->description = $objExperience['description'];
