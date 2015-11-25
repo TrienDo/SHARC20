@@ -661,6 +661,22 @@ function swapMediaItem(curPOI,first,second)
     curPOI.mediaOrder[second] = tmp;
 }
 
+function updateMediaOrder(){
+    var mediaList = $('#uList li');
+    var mediaOrder = "";
+    for(var i = 0; i < mediaList.length; i++)
+        mediaOrder += " " + $(mediaList[i]).attr('id');
+    mediaOrder = mediaOrder.substr(1);
+    
+    if(curMediaType == "POI")
+        resfulManager.updateMediaOrderForEntity("POI", curPOI.id, mediaOrder);
+    else if(curMediaType == "EOI")
+        resfulManager.updateMediaOrderForEntity("EOI", curEOI.id, mediaOrder);
+    else if(curMediaType == "ROUTE")
+        resfulManager.updateMediaOrderForEntity("ROUTE", curRoute.id, mediaOrder);
+}
+
+
 //Scroll media item up in the media pane
 function scrollUp(step)
 {
@@ -738,7 +754,7 @@ function viewAllMediaItems(data)
                 
             $current.insertBefore($previous);
             scrollUp($previous.outerHeight());
-            swapMediaItem(tmpObject,selectedID,selectedID - 1);
+            //swapMediaItem(tmpObject,selectedID,selectedID - 1);
         }
         return false;
     });
@@ -770,7 +786,7 @@ function viewAllMediaItems(data)
             $current.insertAfter($next);
             scrollDown($next.outerHeight());
             //update media order
-            swapMediaItem(tmpObject,selectedID,selectedID + 1);
+            //swapMediaItem(tmpObject,selectedID,selectedID + 1);
         }
         return false;
     });
@@ -868,12 +884,7 @@ function viewAllMediaItems(data)
                 Close: function() {
                     if(isChangingMediaOrder)
                     {
-                        if(curMediaType == "POI")
-                            mDropBox.updatePOIMediaOrder(tmpObject);
-                        else if(curMediaType == "EOI")
-                            mDropBox.updateEOIMediaOrder(tmpObject);
-                        else if(curMediaType == "ROUTE")
-                            mDropBox.updateRouteMediaOrder(tmpObject);
+                        updateMediaOrder();
                         isChangingMediaOrder = false; 
                     }
                     $( this ).dialog("close");
@@ -900,17 +911,11 @@ function viewAllMediaItems(data)
                     }                
                 },             
                 Close: function() {
-                    /*
                     if(isChangingMediaOrder)
                     {
-                        if(curMediaType == "POI")
-                            mDropBox.updatePOIMediaOrder(tmpObject);
-                        else if(curMediaType == "EOI")
-                            mDropBox.updateEOIMediaOrder(tmpObject);
-                        else if(curMediaType == "ROUTE")
-                            mDropBox.updateRouteMediaOrder(tmpObject);
+                        updateMediaOrder();
                         isChangingMediaOrder = false; 
-                    }*/
+                    }
                     $( this ).dialog("close");
                     goBackMain();
                 }

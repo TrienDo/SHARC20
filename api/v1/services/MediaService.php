@@ -146,8 +146,8 @@
             $response = array();
             try{    
                 //Get all mediaexperience
-                $mediaExperience = SharcMediaExperience::where('entityId',$entityId)->where('entityType',$entityType)->where('experienceId',$experienceId)->get();
-                $mediaExperience = $mediaExperience->sortBy('order');
+                $mediaExperience = SharcMediaExperience::where('entityId',$entityId)->where('entityType',$entityType)->where('experienceId',$experienceId)->orderBy('order')->get();
+                //$mediaExperience = $mediaExperience->sortBy('order');
                 $response["status"] = SUCCESS;
                 //Get mediadesigner for each mediaexperience
                 $i = 0;
@@ -156,6 +156,32 @@
                     $mediaExperience[$i]["mediaDesigner"] = $mediaDesigner[0]->toArray();
                 }                    
                 $response["data"] = $mediaExperience->toArray();
+            }
+            catch(Exception $e){
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }
+            return $response;    
+        }
+        
+        /**
+         * Update media order of an entity
+         * @param $objMediaParam: entityType, entityId, experienceId, designerId and mediaOrder        
+         */
+        public static function updateMediaForEntity($designerId, $experienceId, $entityId, $entityType, $objMediaOrder){
+            $response = array();
+            try{    
+                $mediaOrderId = explode(" ", $objMediaOrder);
+                $i = 0;
+                for ($i = 0; $i< count($mediaOrderId); $i++) {
+                    $mediaExperience = SharcMediaExperience::find($mediaOrderId[$i]);
+                    if($mediaExperience != null){
+                        $mediaExperience->order = $i;
+                        $mediaExperience->save();
+                    }
+                }                    
+                $response["data"] = "";
+                $response["status"] = SUCCESS;
             }
             catch(Exception $e){
                 $response["status"] = ERROR;

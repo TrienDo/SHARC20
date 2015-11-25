@@ -308,9 +308,22 @@
         if($rs["status"] != SUCCESS){
             Utils::echoResponse($rs);
             return;
+        }
+        $response = MediaService::getMediaForEntity($designerId, $experienceId, $entityId, $entityType);
+        Utils::echoResponse($response);
+    });
+    
+    $app->put('/mediaForEntity/:designerId/:experienceId/:entityId/:entityType', function ($designerId, $experienceId, $entityId, $entityType) use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
         }    
         //Get a user sent from client and convert it to a json object
-        $response = MediaService::getMediaForEntity($designerId, $experienceId, $entityId, $entityType);
+        $jsonMediaOrder = $app->request->getBody();
+        $objMediaOrder = json_decode($jsonMediaOrder, true);
+        $response = MediaService::updateMediaForEntity($designerId, $experienceId, $entityId, $entityType, $objMediaOrder["mediaOrder"]);
         Utils::echoResponse($response);
     });
     

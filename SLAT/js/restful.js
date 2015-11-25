@@ -436,5 +436,28 @@ function SharcRestful()
         });
     }
     
+    //get media items for an entity
+    this.updateMediaOrderForEntity = function(entityType, entityId, mediaOrder){
+        var data = {            
+            mediaOrder: mediaOrder
+        };
+        $.ajax({
+            type:'PUT',
+            url: apiRoot + 'mediaForEntity/' + designerInfo.id + '/' + curProject.id + '/' + entityId  + '/' + entityType,
+            data: JSON.stringify(data),                                 
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    //viewAllMediaItems(result.data);	
+                }
+                else {
+                    showMessage(result.data);                    
+                }    
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });
+    }
 }
 
