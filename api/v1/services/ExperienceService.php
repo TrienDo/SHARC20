@@ -86,6 +86,7 @@
                     $experience->snapshotPath = $objExperience['snapshotPath'];                                       
                     $experience->thumbnailPath = $objExperience['thumbnailPath'];
                     //$experience->size = SharcMediaExperience::where('experienceId', $objExperience['experienceId'])->sum('size');
+                    $experience->size = MediaService::getMediaSizeForExperience($designerId, $objExperience['id']);
                     $experience->theme = $objExperience['theme']; 
                                     
                     $result = $experience->save();
@@ -277,6 +278,97 @@
                         $tmpRoutes[$i]["routeDesigner"] = $rs[0]->toArray();
                         $media = SharcMediaExperience::where('entityId',$objRoutes[$i]->id)->where('entityType','ROUTE')->get();
                         $tmpRoutes[$i]["mediaCount"] = $media->count();
+                        $tmpRoutes[$i]["responseCount"] = 0;
+                    }                    
+                    $response["data"]["allRoutes"] = $tmpRoutes;
+                    return $response;
+                }
+            }
+            catch(Exception $e){
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }
+            return $response;    
+        }
+        
+        /**
+         * Get content of an experience
+         * @param int $id: id of the SharcExperience         
+         */
+        public static function getExperienceSnapshot($designerId, $experienceId){
+            $response = array();
+            try{    
+                //Check if the designerId owns the experience
+                $rs = SharcExperience::where('id',$experienceId)->where('designerId',$designerId)->get();
+                if ($rs->count() == 0){ //Not exists 
+                    $response["status"] = FAILED;            
+                    $response["data"] = EXPERIENCE_NOT_EXIST;
+                    return $response; 
+                }
+                else {
+                    $response["status"] = SUCCESS;
+                    //Get all POIs of the experience
+                    $objPois = SharcPoiExperience::where('experienceId',$experienceId)->get();            
+                    $tmpPois = $objPois->toArray();                    
+                    $i = 0;
+                    for ($i; $i< $objPois->count(); $i++) {
+                        $rs = SharcPoiDesigner::where('id',$objPois[$i]->poiDesignerId)->where('designerId',$designerId)->get();
+                        $tmpPois[$i]["poiDesigner"] = $rs[0]->toArray();
+                        //Thumbnail
+                        $media = SharcMediaExperience::where('entityId',$objPois[$i]->id)->where('entityType','POI')->where('mainMedia',1)->get();
+                        if($media->count() > 0){                        
+                            $mediaDesigner = SharcMediaDesigner::where('id',$media[0]->mediaDesignerId)->where('designerId',$designerId)->get();
+                            if($mediaDesigner->count() > 0)
+                                $tmpPois[$i]["thumbnail"] = $mediaDesigner[0]->content;
+                            else
+                                $tmpPois[$i]["thumbnail"] = "";
+                        }
+                        else
+                            $tmpPois[$i]["thumbnail"] = "";
+                        //Media for POI                                
+                        $media = MediaService::getMediaForEntityServer($designerId, $experienceId, $objPois[$i]->id, "POI");
+                        $tmpPois[$i]["media"] = $media->toArray();
+                        if($media != null)
+                            $tmpPois[$i]["mediaCount"] = $media->count();
+                        else
+                            $tmpPois[$i]["mediaCount"] = 0;
+                                                    
+                        $tmpPois[$i]["responseCount"] = 0; 
+                    }                    
+                    $response["data"]["allPois"] = $tmpPois;
+                    //Get all EOIs of the experience
+                    $objEois = SharcEoiExperience::where('experienceId',$experienceId)->get();            
+                    $tmpEois = $objEois->toArray();                    
+                    $i = 0;
+                    for ($i; $i< $objEois->count(); $i++) {
+                        $rs = SharcEoiDesigner::where('id',$objEois[$i]->eoiDesignerId)->where('designerId',$designerId)->get();
+                        $tmpEois[$i]["eoiDesigner"] = $rs[0]->toArray();
+                        //Media for EOI                                
+                        $media = MediaService::getMediaForEntityServer($designerId, $experienceId, $objEois[$i]->id, "EOI");
+                        $tmpEois[$i]["media"] = $media->toArray();
+                        if($media != null)
+                            $tmpEois[$i]["mediaCount"] = $media->count();
+                        else
+                            $tmpEois[$i]["mediaCount"] = 0;
+                        
+                        $tmpEois[$i]["responseCount"] = 0;
+                    }                    
+                    $response["data"]["allEois"] = $tmpEois;
+                    //Get all Routes of the experience
+                    $objRoutes = SharcRouteExperience::where('experienceId',$experienceId)->get();            
+                    $tmpRoutes = $objRoutes->toArray();                    
+                    $i = 0;
+                    for ($i; $i< $objRoutes->count(); $i++) {
+                        $rs = SharcRouteDesigner::where('id',$objRoutes[$i]->routeDesignerId)->where('designerId',$designerId)->get();
+                        $tmpRoutes[$i]["routeDesigner"] = $rs[0]->toArray();
+                        //Media for EOI                                
+                        $media = MediaService::getMediaForEntityServer($designerId, $experienceId, $objRoutes[$i]->id, "ROUTE");
+                        $tmpRoutes[$i]["media"] = $media->toArray();
+                        if($media != null)
+                            $tmpRoutes[$i]["mediaCount"] = $media->count();
+                        else
+                            $tmpRoutes[$i]["mediaCount"] = 0;
+                                                
                         $tmpRoutes[$i]["responseCount"] = 0;
                     }                    
                     $response["data"]["allRoutes"] = $tmpRoutes;

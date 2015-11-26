@@ -172,7 +172,7 @@ function SharcRouteExperience(id, routeDesigner,experienceId, description, polyg
     {
         var path = this.polygon.getArray();
         //KML colour = AABBGGRR
-        var kmlPath = "<Placemark><Style><LineStyle><color>FF" + this.colour.substring(5) + this.colour.substring(3,5) + this.colour.substring(1,3) + "</color><width>3</width></LineStyle></Style><gx:MultiTrack><altitudeMode>absolute</altitudeMode><gx:interpolate>1</gx:interpolate><gx:Track>";
+        var kmlPath = "<Placemark><Style><LineStyle><color>FF" + this.routeDesigner.colour.substring(5) + this.routeDesigner.colour.substring(3,5) + this.routeDesigner.colour.substring(1,3) + "</color><width>3</width></LineStyle></Style><gx:MultiTrack><altitudeMode>absolute</altitudeMode><gx:interpolate>1</gx:interpolate><gx:Track>";
         for(var i = 0; i < path.length; i++)
         {
             kmlPath += "<gx:coord>" +  path[i].lng() + " " +  path[i].lat() + " 0</gx:coord>";

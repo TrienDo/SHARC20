@@ -133,6 +133,20 @@
         Utils::echoResponse($response); 
     });
     
+    
+    //Get content of an experience
+    $app->get('/experienceSnapshot/:designerId/:experienceId', function ($designerId, $experienceId) use ($app) {
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }
+           
+        $designerId = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only     
+        $response = ExperienceService::getExperienceSnapshot($designerId, $experienceId);
+        Utils::echoResponse($response); 
+    });
+    
     //RESTful for Poi
     $app->post('/pois', function () use ($app) {
         //Check authentication        
@@ -373,14 +387,10 @@
 		echo "Welcome to SHARC 2.0 RESTful Web services";
 	})->via('GET', 'POST');
     
-    $app->map('/test/:experienceId/:entityType/:entityId', function ($experienceId, $entityType, $entityId) {
-        $maxOrder = SharcMediaExperience::where('experienceId', $experienceId)->where('entityType',$entityType)->where('entityId',$entityId)->max('order');
-        echo "Hey".$maxOrder."Bye";
-        if($maxOrder === null)
-            $maxOrder = 0;
-        else
-            $maxOrder = $maxOrder + 1;
-        echo $maxOrder;
+    $app->map('/test/:designerId/:experienceId', function ($designerId, $experienceId) {
+        //$results = Capsule::se DB::s:select('select * from SharcUsers where id = ?', array(5));
+        //echo $results->toJson();
+        echo MediaService::getMediaSizeForExperience($designerId, $experienceId);
         
          
 	})->via('GET');

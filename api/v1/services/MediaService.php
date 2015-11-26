@@ -164,6 +164,49 @@
             return $response;    
         }
         
+        
+        /**
+         * Get all media associated with an entity
+         * @param $objMediaParam: entityType, entityId, experienceId, designerId         
+         */
+        public static function getMediaForEntityServer($designerId, $experienceId, $entityId, $entityType){
+            try{    
+                //Get all mediaexperience
+                $mediaExperience = SharcMediaExperience::where('entityId',$entityId)->where('entityType',$entityType)->where('experienceId',$experienceId)->orderBy('order')->get();
+                $i = 0;
+                for ($i = 0; $i< $mediaExperience->count(); $i++) {
+                    $mediaDesigner = SharcMediaDesigner::where('id',$mediaExperience[$i]->mediaDesignerId)->where('designerId',$designerId)->get();
+                    $mediaExperience[$i]["mediaDesigner"] = $mediaDesigner[0]->toArray();
+                }                    
+                return $mediaExperience;
+            }
+            catch(Exception $e){
+                return null;
+            }   
+        }
+        
+        /**
+         * Get experience size
+         * @param $objMediaParam:  experienceId, designerId         
+         */
+        public static function getMediaSizeForExperience($designerId, $experienceId){
+            try{    
+                //Get all mediaexperience
+                $mediaExperience = SharcMediaExperience::where('experienceId',$experienceId)->get();
+                $i = 0;
+                $size = 0;
+                for ($i = 0; $i< $mediaExperience->count(); $i++) {
+                    $mediaDesigner = SharcMediaDesigner::where('id',$mediaExperience[$i]->mediaDesignerId)->where('designerId',$designerId)->get();
+                    $size += $mediaDesigner[0]->size;
+                }   
+                $size /= 1024*1024;//convert to MB                 
+                return $size;
+            }
+            catch(Exception $e){
+                return 0;
+            }   
+        }
+        
         /**
          * Update media order of an entity
          * @param $objMediaParam: entityType, entityId, experienceId, designerId and mediaOrder        

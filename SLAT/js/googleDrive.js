@@ -152,7 +152,46 @@ function SharcGoogleDrive()
                 showMessage(resp.error.message);
             }
         });
-    }                   
+    }  
+    
+    this.saveKmlFile = function(filename, data)//Save experience thumbnail 
+    {        
+        const boundary = '-------314159265358979323846';
+        const delimiter = "\r\n--" + boundary + "\r\n";
+        const close_delim = "\r\n--" + boundary + "--";
+        
+        var base64Data = btoa(data);
+        
+        var contentType = 'application/octet-stream';
+        var metadata = {
+            'title': filename,
+            'mimeType': contentType,
+            'parents':[{"id":SharcFolderId}]
+        };            
+        
+        var multipartRequestBody = delimiter + 'Content-Type: application/json\r\n\r\n' +
+                                    JSON.stringify(metadata) + delimiter + 'Content-Type: ' + contentType + '\r\n' +
+                                    'Content-Transfer-Encoding: base64\r\n' + '\r\n' + base64Data + close_delim;
+        
+        var request = gapi.client.request({
+            'path': '/upload/drive/v2/files',
+            'method': 'POST',
+            'params': {'uploadType': 'multipart'},
+            'headers': {
+                'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+            },
+            'body': multipartRequestBody});
+        
+        //request.execute(callback);
+        request.execute(function(resp) {
+            if (resp.error == null) {
+                showMessage("The KML file has been saved in your Dropbox account as Google Drive\\SHARC20\\" + resp.title);
+            } 
+            else {
+                showMessage(resp.error.message);
+            }
+        });
+    }                              
                     
 }
 

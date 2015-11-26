@@ -981,21 +981,22 @@ function getResponseContent(tmpPOI)//For displaying media pane
 
 //Get media items for exporting/generating KML file
 function getPOIMediaContent(tmpPOI)
+
 {
     var content = "";
     var tmpMedia;
-    for(var i=0; i < tmpPOI.mediaOrder.length; i++)
+    for(var i=0; i < tmpPOI.media.length; i++)
     {
-        tmpMedia = tmpPOI.associatedMedia[tmpPOI.mediaOrder[i]];
-        if(tmpMedia.type == "text")
-            content += '<div style="text-align:center;">' + tmpMedia.content + '</div>';
-        else if(tmpMedia.type == "image")
-            content += '<div style="text-align:center;"><img width="350" src="' + tmpMedia.content + '"/></div>';        
-        else if(tmpMedia.type == "audio")
-            content += '<div style="text-align:center;"><audio width="350" controls ><source src="' + tmpMedia.content + '" type="audio/mpeg"></audio></div>' ;
-        else if(tmpMedia.type == "video")
-            content += '<div style="text-align:center;"><video width="350" controls> <source src="' + tmpMedia.content + '"></video></div>';
-        content += '<div style="text-align:center;font-weight:bold;">' + tmpMedia.name + '</div><hr/>';
+        tmpMedia = tmpPOI.media[i];
+        if(tmpMedia.mediaDesigner.contentType == "text")
+            content += '<div><object class="textMediaBox" id="mediaPOI" type="text/html" data="' + tmpMedia.mediaDesigner.content + '" ></object></div>';
+        else if(tmpMedia.mediaDesigner.contentType  == "image")
+            content += '<div style="text-align:center;"><img width="350" src="' + tmpMedia.mediaDesigner.content + '"/></div>';        
+        else if(tmpMedia.mediaDesigner.contentType  == "audio")
+            content += '<div style="text-align:center;"><audio width="350" controls ><source src="' + tmpMedia.mediaDesigner.content + '" type="audio/mpeg"></audio></div>' ;
+        else if(tmpMedia.mediaDesigner.contentType  == "video")
+            content += '<div style="text-align:center;"><video width="350" controls> <source src="' + tmpMedia.mediaDesigner.content + '"></video></div>';
+        content += '<div style="text-align:center;font-weight:bold;">' + tmpMedia.caption + '</div><hr/>';
     }
     return content;
 }

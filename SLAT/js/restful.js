@@ -130,6 +130,20 @@ function SharcRestful()
         });
     }
     
+    this.getExperienceSnapshot = function(){
+        $.ajax({
+            type:'GET',
+            url: apiRoot + 'experienceSnapshot/' + designerInfo.id + '/' + curProject.id,
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS)
+                    showExportDialog(result.data)
+                else
+                    showMessage(result.data);
+            }
+        });
+    }
+    
     //Working with POI
     this.createNewPoi = function (poiExperience)
     {

@@ -19,8 +19,8 @@ function showLoginDialog()
         $('#dialog-message').append('<p>We strongly recommend that you use the Google Chrome browser. Please select a cloud service to log in with</p>');
     else
         $('#dialog-message').append('<p>Please select a cloud service to log in.</p>' 
-                                        + '<ul><li>If you log in with Dropbox, your media files will be store in Dropbox/Apps/SHARC20 folder</li>'
-                                        + '<li>If you log in with Google Drive, your media files will be store in Google Drive/SHARC20 folder</li></ul>');               
+                                        + '<ul><li>If you log in with Dropbox, your media files will be stored in Dropbox\\Apps\\SHARC20 folder</li><br/>'
+                                        + '<li>If you log in with Google Drive, your media files will be stored in Google Drive\\SHARC20 folder</li></ul>');               
     $( "#dialog-message" ).dialog({
         modal: true,            
         height: 250,

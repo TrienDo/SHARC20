@@ -427,11 +427,14 @@ function deleteProject()
 
 function exportToKML()
 {
+    resfulManager.getExperienceSnapshot();
+}
+
+function showExportDialog(data){
     $(function() {        
         $('#dialog-message').html('');        
         $('#dialog-message').dialog({ title: "Export the experience to a KML file" });
-        var fname = $("#curProject").text();
-        fname = fname.substring(fname.indexOf(":") + 2);
+        var fname = curProject.name;
         fname = fname.replace(/ /g,"");//Remove space from exprience name to make a file name
         $('#dialog-message').append('<div class="formLabel">KML file name (Note: the kml file extension will be automatically added when the file is saved in your Dropbox)</div><div><input type="text" id="kmlName" value="' + fname + '" style="width:300px;"/></div>');               
         $( "#dialog-message" ).dialog({
@@ -451,7 +454,7 @@ function exportToKML()
                         showMessage("Invalid file name! File name cannot be blank and should contain only numbers and characters (no space)");
                         return;
                     }
-                    mDropBox.saveFile(ffname + ".kml",generateKMLContent(ffname));
+                    cloudManager.saveKmlFile(ffname + ".kml",generateKMLContent(data, ffname));
                     $( this ).dialog("close");
                 }             
             }
@@ -459,7 +462,7 @@ function exportToKML()
     });
 }
 
-function generateKMLContent(fileName)
+function generateKMLContent(data, fileName)
 {
     var content = '<?xml version="1.0" encoding="UTF-8"?>'
                 + '<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">'
@@ -467,11 +470,12 @@ function generateKMLContent(fileName)
                 + '<name>' + fileName + '.kml</name>'
                 + '<open>1</open>'; 
     //POI
-    for(var i = 0; i < allPOIs.length; i++)
+    var poiList = data.allPois; 
+    for(var i = 0; i < poiList.length; i++)
     {        
-        content = content + '<Placemark><name>' + allPOIs[i].name + '</name><description><![CDATA[';
-        content = content + getPOIMediaContent(allPOIs[i]) + ']]></description>';
-        var coor = allPOIs[i].latLng.split(" ");
+        content = content + '<Placemark><name>' + poiList[i].poiDesigner.name + '</name><description><![CDATA[';
+        content = content + getPOIMediaContent(poiList[i]) + ']]></description>';
+        var coor = poiList[i].poiDesigner.coordinate.split(" ");
         content = content + '<Point><coordinates>' + coor[1] + ',' + coor[0] + ',0</coordinates></Point></Placemark>';
     }
     //Route
@@ -552,7 +556,7 @@ function publishProject()
 }
 
 function showExperienceSize(experienceInfo){
-    showMessage("Your experience has been successfully published. The media package is " + experienceInfo.size + " MB");
+    showMessage("Your experience has been successfully published. The media package is " + experienceInfo.size.toFixed(2) + " MB");
 }
 
 function publishExperienceData(thumbnailURL)//Called from  mDropBox.saveExperienceThumbnail
@@ -571,34 +575,7 @@ function unpublishProject()
     resfulManager.saveExperience(curProject);
     showMessage("Your exprience has been set to private. Consumers cannot see it online.");    
 }
-function getProjectSize()
-{
-    var proSize = 0;
-    if(allMedia.length > 0)
-	{
-		for(var i = 0; i < allMedia.length; i++)
-		{
-			var size = parseFloat(allMedia[i].context);			
-			if(!isNaN(size))
-				proSize += size;
-		}
-	}
-    
-    if(allResponses.length > 0)
-	{
-		for(var i = 0; i < allResponses.length; i++)
-		{
-			var size = parseFloat(allResponses[i].size);			
-			if(!isNaN(size))
-				proSize += size;
-		}
-	}
-    
-    proSize /= 1024*1024;//convert byte to MB
-    if(allMedia.length > 0 && (proSize == 0 || isNaN(proSize)))
-        proSize = 40;
-    return proSize.toFixed(2);
-}
+ 
 function getProjectSummary()
 {
     var routeInfo = "";
