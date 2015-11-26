@@ -468,7 +468,7 @@ function SharcDropBox()
                         var url = rs.url;
                         url = url.substring(0,url.lastIndexOf("?"));
                         url = url.replace("https://www.drop","https://dl.drop");    
-                        publish(url);                    
+                        publishExperienceData(url);  
                     }
                 });                
             },
@@ -489,7 +489,7 @@ function SharcDropBox()
             data: mdata,
             success: function(data) {                
                 var result = JSON.parse(data);  
-                //Update size for media in the context field as this field has not been use!IMPORTANT
+                //Update size for media
                 curMediaBank.size = result.bytes;                
                                
                 //Share data                

@@ -9,6 +9,7 @@ var allProjects = new Array();//For managing experiences
 var curProject = null;
 //Create a new experience
 var presentAllExperience = "";//temp call back function for presenting list of experience 1: for names only 2: all details
+var showExperienceUpdateInfo = "";//temp call back function for presenting updated info of of experience 1: publish -> size, 2: unpublish: nothing
 function createProject() {   
     //Create a dialog for the user to enter details about the experience
     $(function() {        
@@ -484,11 +485,11 @@ function generateKMLContent(fileName)
 
 function publishProject()
 {
-    curProject.proSize = getProjectSize();    
+    //curProject.proSize = getProjectSize();    
     var content = '<table><tr><td>'  
         + '<div>Experience description (optional but please consider including accessibility issues and whether this route is affected by season, weather, etc)</div><br/>'
-        + '<div><textarea rows="27" cols="42" id="projectDesc" >' + curProject.proDesc + '</textarea></div><td><td>';
-    if(curProject.proThumbnail == "" || curProject.proThumbnail == null)
+        + '<div><textarea rows="27" cols="42" id="projectDesc" >' + curProject.description + '</textarea></div><td><td>';
+    if(curProject.thumbnailPath == "" || curProject.thumbnailPath == null)
     {    
         content += '<div>Please upload an square image (otherwise it will be stretched) which best represents this experience (e.g. a screenshot containing all routes and POIs)</div>';
         content += '<div><input type="file" id="imageFile" name="imageFile" accept="image/*" class="googleLookAndFeel1"/></div><div class="mediaPlacehold" style="width:350px;height:350px" id="thumbnailEx"><img id="experienceThumbnail" class="imgBox" src="images/placeholder.png"/></div></td></tr></table>';
@@ -496,11 +497,11 @@ function publishProject()
     else
     {
         content += '<div>Previously, you have submitted a representative image for this experience. If you want to replace it with a new one, please click on the "Choose file" button below to select a new square image</div>'
-        content += '<div><input type="file" id="imageFile" name="imageFile" accept="image/*" class="googleLookAndFeel1"/></div><div class="mediaPlacehold" style="width:350px;height:350px" id="thumbnailEx"><img id="experienceThumbnail" class="imgBox" src="'+ curProject.proThumbnail +'"/></div></td></tr></table>';
+        content += '<div><input type="file" id="imageFile" name="imageFile" accept="image/*" class="googleLookAndFeel1"/></div><div class="mediaPlacehold" style="width:350px;height:350px" id="thumbnailEx"><img id="experienceThumbnail" class="imgBox" src="'+ curProject.thumbnailPath +'"/></div></td></tr></table>';
     }
         
     $('#dialog-message').html('');        
-    $('#dialog-message').dialog({ title: "Publish the experience '" +  curProject.proName + "' (" + curProject.proSize + "MB)"});
+    $('#dialog-message').dialog({ title: "Publish the experience '" +  curProject.name + "'"});// + "' (" + curProject.size + "MB)"});
     $('#dialog-message').append(content);
     
     //Chose file button
@@ -513,14 +514,9 @@ function publishProject()
                 $('#experienceThumbnail').attr('src', e.target.result);
             }
             imgReader.readAsDataURL(this.files[0]);
-			
-			//Read binary data to upload to Dropbox
-            var reader = new FileReader({'blob': true});  // Create a FileReader object                 
-	        reader.readAsArrayBuffer(this.files[0]);           // Read the file
-        	reader.onload = function() 
-        	{    
-        		curMediaData = reader.result;   // This is the file contents                            
-            }
+            
+            curBrowsingType = "thumbnail";
+            readMediaFileAsBinary(this.files[0]);
         }                 			
 	});
            
@@ -534,21 +530,20 @@ function publishProject()
                 $( this ).dialog("close");
             },
             Publish: function() {                
-                if($('#imageFile').val() == "")
+                if($('#imageFile').val() == "")//not browse any representative photo
                 {
-                    if(curProject.proThumbnail == "" || curProject.proThumbnail == null)
+                    if(curProject.thumbnailPath == "" || curProject.thumbnailPath == null)//never browsed before
                         showMessage("Please select an image file!");
-                    else
+                    else //browsed before
                     {
-                        curProject.proDesc = $("#projectDesc").val();
-                        publish(curProject.proThumbnail);
-                        $( this ).dialog("close");
+                        curProject.description = $("#projectDesc").val();
+                        publishExperienceData(curProject.thumbnailPath);
+                        $(this).dialog("close");
                     }                    
                 }
-                else
+                else//browse an image -> upload to cloud and save path
                 {
-                    mDropBox.saveExperienceThumbnail(curProject.proPath + ".png", curMediaData);
-                    //publish();
+                    cloudManager.saveExperienceThumbnail(curProject.id + ".jpg", curMediaData);
                     $( this ).dialog("close");
                 }
             }             
@@ -556,69 +551,25 @@ function publishProject()
     });
 }
 
-function publish(thumbnailURL)//Called from  mDropBox.saveExperienceThumbnail
+function showExperienceSize(experienceInfo){
+    showMessage("Your experience has been successfully published. The media package is " + experienceInfo.size + " MB");
+}
+
+function publishExperienceData(thumbnailURL)//Called from  mDropBox.saveExperienceThumbnail
 {    
     //Make the project accessible/inaccessible by other Dropbox users: isPublic = true (1) -> ccessible, false (0) -> inaccessible
-    //Submit info about the project to SHARC server
-    var summary = getProjectSummary();
-    curProject.proThumbnail = thumbnailURL;
-    //Update metadata in MySQL db
-    if(curProject.proAccess.length == 1)
-        curProject.proAccess = "1#0";
-    else
-        curProject.proAccess = "1#" + curProject.proAccess.substring(2);
-    $.post(
-        'php/publicProject.php',
-        {
-            proAuthID: designerInfo.id,
-            proPath: projectID,            
-            proAccess: curProject.proAccess,
-            proSummary: summary,
-            proDesc: curProject.proDesc,
-            proSize: curProject.proSize,
-            proThumbnail: thumbnailURL
-        },
-        function(data,status){
-            var result = JSON.parse(data);
-            if(result.success == 1)
-            {    
-                //Create a snapshot for the project if message = 1 ~ public
-                if(result.message.charAt(0) == 1 )
-                {
-                    mDropBox.createSnapshot(projectID);
-                }                
-            }
-            else
-                showMessage("Error when publishing the experience: " + result.message);
-    });
+    curProject.summary = getProjectSummary();
+    curProject.thumbnailPath = thumbnailURL;
+    curProject.isPublished = true;
+    curProject.latLng = getExperienceBoundary().getCenter().lat() + " " + getExperienceBoundary().getCenter().lng();
+    resfulManager.publishExperience(curProject);
 }
 
 function unpublishProject()
-{    
-    var summary = getProjectSummary();
-    //Update metadata in MySQL db
-    if(curProject.proAccess.length == 1)
-        curProject.proAccess = "0#0";
-    else
-        curProject.proAccess = "0#" + curProject.proAccess.substring(2);
-    $.post(
-        'php/publicProject.php',
-        {
-            proAuthID: designerInfo.id,
-            proPath: projectID,            
-            proAccess: curProject.proAccess,
-            proSummary: summary,
-            proDesc: curProject.proDesc,
-            proSize: curProject.proSize,
-            proThumbnail: curProject.proThumbnail
-        },
-        function(data,status){
-            var result = JSON.parse(data);
-            if(result.success == 1)                
-                showMessage("Your exprience has been set to private. Consumers cannot see it online.");            
-            else
-                showMessage("Error when publishing the experience: " + result.message);
-    });
+{   
+    curProject.isPublished = false;
+    resfulManager.saveExperience(curProject);
+    showMessage("Your exprience has been set to private. Consumers cannot see it online.");    
 }
 function getProjectSize()
 {
@@ -654,7 +605,7 @@ function getProjectSummary()
 	if(allRoutes.length > 0)
 	{
 		for(var i = 0; i < allRoutes.length; i++)
-			routeInfo += " [Route name: " + allRoutes[i].name + " (" +   allRoutes[i].getDistance() + " km). " + allRoutes[i].desc +"].";
+			routeInfo += " [Route name: " + allRoutes[i].routeDesigner.name + " (" +   allRoutes[i].getDistance() + " km). " + allRoutes[i].desc +"].";
 	}
     return "This experience has " + allRoutes.length + " route(s), " + allEOIs.length + " EOI(s), and " + allPOIs.length + " POI(s)." + routeInfo;
 }

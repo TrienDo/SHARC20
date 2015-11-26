@@ -114,6 +114,22 @@ function SharcRestful()
             
     }
     
+    this.publishExperience = function(experienceInfo){
+        var data = JSON.stringify(experienceInfo);
+        $.ajax({
+            type:'POST',
+            url: apiRoot + 'publishExperience/' + curProject.id,
+            data: data,
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS)
+                    showExperienceSize(result.data)
+                else
+                    showMessage(result.data);
+            }
+        });
+    }
+    
     //Working with POI
     this.createNewPoi = function (poiExperience)
     {

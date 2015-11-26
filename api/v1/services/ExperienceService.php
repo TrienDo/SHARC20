@@ -85,7 +85,7 @@
                     $experience->summary = $objExperience['summary'];
                     $experience->snapshotPath = $objExperience['snapshotPath'];                                       
                     $experience->thumbnailPath = $objExperience['thumbnailPath'];
-                    $experience->size = $objExperience['size'];
+                    //$experience->size = SharcMediaExperience::where('experienceId', $objExperience['experienceId'])->sum('size');
                     $experience->theme = $objExperience['theme']; 
                                     
                     $result = $experience->save();

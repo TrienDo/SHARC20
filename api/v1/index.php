@@ -77,6 +77,20 @@
         Utils::echoResponse($response);
     });
     
+    $app->post('/publishExperience/:id', function ($id) use ($app) {        
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }
+        
+        $jsonExperience = $app->request->getBody();         
+        $objExperience = json_decode($jsonExperience, true);     
+        $response = ExperienceService::updateExperience($id,$objExperience,$rs['data']->id);
+        Utils::echoResponse($response);
+    });
+    
     $app->get('/experiences', function () { //should be published experiences only
         $response = ExperienceService::getAllExperiences();
         Utils::echoResponse($response); 
