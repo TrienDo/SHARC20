@@ -29,7 +29,8 @@
                         'lastOnline' => date('Y-m-d'),
                         'cloudType' => $objUser['cloudType'],
                         'cloudAccountId' => $objUser['cloudAccountId'],                   
-                        'apiKey' => Utils::generateApiKey()
+                        'apiKey' => Utils::generateApiKey(),
+                        'location' => $objUser['location']
                     ));
                     
                     $result = $user->save(); 

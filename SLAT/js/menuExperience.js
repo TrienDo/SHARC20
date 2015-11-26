@@ -137,7 +137,7 @@ function askToCreateNewProject()
     });    
 }
 
-function renderProject(data)
+function renderExperience(data)
 {
     clearScreen();
     renderPOIs(data.allPois); 
@@ -402,29 +402,26 @@ function deleteProject()
     var par = $(this).parent().parent(); //get current row
     var tdIndex = par.children("td:nth-child(1)");//get index of current row
     tdIndex =  parseInt(tdIndex.text())-1;
-    curProject = allProjects[tdIndex];    
-    //Delete row in MySQL
-    $.post(
-        'php/deleteProjectInfo.php',
-        {            
-            proPath: curProject.proPath,
-            proAuthID: designerInfo.id 
-        },
-        function(data,status){
-			var result = JSON.parse(data);//JSON object return by listProjects.php                       
-            if(result.success != 1) //there are available experiences 
-			{
-                showMessage("Error when deleting an experience: " + result.message);       
-            }
-            else
-            {
-                //Delete datastore
-                mDropBox.deleteDatastore(curProject.proPath);
-                allProjects.splice(tdIndex,1);
-                presentProjects(allProjects)
-            }		
+    curProject = allProjects[tdIndex];
+    
+    $('#dialog-message').html('');        
+    $('#dialog-message').dialog({ title: "Delete an experience"});        
+    $('#dialog-message').append('<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>This experience will be permanently deleted and cannot be recovered. Are you sure?</p>');               
+    $( "#dialog-message" ).dialog({
+        modal: true,            
+        height: 225,
+        width: 460,            
+        buttons: {             
+            Cancel: function() {
+                $( this ).dialog("close");
+                presentExperiencesDetail(allProjects);
+            },
+            Yes: function() {                
+                $( this ).dialog("close");                    
+                resfulManager.deleteExperience(curProject.id);
+            }             
         }
-    );   
+    });
 }
 
 function exportToKML()

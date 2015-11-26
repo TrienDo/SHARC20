@@ -78,7 +78,6 @@
     });
     
     $app->get('/experiences', function () { //should be published experiences only
-        $response = array();        
         $response = ExperienceService::getAllExperiences();
         Utils::echoResponse($response); 
     });   
@@ -89,17 +88,22 @@
         if($rs["status"] != SUCCESS){
             Utils::echoResponse($rs);
             return;
-        }
-        $response = array();   
+        }           
         $id = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only     
         $response = ExperienceService::getExperienceOfDesigner($id);
         Utils::echoResponse($response); 
     });
     
-    $app->delete('/experiences/:id', function ($id) {
-        $response = array();        
-        $response = ExperienceService::deleteExperienceFromId($id);
-        Utils::echoResponse($response); 
+    $app->delete('/experiences/:designerId/:experienceId', function ($designerId, $experienceId) use ($app) {
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }
+           
+        $designerId = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only     
+        $response = ExperienceService::deleteExperience($designerId, $experienceId);
+        Utils::echoResponse($response);
     });
     
     //Get content of an experience
@@ -109,7 +113,7 @@
             Utils::echoResponse($rs);
             return;
         }
-        $response = array();   
+           
         $designerId = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only     
         $response = ExperienceService::getExperienceContent($designerId, $experienceId);
         Utils::echoResponse($response); 
@@ -364,13 +368,7 @@
             $maxOrder = $maxOrder + 1;
         echo $maxOrder;
         
-        /*$arrId = explode(" ", $list);        
-        foreach ($arrId as $id ){
-            $eoi = SharcEoiExperience::find($id);
-            echo $eoi->poiList."\n";
-            echo $eoi->routeList."\n"."\n";
-        }
-        */
+         
 	})->via('GET');
  
  

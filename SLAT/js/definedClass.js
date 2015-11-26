@@ -5,7 +5,7 @@
 */  
 var SUCCESS = "success";
 
-function SharcUser(userID, userName, userEmail, registrationDate, lastOnline, cloudType, cloudAccountId, apiKey)
+function SharcUser(userID, userName, userEmail, registrationDate, lastOnline, cloudType, cloudAccountId, apiKey, location)
 {
     this.id = userID;
     this.username = userName;
@@ -15,6 +15,7 @@ function SharcUser(userID, userName, userEmail, registrationDate, lastOnline, cl
     this.cloudType = cloudType;
     this.cloudAccountId = cloudAccountId;
     this.apiKey = apiKey;
+    this.location = location;
 }
 
 function SharcExperience(id, name, description, createdDate, lastPublishedDate, designerId, isPublished, moderationMode, latLng, summary, snapshotPath, thumbnailPath, size, theme)

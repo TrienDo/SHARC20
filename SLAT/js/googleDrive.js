@@ -41,7 +41,7 @@ function SharcGoogleDrive()
             if (resp) {
                 var designerName =  resp.user.displayName;
                 $("#userAccount").html('Logged in as ' + designerName + '<img src="images/arrow.png" class="arrowMenu"/>');
-                designerInfo = new SharcUser(0, designerName, resp.user.emailAddress, "", "", "Google Drive", resp.user.permissionId, "");            
+                designerInfo = new SharcUser(0, designerName, resp.user.emailAddress, "", "", "Google Drive", resp.user.permissionId, "", "");            
                 //showWelcomeDialog(designerName);  
                 resfulManager.updateOrAddUser(designerInfo);
             } 

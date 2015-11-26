@@ -41,12 +41,12 @@
  
     //Each table of the sharc20 database is created by one of the blocks below. 
     //If you want to change the structure of a table:
-    // 1 - Uncomment that block 
+    // 1 - Copy that block out of the block comment 
     // 2 - Make changes
     // 3 - Run the server
-    // 4 - Comment the block again
+    // 4 - Copy back the block again to keep track of the change
     
-    //Table SharcUsers  
+      
     /*
     Capsule::schema()->dropIfExists('SharcUsers');
     Capsule::schema()->create('SharcUsers', function($table)
@@ -59,11 +59,11 @@
         $table->string('cloudType');
         $table->string('cloudAccountId');
         $table->string('apiKey');
+        $table->string('location');
     });
-    */
     
-    //Table SharcExperience  
-    /*
+    
+    
     Capsule::schema()->dropIfExists('SharcExperiences');
     Capsule::schema()->create('SharcExperiences', function($table)
     {
@@ -83,10 +83,9 @@
         $table->integer('size');
         $table->string('theme');
     });
-    */
     
-    //Table SharcPoiDesigner  
-    /*        
+            
+            
     Capsule::schema()->dropIfExists('SharcPoiDesigners');
     Capsule::schema()->create('SharcPoiDesigners', function($table)
     {
@@ -97,16 +96,13 @@
         $table->integer('designerId')->unsigned();
         $table->foreign('designerId')->references('id')->on('SharcUsers');        
     });
-    */
     
-    //Table SharcPoiExperiences   
-    /*
     Capsule::schema()->dropIfExists('SharcPoiExperiences');
     Capsule::schema()->create('SharcPoiExperiences', function($table)
     {
         $table->increments('id');
         $table->integer('experienceId')->unsigned();
-        $table->foreign('experienceId')->references('id')->on('SharcExperiences');        
+        $table->foreign('experienceId')->references('id')->on('SharcExperiences')->onDelete('cascade');        
         $table->integer('poiDesignerId')->unsigned();
         $table->foreign('poiDesignerId')->references('id')->on('SharcPoiDesigners');
         $table->string('description'); 
@@ -114,10 +110,8 @@
         $table->string('eoiList');
         $table->string('routeList');                               
     });
-    */
     
-    /*
-    //Table SharcMediaDesigner  
+    
             
     Capsule::schema()->dropIfExists('SharcMediaDesigners');
     Capsule::schema()->create('SharcMediaDesigners', function($table)
@@ -130,11 +124,7 @@
         $table->integer('designerId')->unsigned();
         $table->foreign('designerId')->references('id')->on('SharcUsers');        
     });
-    */
-    
-        
-    //Table SharcMediaDesigner  
-    /*        
+            
     Capsule::schema()->dropIfExists('SharcMediaExperiences');
     Capsule::schema()->create('SharcMediaExperiences', function($table)
     {
@@ -144,18 +134,16 @@
         $table->string('entityType');
         $table->integer('entityId');        	
         $table->integer('experienceId')->unsigned();
-        $table->foreign('experienceId')->references('id')->on('SharcExperiences');
+        $table->foreign('experienceId')->references('id')->on('SharcExperiences')->onDelete('cascade');
         $table->string('caption');
         $table->string('context');
         $table->boolean('mainMedia');
         $table->boolean('visible');
         $table->integer('order');
     });
-    */
     
     
-    //Table SharcEoiDesigner  
-    /*        
+            
     Capsule::schema()->dropIfExists('SharcEoiDesigners');
     Capsule::schema()->create('SharcEoiDesigners', function($table)
     {
@@ -165,27 +153,22 @@
         $table->integer('designerId')->unsigned();
         $table->foreign('designerId')->references('id')->on('SharcUsers');        
     });
-    */
-    
-    
-    //Table SharcEoiExperiences   
-    /*
+        
     Capsule::schema()->dropIfExists('SharcEoiExperiences');
     Capsule::schema()->create('SharcEoiExperiences', function($table)
     {
         $table->increments('id');
         $table->integer('experienceId')->unsigned();
-        $table->foreign('experienceId')->references('id')->on('SharcExperiences');        
+        $table->foreign('experienceId')->references('id')->on('SharcExperiences')->onDelete('cascade');        
         $table->integer('eoiDesignerId')->unsigned();
         $table->foreign('eoiDesignerId')->references('id')->on('SharcEoiDesigners');
         $table->string('note');  
         $table->string('poiList');
         $table->string('routeList');                      
     });
-    */       
-    
-    //Table SharcRouteDesigner  
-    /*        
+   
+   
+           
     Capsule::schema()->dropIfExists('SharcRouteDesigners');
     Capsule::schema()->create('SharcRouteDesigners', function($table)
     {
@@ -197,22 +180,20 @@
         $table->integer('designerId')->unsigned();
         $table->foreign('designerId')->references('id')->on('SharcUsers');        
     });
-    */
     
-    
-    //Table SharcRouteExperiences   
-    /*
     Capsule::schema()->dropIfExists('SharcRouteExperiences');
     Capsule::schema()->create('SharcRouteExperiences', function($table)// , routeDesigner, , 
     {
         $table->increments('id');
         $table->integer('experienceId')->unsigned();
-        $table->foreign('experienceId')->references('id')->on('SharcExperiences');        
+        $table->foreign('experienceId')->references('id')->on('SharcExperiences')->onDelete('cascade');        
         $table->integer('routeDesignerId')->unsigned();
         $table->foreign('routeDesignerId')->references('id')->on('SharcRouteDesigners');
         $table->string('description');                        
         $table->string('poiList');
         $table->string('eoiList');
     });
+    
+    
     */            
 ?>

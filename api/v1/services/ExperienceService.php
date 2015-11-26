@@ -177,23 +177,30 @@
         
         /**
          * Delete an experience
-         * @param int $id: id of the SharcExperience         
+         * @param int $experienceId: id of the SharcExperience         
+         * @param int $designerId: id of the SharcUser -> experience can be deleted by its owner only
          */
-        public static function deleteExperienceFromId($id)
+        public static function deleteExperience($designerId, $experienceId)
         {
             $response = array();
             try{    
-                $experience = SharcExperience::find($id);                
+                $experience = SharcExperience::find($experienceId);                
                 if($experience!=null)
                 {
-                    $result = $experience->delete();//= 1 success
-                    if ($result){ //= 1 success
-                        $response["status"] = SUCCESS;            
-                        $response["data"] = null;    
-                    }   
-                    else {  //error
-                        $response["status"] = ERROR;
-                        $response["data"] = INTERNAL_SERVER_ERROR;                
+                    if($experience->designerId == $designerId){
+                        $result = $experience->delete();
+                        if ($result){ //= 1 success
+                            $response["status"] = SUCCESS;            
+                            $response["data"] = SharcExperience::where('designerId',$designerId)->get()->toArray();    
+                        }   
+                        else {  //error
+                            $response["status"] = ERROR;
+                            $response["data"] = INTERNAL_SERVER_ERROR;                
+                        }    
+                    }
+                    else{
+                        $response["status"] = FAILED;
+                        $response["data"] = EXPERIENCE_NOT_AUTHORIZED;
                     }
                 } 
                 else {      //fail AS cant find the experience 

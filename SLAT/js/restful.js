@@ -84,7 +84,7 @@ function SharcRestful()
             headers: { 'apiKey': designerInfo.apiKey},
             success: function(result) {                
                 if(result.status == SUCCESS){                    
-                    renderProject(result.data);
+                    renderExperience(result.data);
                 }
                 else
                     showMessage(result.data);
@@ -93,6 +93,25 @@ function SharcRestful()
                 showMessage(textStatus + ". " + errorThrown);
             }
         });
+    }
+    
+    this.deleteExperience = function (experienceId){
+        $.ajax({
+            type:'DELETE',
+            url: apiRoot + 'experiences/' + designerInfo.id + '/'+ experienceId,                        
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){                    
+                    presentExperiencesDetail(result.data);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });
+            
     }
     
     //Working with POI

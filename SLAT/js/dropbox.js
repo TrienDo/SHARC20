@@ -72,7 +72,7 @@ function SharcDropBox()
                     success: function(data) {                        
                         var result = JSON.parse(data);
                         $("#userAccount").html('Logged in as ' + result.display_name + '<img src="images/arrow.png" class="arrowMenu"/>');
-                        designerInfo = new SharcUser(0, result.display_name, result.email, "", "", "Dropbox", result.uid, "");
+                        designerInfo = new SharcUser(0, result.display_name, result.email, "", "", "Dropbox", result.uid, "", "");
                         logedIn = true;   
                         showMenu(true);                          
                         resfulManager.updateOrAddUser(designerInfo);                                   
