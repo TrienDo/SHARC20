@@ -281,6 +281,11 @@
                         $tmpRoutes[$i]["responseCount"] = 0;
                     }                    
                     $response["data"]["allRoutes"] = $tmpRoutes;
+                    
+                    //Get all PoiType of the experience
+                    $objPoiTypes = SharcPoiType::where('designerId',$designerId)->get();
+                    $response["data"]["allPoiTypes"] = $objPoiTypes->toArray();
+                    
                     return $response;
                 }
             }
@@ -354,6 +359,7 @@
                         $tmpEois[$i]["responseCount"] = 0;
                     }                    
                     $response["data"]["allEois"] = $tmpEois;
+                    
                     //Get all Routes of the experience
                     $objRoutes = SharcRouteExperience::where('experienceId',$experienceId)->get();            
                     $tmpRoutes = $objRoutes->toArray();                    
@@ -372,6 +378,11 @@
                         $tmpRoutes[$i]["responseCount"] = 0;
                     }                    
                     $response["data"]["allRoutes"] = $tmpRoutes;
+                    
+                    //Get all PoiType of the experience
+                    $objPoiTypes = SharcPoiType::where('designerId',$designerId)->get();
+                    $response["data"]["allPoiTypes"] = $objPoiTypes->toArray();
+                    
                     return $response;
                 }
             }

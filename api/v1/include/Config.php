@@ -195,5 +195,18 @@
     });
     
     
-    */            
+    
+    Capsule::schema()->dropIfExists('SharcPoiTypes');
+    Capsule::schema()->create('SharcPoiTypes', function($table)
+    {
+        $table->increments('id');
+        $table->string('name');        	
+        $table->string('description');        
+        $table->integer('designerId')->unsigned();
+        $table->foreign('designerId')->references('id')->on('SharcUsers');        
+    });   
+    
+    */    
+    
+         
 ?>

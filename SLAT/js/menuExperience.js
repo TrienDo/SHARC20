@@ -142,6 +142,7 @@ function renderExperience(data)
 {
     clearScreen();
     renderPOIs(data.allPois); 
+    renderPoiTypes(data.allPoiTypes);
     renderEOIs(data.allEois);
     renderRoutes(data.allRoutes);
     $("#noOfPOI").text("Number of POIs: " + allPOIs.length);
@@ -227,6 +228,12 @@ function renderPOIs(retPOIs)
     }                                                             
 }
 
+function renderPoiTypes(retPoiTypes){
+    for(i = 0; i < retPoiTypes.length; i++) {        
+        var poiType = new SharcPoiType(retPoiTypes[i].id, retPoiTypes[i].name,retPoiTypes[i].description);
+        allPOITypes.push(poiType);                
+    }
+}
 function renderEOIs(retEOIs)    
 {
     for(i = 0; i < retEOIs.length; i++) {

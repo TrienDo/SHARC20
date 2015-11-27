@@ -280,14 +280,14 @@ function createGoogleObjects()
     
     endRouteMarker = new google.maps.Marker({
         position: new google.maps.LatLng(0,0),
-        draggable:true,
+        draggable: false,
         icon: endIcon,
         map:null
     });
     
     startRouteMarker = new google.maps.Marker({
         position: new google.maps.LatLng(0,0),
-        draggable:true,
+        draggable: false,
         icon: "images/start.png",
         map:null
     });
@@ -313,6 +313,7 @@ function clearScreen()//clear data and screen before loading/creating a new expr
 {
     //Empty all arrays and viz on map
     allPOIs = [];
+    allPOITypes = [];
     allMedia = [];
     allEOIs = [];
     allRoutes = [];

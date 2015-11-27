@@ -218,6 +218,71 @@ function SharcRestful()
         });    
     }
     
+    //Working with POI Type
+    this.createPoiType = function (poiType)
+    {
+        var data = JSON.stringify(poiType);
+        $.ajax({
+            type:'POST',
+            url: apiRoot + 'poiTypes',
+            data: data,                       
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    presentNewPoiType(result.data, false);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });    
+    }
+    
+    //Update Poi Type
+    this.updatePoiType= function (poiType)
+    {
+        var data = JSON.stringify(poiType);
+        $.ajax({
+            type:'PUT',
+            url: apiRoot + 'poiTypes',
+            data: data,                       
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    presentNewPoiType(result.data, false);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });    
+    }
+    
+    //Delete Poi Type
+    this.deletePoiType = function (poiType)
+    {
+        var data = JSON.stringify(poiType);
+        $.ajax({
+            type:'DELETE',
+            url: apiRoot + 'poiTypes',
+            data: data,                       
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    presentNewPoiType(result.data, true);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });    
+    }
     //Working with EOI
     this.createNewEoi = function (eoiExperience)
     {

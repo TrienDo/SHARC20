@@ -36,7 +36,7 @@ function createNewPOIType(isCreating)
         if(!isCreating)
         {
             $("#poiTypeName").val(curPOIType.name);
-            $("#poiTypeDesc").val(curPOIType.desc);
+            $("#poiTypeDesc").val(curPOIType.description);
             //$("#inputIcon").val(curPOIType.icon);
             //$("#imageIcon").val(curPOIType.icon);                       
         }      
@@ -71,22 +71,27 @@ function createNewPOIType(isCreating)
                     if(!isCreating)
                     {
                         curPOIType.name = name;
-                        curPOIType.desc = desc; 
-                        mDropBox.updatePOIType(curPOIType);                                                                        
+                        curPOIType.description = desc; 
+                        resfulManager.updatePoiType(curPOIType);                                                                        
                     }
                     else
                     {
-                        curPOIType = new POIType((new Date()).getTime(),$("#poiTypeName").val(),"",$("#poiTypeDesc").val());
+                        curPOIType = new SharcPoiType(0, name, desc);
                         allPOITypes.push(curPOIType);
-                        mDropBox.insertPOIType(curPOIType);                                                
-                    }
-                    $(this).dialog("close");
-                    showAllPOITypes();                    
+                        resfulManager.createPoiType(curPOIType);                                                
+                    }                   
                 }             
             }
         });
     });
 } 
+
+function presentNewPoiType(data, isDeleting){
+    if (!isDeleting)
+        curPOIType.id = data.id;
+    $("#dialog-message").dialog("close");
+    showAllPOITypes();
+}
 
 function showAllPOITypes()
 {
@@ -121,7 +126,7 @@ function presentPOITypes()
     $('#dialog-message').append('<table width="100%" id="tblData"><thead><tr><th>No.</th><th class="tableNameColumn">Name</th><th>Description</th><th class="tableNameColumn">Action</th></tr></thead><tbody></tbody></table>');
     for(var i=0; i < allPOITypes.length; i++)
     {
-        $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + allPOITypes[i].name  + '</td><td>' + allPOITypes[i].desc+ '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/edit.png"> Edit this POI type</button><button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Delete this POI type</button></td></tr>');
+        $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td>' + allPOITypes[i].name  + '</td><td>' + allPOITypes[i].description + '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/edit.png"> Edit this POI type</button><button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Delete this POI type</button></td></tr>');
     } 
     $("#tblData").addClass("tableBorder");
     $("#tblData td").addClass("tableBorder");
@@ -145,7 +150,7 @@ function deletePOIType()
     curPOIType = allPOITypes[tdIndex];    
     $('#dialog-message').html('');        
     $('#dialog-message').dialog({ title: "Delete a type of POI"});        
-    $('#dialog-message').append('<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>This type of POI will be permanently deleted and cannot be recovered. Are you sure?</p>');               
+    $('#dialog-message').append('<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>This type of POI Type will be permanently deleted and cannot be recovered. Are you sure?</p>');               
     $( "#dialog-message" ).dialog({
         modal: true,            
         height: 225,
@@ -157,7 +162,7 @@ function deletePOIType()
             },
             Yes: function() {                
                 $( this ).dialog("close");                    
-                mDropBox.deletePOIType(curPOIType);
+                resfulManager.deletePoiType(curPOIType);
                 allPOITypes.splice(tdIndex,1); 
                 showAllPOITypes();
             }             

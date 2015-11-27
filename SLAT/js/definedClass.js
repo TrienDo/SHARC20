@@ -193,6 +193,14 @@ function SharcRouteExperience(id, routeDesigner,experienceId, description, polyg
     }        
 }
 
+function SharcPoiType(id, name, description)
+{
+    this.id = id;
+    this.name = name;
+    this.description = description;
+}
+
+
 function Response(mID, mType,mDesc,mContent,mNoOfLike,mEntityType, mEntityID, mConName, mConEmail, mStatus, mSize)
 {
     this.id = mID;    
@@ -212,15 +220,6 @@ function Response(mID, mType,mDesc,mContent,mNoOfLike,mEntityType, mEntityID, mC
     this.location = "";                 
 }
 
-function POIType(mID,mName,mIcon,mDesc)
-{
-    this.id = mID;
-    this.name = mName;
-    this.icon = mIcon;          //Not in use
-    this.desc = mDesc;
-    this.associatedPOI = "";    //Not in use
-    this.state = "new";         //Not in use
-}
 
 //Model for a Placemark from KML file
 function Placemark(inType,inName,inDes,inCoor)

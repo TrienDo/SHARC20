@@ -13,6 +13,7 @@
     require_once 'models/SharcExperience.php';
     require_once 'models/SharcPoiDesigner.php';
     require_once 'models/SharcPoiExperience.php';
+    require_once 'models/SharcPoiType.php';
     require_once 'models/SharcMediaDesigner.php';
     require_once 'models/SharcMediaExperience.php';
     require_once 'models/SharcEoiDesigner.php';
@@ -22,6 +23,7 @@
     require_once 'services/UserService.php';
     require_once 'services/ExperienceService.php';
     require_once 'services/PoiService.php';
+    require_once 'services/PoiTypeService.php';
     require_once 'services/MediaService.php';
     require_once 'services/EoiService.php';
     require_once 'services/RouteService.php';
@@ -236,6 +238,52 @@
         $objEoi = json_decode($jsonEoi, true);
         $objEoi['eoiDesigner']['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
         $response = EoiService::deleteEoi($objEoi);
+        Utils::echoResponse($response);
+    });
+    
+    //RESTful for PoiType
+    $app->post('/poiTypes', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $jsonPoiType = $app->request->getBody();        
+        $objPoiType = json_decode($jsonPoiType, true);
+        $objPoiType['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = PoiTypeService::addNewPoiType($objPoiType);
+        Utils::echoResponse($response);
+    });    
+    
+    $app->put('/poiTypes', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $jsonPoiType = $app->request->getBody();        
+        $objPoiType = json_decode($jsonPoiType, true);
+        $objPoiType['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = PoiTypeService::updatePoiType($objPoiType);
+        Utils::echoResponse($response);
+    });
+    
+    $app->delete('/poiTypes', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $jsonPoiType = $app->request->getBody();        
+        $objPoiType = json_decode($jsonPoiType, true);
+        $objPoiType['designerId'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = PoiTypeService::deletePoiType($objPoiType);
         Utils::echoResponse($response);
     });
     
