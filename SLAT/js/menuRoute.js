@@ -435,6 +435,7 @@ function showStartEnd(inMap)
 	{
 		var tmpR = routePath.getPath().getArray();		
 		endRouteMarker.setPosition(tmpR[tmpR.length - 1]);
+        endRouteMarker.setIcon(endIcon);
 		endRouteMarker.setMap(inMap);
         startRouteMarker.setPosition(tmpR[0]);
 		startRouteMarker.setMap(inMap);

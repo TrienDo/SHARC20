@@ -43,6 +43,7 @@ var curResponse = null;                 //Object to store details of current res
 var mapRoute;                   //map for creating/editing a route
 var startRouteMarker = null;    //start route marker
 var endRouteMarker = null;      //end route marker
+var endIcon = null;
 var routePath = null;           //current route path
 var curRoute = null;            //details of current route 
 var allRoutePaths = new Array();//Array to store all routes' paths
@@ -270,10 +271,17 @@ function createGoogleObjects()
         	trigerZonePOI.setCenter(markerPOI.getPosition());
     });  
     
+    endIcon = {
+        url: 'images/end.png',        
+        size: new google.maps.Size(32, 64),        
+        origin: new google.maps.Point(0, 0),        
+        anchor: new google.maps.Point(16, 0)
+    };
+    
     endRouteMarker = new google.maps.Marker({
         position: new google.maps.LatLng(0,0),
         draggable:true,
-        icon: "images/end.png",
+        icon: endIcon,
         map:null
     });
     

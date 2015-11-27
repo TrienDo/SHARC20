@@ -262,7 +262,7 @@ function renderRoutes(retRoutes)
     		tmpRouteMarker = new google.maps.Marker({
                 position: new google.maps.LatLng(0,0),
                 draggable:true,
-                icon: "images/end.png",
+                icon: endIcon,
                 map:null
             });
             tmpRouteMarker.setPosition(tmpR[tmpR.length - 1]);
