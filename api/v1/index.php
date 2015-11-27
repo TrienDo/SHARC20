@@ -414,7 +414,18 @@
         $response = MediaService::updateMediaForEntity($designerId, $experienceId, $entityId, $entityType, $objMediaOrder["mediaOrder"]);
         Utils::echoResponse($response);
     });
-    
+        
+    $app->get('/mediaLibrary/:designerId', function ($designerId) use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }
+        $response = MediaService::getMediaLibrary($rs['data']->id, $designerId);
+        Utils::echoResponse($response);
+    });
+
     //compress media
     $app->post('/mediaCompress', function () use ($app) {
         //Check authentication        

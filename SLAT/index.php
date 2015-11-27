@@ -28,6 +28,7 @@
     <script src="js/menuRoute.js"></script>
     <script src="js/menuTest.js"></script>
     <script src="js/menuResponse.js"></script>    
+    <script src="js/menuLibrary.js"></script>
     <script src="js/dropbox.js"></script>
     <script src="js/googleDrive.js"> </script>
     <script src="js/restful.js"> </script>
@@ -101,6 +102,17 @@
             <ul class="dropdown-menu">
                 <li><a id="moderate" href="#">Moderate new responses</a></li>                
                 <li><a id="manage" href="#">Manage all responses</a></li>
+            </ul>
+        </li>
+        
+        <li  >
+            <a   href="#">My Library<img src="images/arrow.png" class="arrowMenu"/></a>
+            <ul class="dropdown-menu">
+                <li><a id="mediaLibrary" href="#">Media library</a></li>                
+                <li><a id="poiLibrary" href="#">POI library</a></li>
+                <li><a id="poiTypeLibrary" href="#">POI type library</a></li>
+                <li><a id="eoiLibrary" href="#">EOI library</a></li>
+                <li><a id="routeLibrary" href="#">Route library</a></li>
             </ul>
         </li>
         

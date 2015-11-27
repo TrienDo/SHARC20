@@ -322,5 +322,29 @@
             return $response;                 
         }
         
+        
+        /**
+         * Get Media Library for a designer
+         * @param int $designerId, @realId -> only authorised designer can gets all his media                  
+         */
+        public static function getMediaLibrary($realId, $designerId){
+            $response = array();
+            try{
+                if($realId == $designerId){
+                    $mediaDesigner = SharcMediaDesigner::where('designerId',$designerId)->get();
+                    $response["status"] = SUCCESS;
+                    $response["data"] = $mediaDesigner->toArray();
+                }
+                else{
+                    $response["status"] = FAILED;
+                    $response["data"] = MEDIA_NOT_AUTHORIZED;
+                }              
+            }
+            catch(Exception $e) {
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }    
+            return $response;                 
+        }
     } 
 ?>

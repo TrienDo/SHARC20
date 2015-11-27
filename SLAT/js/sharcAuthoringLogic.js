@@ -214,6 +214,28 @@ function initialize()
 	});
     
     //========================================================================================
+    //My Library menu ~ menuLibrary.js
+    $('#mediaLibrary').click(function(){
+        Library_showMediaLibrary();   
+	}); 
+    
+    $('#poiLibrary').click(function(){
+        Library_showPoiLibrary()     
+	});	
+    
+    $('#eoiLibrary').click(function(){
+        Library_showEoiLibrary();   
+	}); 
+    
+    $('#routeLibrary').click(function(){
+        Library_showRouteLibrary()     
+	});
+    
+    $('#poiTypeLibrary').click(function(){
+        Library_showPoiTypeLibrary()     
+	});
+    
+    //========================================================================================
     //Response menu ~ menuResponse.js
     $('#moderate').click(function(){
         Response_showNewResponse();   

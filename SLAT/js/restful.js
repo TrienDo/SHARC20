@@ -458,6 +458,24 @@ function SharcRestful()
         });   
     }
     
+    this.getMediaLibrary = function(designerId){
+        $.ajax({
+            type:'GET',
+            url: apiRoot + 'mediaLibrary/' + designerId,                                
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    presentAllMedia(result.data);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });
+    }
+    
     this.updateMedia = function(mediaExperience)
     {        
         var data = JSON.stringify(mediaExperience);
