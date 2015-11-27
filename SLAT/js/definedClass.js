@@ -94,9 +94,10 @@ function SharcPoiExperience(experienceId,poiDesigner,description,id, typeList, e
     }
 }
   
-function SharcMediaDesigner(id, contentType, content, size, designerId)
+function SharcMediaDesigner(id, name, contentType, content, size, designerId)
 {
     this.id = id;    
+    this.name = name;
     this.contentType = contentType;          //(Text/Image/Audio/Video)
     this.content = content;                  // Content (Text vs. path to media)   
     this.size = size;   

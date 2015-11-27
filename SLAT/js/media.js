@@ -103,14 +103,14 @@ function selectMediaType()
                 Next: function() {
                     var type = $('input[name=mediaType]:checked', '#selectMediaType').val();
                     //curMedia = new Media((new Date()).getTime(),"",type,"","",0,"","",curMediaType);
-                    curMediaBank = new SharcMediaDesigner((new Date()).getTime() + "", type, "", 0, designerInfo.id); 
+                    curMediaBank = new SharcMediaDesigner((new Date()).getTime() + "", "", type, "", 0, designerInfo.id); 
                     curMedia = new SharcMediaExperience(0, curMediaBank, curMediaType, 0, curProject.id, "", "", false, true,0);
                     curBrowsingType = type;
                     $( this ).dialog("close");
                     switch (type)
                     {
                         case "text":
-                            showTextDialog();
+                            showTextDialog(true, null);
                             break;
                         case "image":
                             showImageDialog();
@@ -186,10 +186,13 @@ function removeMediaFromArray(delId)
 }
 
 //Add a text media item
-function showTextDialog()
+function showTextDialog(isCreating, curMedia)
 {
-    $('#dialog-media').html('');        
-    $('#dialog-media').dialog({ title: "Add text media" });
+    $('#dialog-media').html('');   
+    if(isCreating)     
+        $('#dialog-media').dialog({ title: "Add text media" });
+    else
+        $('#dialog-media').dialog({ title: "Edit text media" });
     var content = '<p><b>You can edit the media content like a Microsoft word document in the form below and click the "Save" button at the end of the dialog</b></p>'
                 + '<input type="file" hidden="hidden" id="importHtmlFile" accept=".html, .htm"/>'
                 + '<form method="post" action="dump.php">'
@@ -223,8 +226,15 @@ function showTextDialog()
         		var htmlContent = reader.result;   // This is the file contents
         	    tinyMCE.activeEditor.setContent(htmlContent);
         	};    	            			
-    	});   
-    tinyMCE.activeEditor.setContent("Please type your text here");  
+    	});
+    if(isCreating)   
+        tinyMCE.activeEditor.setContent("Please type your text here");
+    else{
+        $.get(curMedia.mediaDesigner.content, function(content) { 
+			// if you have one tinyMCE box on the page:
+			tinyMCE.activeEditor.setContent(content);
+		});
+    }  
     $( "#dialog-media" ).dialog({
             modal: true,
             height: 500,
@@ -243,11 +253,24 @@ function showTextDialog()
                     goBack()
                 }, 
                 Back: function(){                 
-                    selectMediaType();                    
+                    if(isCreating) 
+                        selectMediaType();
+                    else{
+                        $( this ).dialog("close");
+                        goBack();
+                    }                    
                 },  
-                Add: function() {
+                Save: function() {
                     curMediaData = tinyMCE.activeEditor.getContent();
-                    uploadAndAddMedia();
+                    if(isCreating)
+                        uploadAndAddMedia();
+                    else{
+                        cloudManager.updateMedia(curMedia.mediaDesigner.id, curMediaData);
+                        $("#dialog-media").dialog("close");
+                        selectedPOIMarker.setMap(null);
+                        //goBack();
+                    }
+                        
                 }             
             }
         });
@@ -499,7 +522,7 @@ function uploadAndAddMedia()
             return;
         }
     }
-             
+    curMediaBank.name = name;         
     curMedia.caption = name;
     
     if(curMediaType == "POI")
@@ -578,20 +601,23 @@ function presentNewMedia(data, count)//count = 1 / -1 when add/delete a media it
     {
         curRoute.mediaCount += count;
     }
-    //goBack();     
-    if(count == 1)
+    goBack();     
+    if(count == 1)//adding -> remove the waiting
         $("#dialog-status").dialog("close");
 }
 //Edit a media item
 function viewEditMediaItem(curMedia)
 {        
+    if(curMedia.mediaDesigner.contentType == "text"){
+        showTextDialog(false, curMedia);
+        return;
+    }
+        
     $('#dialog-media').html('');        
     $('#dialog-media').dialog({ title: "Edit a media item"});
     
-    var content = ""; 
-    if(curMedia.mediaDesigner.contentType == "text")
-        content = '<div><object class="textMediaBox" id="mediaPOI" type="text/html" data="' + curMedia.mediaDesigner.content + '" ></object></div>' + content;
-    else if(curMedia.mediaDesigner.contentType == "image")
+    var content = "";
+    if(curMedia.mediaDesigner.contentType == "image")
         content = '<div class="mediaPlacehold"><img class="imgBox" src="' + curMedia.mediaDesigner.content + '"/></div>' + content;
     else if(curMedia.mediaDesigner.contentType == "audio")
         content = '<div class="mediaPlacehold"><audio width="318" height="200" controls ><source src="' + curMedia.mediaDesigner.content + '" type="audio/mpeg"></audio></div>' + content;
@@ -632,21 +658,11 @@ function viewEditMediaItem(curMedia)
                         return;
                     }
                     
-                    /*if(curMedia.type == "text")
-                    {
-                        desc = $.trim($("#mediaPOI").val());
-                        if(desc!="" && !isValidDescription(desc))
-                        {
-                            showMessage("Invalid content! Content should contain only numbers, characters, hyphen, underscore, comma, period, colon, and space.");
-                            return;
-                        }
-                    } */   
-                    
-                    curMedia.mainMedia = $('#mainMedia').is(':checked');
+                    curMedia.mainMedia = $('#mainMedia').is(':checked');//should check POI and image but ok
                     curMedia.caption = name;                    
                     resfulManager.updateMedia(curMedia);
                     $( this ).dialog( "close" );                    
-                    goBack();                                      
+                    //goBack();                                      
                 }
             }                  
         ]      

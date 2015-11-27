@@ -118,6 +118,7 @@
     {
         $table->string('id');
         $table->primary('id');
+        $table->string('name');
         $table->string('contentType');        	
         $table->string('content');
         $table->integer('size');

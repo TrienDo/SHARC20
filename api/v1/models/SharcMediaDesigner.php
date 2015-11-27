@@ -11,7 +11,7 @@
     {	 
     	public $timestamps = false;
         public $incrementing = false;//Important for non-increment id
-    	protected $fillable = array('id', 'contentType', 'content', 'size', 'designerId');
+    	protected $fillable = array('id', 'name', 'contentType', 'content', 'size', 'designerId');
     	protected $table = 'SharcMediaDesigners'; //name of table       
     }
 ?>

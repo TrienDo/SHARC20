@@ -115,7 +115,45 @@ function SharcGoogleDrive()
             uploadFile(filename, mdata);    
     }
     
-    this.saveExperienceThumbnail = function(filename, data)//Save experience thumbnail 
+    this.updateMedia = function (fileId, data){
+        const boundary = '-------314159265358979323846';
+        const delimiter = "\r\n--" + boundary + "\r\n";
+        const close_delim = "\r\n--" + boundary + "--";
+        
+        var base64Data = btoa(data);
+        
+        var contentType = 'application/octet-stream';
+        var metadata = {
+            'mimeType': contentType,
+            'parents':[{"id":SharcFolderId}]
+        };            
+        
+        var multipartRequestBody = delimiter + 'Content-Type: application/json\r\n\r\n' +
+                                    JSON.stringify(metadata) + delimiter + 'Content-Type: ' + contentType + '\r\n' +
+                                    'Content-Transfer-Encoding: base64\r\n' + '\r\n' + base64Data + close_delim;
+        
+        var request = gapi.client.request({
+            'path': '/upload/drive/v2/files/' + fileId,
+            'method': 'PUT',
+            'params': {'uploadType': 'multipart'},
+            'headers': {
+                'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+            },
+            'body': multipartRequestBody});
+        
+        //request.execute(callback);
+        request.execute(function(resp) {
+            if (resp.error == null) {
+                //goBack();
+            } 
+            else {
+                showMessage(resp.error.message);
+            }
+        });
+        
+    }
+    
+    this.saveExperienceThumbnail = function(filename, data, thumnailPath)//Save experience thumbnail 
     {        
         const boundary = '-------314159265358979323846';
         const delimiter = "\r\n--" + boundary + "\r\n";
@@ -134,19 +172,28 @@ function SharcGoogleDrive()
                                     JSON.stringify(metadata) + delimiter + 'Content-Type: ' + contentType + '\r\n' +
                                     'Content-Transfer-Encoding: base64\r\n' + '\r\n' + base64Data + close_delim;
         
+        var lApiPath = "";
+        var method = "PUT";
+        if(thumnailPath == "" || thumnailPath == null) {//first time -> upload new file
+            method = "POST";
+            lApiPath = '/upload/drive/v2/files';
+        }
+        else {//update file
+            lApiPath = '/upload/drive/v2/files/' + thumnailPath.substr(0,thumnailPath.lastIndexOf("###"));//get id from path
+        }        
         var request = gapi.client.request({
-            'path': '/upload/drive/v2/files',
-            'method': 'POST',
+            'path': lApiPath,
+            'method': method,
             'params': {'uploadType': 'multipart'},
             'headers': {
                 'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
             },
-            'body': multipartRequestBody});
+            'body': multipartRequestBody
+        });
         
-        //request.execute(callback);
         request.execute(function(resp) {
             if (resp.error == null) {
-                publishExperienceData(SharcWebViewLink + resp.title);
+                publishExperienceData(resp.id + "###" + SharcWebViewLink + resp.title);
             } 
             else {
                 showMessage(resp.error.message);
@@ -228,6 +275,7 @@ function uploadFile(filename, data)
         if (resp.error == null) {
             curMediaBank.size = resp.fileSize;                
             curMediaBank.content = SharcWebViewLink + resp.title;
+            curMediaBank.id = resp.id;
             resfulManager.addMedia(curMedia);
         } 
         else {

@@ -155,7 +155,7 @@ function SharcDropBox()
         });
     }
     
-    this.saveExperienceThumbnail = function(filename,mdata)//Save data to file in Dropbox
+    this.saveExperienceThumbnail = function(filename,mdata, thumnailPath)//Save data to file in Dropbox - thumnailPath for google drive only
     {        
         $.ajax({
             type:'POST',
@@ -178,7 +178,7 @@ function SharcDropBox()
                         var url = rs.url;
                         url = url.substring(0,url.lastIndexOf("?"));
                         url = url.replace("https://www.drop","https://dl.drop");    
-                        publishExperienceData(url);  
+                        publishExperienceData("000###" + url);  
                     }
                 });                
             },
@@ -220,6 +220,25 @@ function SharcDropBox()
                         showMessage("Error when sharing data: " + textStatus + " because:" + errorThrown);
                     }
                 });                  
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage("Error when uploading file: " + textStatus + " because:" + errorThrown);
+            }
+        });
+    }
+    
+    this.updateMedia = function (fileId, mdata){
+        $.ajax({
+            type:'POST',
+            url: 'https://api-content.dropbox.com/1/files_put/auto/' + fileId + ".html",
+            headers: { 'Authorization': REQUEST_HEADER, 'Content-Type': 'text/plain'},
+            dataType: 'html',
+            processData: false,
+            data: mdata,
+            success: function(data) {
+                //curMediaBank.size = result.bytes;
+                //resfulManager.addMedia(curMedia);//should update file size
+                goBack();
             },
             error: function(jqXHR, textStatus, errorThrown ) {
                 showMessage("Error when uploading file: " + textStatus + " because:" + errorThrown);

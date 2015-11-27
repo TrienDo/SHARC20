@@ -207,7 +207,7 @@ function createPOI(isCreating,isFromPhoto,tdIndex)//
                         {
                             //add the GPS photo to the POI
                             curMediaType = "POI";//New media                            
-                            curMediaBank = new SharcMediaDesigner((new Date()).getTime() + "", "image", "", 0, designerInfo.id); 
+                            curMediaBank = new SharcMediaDesigner((new Date()).getTime() + "", $("#mediaCaptionPOI").val(), "image", "", 0, designerInfo.id); 
                             curMedia = new SharcMediaExperience(0, curMediaBank, "POI", -1, curProject.id, $("#mediaCaptionPOI").val(), "", false, true,0);//trick: if curMedia.entityId = -1 then upload media                      
                         }
                         

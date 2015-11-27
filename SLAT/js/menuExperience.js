@@ -507,8 +507,10 @@ function publishProject()
     }
     else
     {
+        var exThumbnailPath = curProject.thumbnailPath;
+        exThumbnailPath = exThumbnailPath.substr(exThumbnailPath.lastIndexOf("###")+3);
         content += '<div>Previously, you have submitted a representative image for this experience. If you want to replace it with a new one, please click on the "Choose file" button below to select a new square image</div>'
-        content += '<div><input type="file" id="imageFile" name="imageFile" accept="image/*" class="googleLookAndFeel1"/></div><div class="mediaPlacehold" style="width:350px;height:350px" id="thumbnailEx"><img id="experienceThumbnail" class="imgBox" src="'+ curProject.thumbnailPath +'"/></div></td></tr></table>';
+        content += '<div><input type="file" id="imageFile" name="imageFile" accept="image/*" class="googleLookAndFeel1"/></div><div class="mediaPlacehold" style="width:350px;height:350px" id="thumbnailEx"><img id="experienceThumbnail" class="imgBox" src="'+ exThumbnailPath +'"/></div></td></tr></table>';
     }
         
     $('#dialog-message').html('');        
@@ -554,7 +556,7 @@ function publishProject()
                 }
                 else//browse an image -> upload to cloud and save path
                 {
-                    cloudManager.saveExperienceThumbnail(curProject.id + ".jpg", curMediaData);
+                    cloudManager.saveExperienceThumbnail(curProject.id + ".jpg", curMediaData, curProject.thumbnailPath);
                     $( this ).dialog("close");
                 }
             }             

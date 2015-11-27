@@ -49,6 +49,7 @@
                 //'contentType', 'content', 'size', 'designerId'
                 $mediaDesigner = SharcMediaDesigner::create(array(
                     'id' => $objMedia['mediaDesigner']['id'],
+                    'name' => $objMedia['mediaDesigner']['name'],
                     'contentType' => $objMedia['mediaDesigner']['contentType'],                   
                     'content' => $objMedia['mediaDesigner']['content'],
                     'size' => $objMedia['mediaDesigner']['size'],                   
