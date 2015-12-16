@@ -591,7 +591,7 @@ function getProjectSummary()
 	if(allRoutes.length > 0)
 	{
 		for(var i = 0; i < allRoutes.length; i++)
-			routeInfo += " [Route name: " + allRoutes[i].routeDesigner.name + " (" +   allRoutes[i].getDistance() + " km). " + allRoutes[i].desc +"].";
+			routeInfo += " [Route name: " + allRoutes[i].routeDesigner.name + " (" +   allRoutes[i].getDistance() + " km). " + allRoutes[i].description +"].";
 	}
     return "This experience has " + allRoutes.length + " route(s), " + allEOIs.length + " EOI(s), and " + allPOIs.length + " POI(s)." + routeInfo;
 }

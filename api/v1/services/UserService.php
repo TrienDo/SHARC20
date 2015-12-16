@@ -66,6 +66,23 @@
             return $response;                 
         }
         
+        public static function trackConsumerExperience($experienceId, $cloudAccountId, $username, $useremail, $cloudType){
+            //Check login
+            $objUser = array();
+            $objUser['username'] = $username;
+            $objUser['email'] = $useremail;
+            $objUser['cloudType'] = $cloudType;
+            $objUser['cloudAccountId'] = $cloudAccountId;
+            $objUser['location'] = "";
+            $response = UserService::userLogin($objUser);
+            //Update consumer - experience
+            $objConExp = array();
+            $objConExp['userId'] = $response['data']['id'];
+            $objConExp['experienceId'] = $experienceId;
+            ConsumerExperienceService::updateConsumerExperience($objConExp);
+            return $response;                        
+        }
+        
         public static function checkAuthentication($apiKey) {
             $response = array();
             try{

@@ -109,10 +109,10 @@
             <a   href="#">My Library<img src="images/arrow.png" class="arrowMenu"/></a>
             <ul class="dropdown-menu">
                 <li><a id="mediaLibrary" href="#">Media library</a></li>                
-                <li><a id="poiLibrary" href="#">POI library</a></li>
-                <li><a id="poiTypeLibrary" href="#">POI type library</a></li>
-                <li><a id="eoiLibrary" href="#">EOI library</a></li>
-                <li><a id="routeLibrary" href="#">Route library</a></li>
+                <li><a id="poiLibrary" href="#">[POI library]</a></li>
+                <li><a id="poiTypeLibrary" href="#">[POI type library]</a></li>
+                <li><a id="eoiLibrary" href="#">[EOI library]</a></li>
+                <li><a id="routeLibrary" href="#">[Route library]</a></li>
             </ul>
         </li>
         

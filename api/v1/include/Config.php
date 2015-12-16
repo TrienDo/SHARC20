@@ -207,7 +207,37 @@
         $table->foreign('designerId')->references('id')->on('SharcUsers');        
     });   
     
-    */    
+       
     
+    Capsule::schema()->dropIfExists('SharcConsumerExperiences');
+    Capsule::schema()->create('SharcConsumerExperiences', function($table)
+    {
+        $table->increments('id');
+        $table->integer('experienceId')->unsigned();
+        $table->foreign('experienceId')->references('id')->on('SharcExperiences')->onDelete('cascade');
+        $table->integer('userId')->unsigned();
+        $table->foreign('userId')->references('id')->on('SharcUsers'); 
+        $table->date('lastVisitedDate');       
+    });  
+    
+    Capsule::schema()->dropIfExists('SharcResponses');
+    Capsule::schema()->create('SharcResponses', function($table)
+    {
+        $table->string('id');
+        $table->integer('experienceId')->unsigned();
+        $table->foreign('experienceId')->references('id')->on('SharcExperiences')->onDelete('cascade');
+        $table->integer('userId')->unsigned();
+        $table->foreign('userId')->references('id')->on('SharcUsers');
+        $table->string('contentType');
+        $table->string('content');
+        $table->string('description');                
+        $table->string('entityType');
+        $table->integer('entityId');
+        $table->string('status');
+        $table->integer('size');
+        $table->date('submittedDate');        
+    }); 
+    
+    */ 
          
 ?>

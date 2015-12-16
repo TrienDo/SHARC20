@@ -51,7 +51,7 @@ function presentAllMedia(media)
                 }, 
                 Add: {
                     //class: 'rightButtonCloseEOI',
-                    text:"Add",
+                    text:"[Add]",
                     click: function() {                
                         $(this).dialog("close");                    
                     }

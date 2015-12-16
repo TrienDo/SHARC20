@@ -202,23 +202,19 @@ function SharcPoiType(id, name, description)
 }
 
 
-function Response(mID, mType,mDesc,mContent,mNoOfLike,mEntityType, mEntityID, mConName, mConEmail, mStatus, mSize)
+function SharcResponse(id, experienceId, userId, contentType, content, description, entityType, entityId, status, size, submittedDate)
 {
-    this.id = mID;    
-    this.type = mType;              //(Text/Image/Audio/Video)
-    this.desc = mDesc;
-    this.content = mContent;        // Content (Text vs. path to media)
-    this.noOfLike = mNoOfLike;
-    this.entityType = mEntityType;  //Type of associated entity: New location - POI - EOI - Route
-    this.entityID = mEntityID;      //id of the associated entity
-    this.conName = mConName;        //Name of the dropbox user who submit the response
-    this.conEmail = mConEmail;      //Email of the dropbox user 
-    this.status = mStatus;          //Waiting - Accepted - Rejected - Made a new POI
-    if(mSize == undefined)
-        mSize = "0"
-    this.size = mSize;
-    this.entityName = "";           //Name of the entity
-    this.location = "";                 
+    this.id = id;    
+    this.experienceId = experienceId;         
+    this.userId = userId;
+    this.contentType = contentType;        
+    this.content = content;
+    this.description = description;  
+    this.entityType = entityType;    
+    this.entityId = entityId;        
+    this.status = status;
+    this.size = size;
+    this.submittedDate = submittedDate;
 }
 
 
