@@ -129,7 +129,7 @@ function SharcRestful()
             }
         });
     }
-    
+    //For KML
     this.getExperienceSnapshot = function(){
         $.ajax({
             type:'GET',
@@ -138,6 +138,54 @@ function SharcRestful()
             success: function(result) {                
                 if(result.status == SUCCESS)
                     showExportDialog(result.data)
+                else
+                    showMessage(result.data);
+            }
+        });
+    }
+    
+    //For consumer
+    this.getExperienceSnapshotForConsumer = function(proId){
+        $.ajax({
+            type:'GET',
+            url: apiRoot + 'experienceSnapshot/' + proId,            
+            success: function(result) {                
+                if(result.status == SUCCESS)
+                    renderExperience(result.data)
+                else
+                    showMessage(result.data);
+            }
+        });
+    }
+    
+    //Get mock location
+    this.getMockLocation = function(designerId){
+        $.ajax({
+            type:'GET',
+            url: apiRoot + 'locations/' + designerId,            
+            success: function(result) {                
+                if(result.status == SUCCESS)
+                    renderLocation(result.data)
+                else
+                    showMessage(result.data);
+            }
+        });
+    }
+    
+    //Set mock location
+    this.setMockLocation = function(location){
+        var data = {
+            id: designerInfo.id,
+            location: location
+        };
+        $.ajax({
+            type:'PUT',
+            url: apiRoot + 'locations',
+            headers: { 'apiKey': designerInfo.apiKey},
+            data: JSON.stringify(data),            
+            success: function(result) {                
+                if(result.status == SUCCESS){}
+                    //renderLocation(result.data)
                 else
                     showMessage(result.data);
             }
@@ -163,6 +211,10 @@ function SharcRestful()
                         showUploadingStatus("Please wait. Uploading data...");
                         curMedia.entityId = result.data.id;//return id of the current POI
                         cloudManager.uploadMedia(curMediaBank.id + ".jpg", curMediaData);                        
+                    }
+                    else if(curMedia != null && curMedia.entityId ==-2){//new media from a response
+                        curMedia.entityId = result.data.id;//return id of the current POI
+                        resfulManager.addMedia(curMedia);
                     }
                 }
                 else
@@ -604,6 +656,26 @@ function SharcRestful()
                 showMessage(textStatus + ". " + errorThrown);
             }
         });
+    }
+    //moderate a response
+    this.updateResponseStatus = function(response){
+        var data = JSON.stringify(response);
+        $.ajax({
+            type:'PUT',
+            url: apiRoot + 'responses',
+            data: data,                       
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){
+                    //presentNewMedia(result.data, 1);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });   
     }
 }
 

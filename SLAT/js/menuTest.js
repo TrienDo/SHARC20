@@ -108,6 +108,7 @@ function Test_openEmulator(isEmulator)//emulator or real device
                 	$("#emulatorFrame").show(ANIMATION_SPEED);	
                 	localStorage.setItem("projectID",projectID);
                     localStorage.setItem("designerID",designerInfo.id);
+                    localStorage.setItem("apiKey",designerInfo.apiKey);
                     Test_emulatorWindow = window.open("emulator.php", "Emulator","width=454,height=742,titlebar=no,resizable=no");
                     $( this ).dialog( "close" );
                 }
@@ -122,6 +123,7 @@ function Test_openEmulator(isEmulator)//emulator or real device
     	Test_saveMockLocation(map.getCenter().lat(),map.getCenter().lng());
     	$("#emulatorFrame").show(ANIMATION_SPEED);	
     	localStorage.setItem("projectID",projectID);
+        localStorage.setItem("apiKey",designerInfo.apiKey);
         localStorage.setItem("designerID",designerInfo.id);
     } 
 }
@@ -210,16 +212,5 @@ function Test_goDownRightLocation()
 }
 function Test_saveMockLocation(lat,lng)
 {	
-    $.post(
-        'php/saveMockLocation.php',
-        {            
-            locationID: designerInfo.id,
-            lat: lat,
-            lng: lng                     
-        },
-        function(data,status){
-            //Get all current project name - no duplication
-            //var result = JSON.parse(data);
-        }            
-    );	
+    resfulManager.setMockLocation(lat + " " + lng);
 }		 

@@ -52,6 +52,29 @@
                         
     });
     
+    //Update user location for emulator
+    $app->put('/locations', function () use ($app) {
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }   
+        //Get a user sent from client and convert it to a json object
+        $jsonLocation = $app->request->getBody();
+        $objLocation = json_decode($jsonLocation, true);
+        $objLocation['id'] = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = UserService::updateLocation($objLocation['id'], $objLocation['location']);
+        Utils::echoResponse($response);
+    });
+    
+    //Update user location for emulator
+    $app->get('/locations/:id', function ($id) use ($app) {
+        //Check authentication        
+        $response = UserService::getLocation($id);
+        Utils::echoResponse($response);
+    });
+    
     //RESTful for SharcExperience
     $app->post('/experiences', function () use ($app) {
         //Check authentication        
@@ -121,7 +144,7 @@
         Utils::echoResponse($response);
     });
     
-    //Get content of an experience
+    //Get content of an experience - use when loading an experience from SLAT
     $app->get('/experiences/:designerId/:experienceId', function ($designerId, $experienceId) use ($app) {
         $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
         if($rs["status"] != SUCCESS){
@@ -135,7 +158,7 @@
     });
     
     
-    //Get content of an experience
+    //Get content of an experience --> For exporting data to KML
     $app->get('/experienceSnapshot/:designerId/:experienceId', function ($designerId, $experienceId) use ($app) {
         $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
         if($rs["status"] != SUCCESS){
@@ -144,7 +167,7 @@
         }
            
         $designerId = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only     
-        $response = ExperienceService::getExperienceSnapshot($designerId, $experienceId);
+        $response = ExperienceService::getExperienceSnapshotForKml($designerId, $experienceId);
         Utils::echoResponse($response); 
     });
     
@@ -498,7 +521,21 @@
         $response = ResponseService::addNewResponse($objResponse);
         Utils::echoResponse($response); 
     });
-        
+
+    //Update a response
+    $app->put('/responses', function () use ($app){
+        //Check authentication        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }    
+        //Get a user sent from client and convert it to a json object
+        $jsonResponse = $app->request->getBody();        
+        $objResponse = json_decode($jsonResponse, true);        
+        $response = ResponseService::updateResponse($objResponse);
+        Utils::echoResponse($response); 
+    });        
  
     $app->map('/hello', function () {
 		echo "Welcome to SHARC 2.0 RESTful Web services";

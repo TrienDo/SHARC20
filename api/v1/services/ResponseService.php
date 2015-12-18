@@ -54,7 +54,7 @@
                                 $objPoi['routeList'] = "";                                
                                 $objPoi['poiDesigner'] = array();
                                 $objPoi['poiDesigner']['id'] = 0;
-                                $objPoi['poiDesigner']['name'] = $sharcResponse->description." (created from a response)";
+                                $objPoi['poiDesigner']['name'] = $sharcResponse->description." (created by a user named $curResponse->userId)";
                                 $objPoi['poiDesigner']['coordinate'] = $sharcResponse->entityId;
                                 $objPoi['poiDesigner']['triggerZone'] = "circle 00ff00 20 ".$sharcResponse->entityId;
                                 $objPoi['poiDesigner']['designerId'] = $experience->designerId; 
@@ -83,6 +83,7 @@
                                     $objMedia['mediaDesigner']['designerId'] = $experience->designerId; 
                                     $response = MediaService::addNewMedia($objMedia);
                                 }
+                                $sharcResponse->status = "Made a new POI";
                             }
                             break;
                         case 1:
@@ -127,6 +128,37 @@
                 else {  //error
                     $response["status"] = ERROR;
                     $response["data"] = INTERNAL_SERVER_ERROR;                
+                }               
+            }
+            catch(Exception $e) {
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }    
+            return $response;                 
+        }
+        
+        /**
+         * Update a Response
+         * @param String $objResponse: a json object containing info of a Response                  
+         */
+        public static function updateResponse($objResponse) {            
+            $response = array();
+            try{
+                $sharcResponse = SharcResponse::find($objResponse['id']);
+                if($sharcResponse != null){
+                    $sharcResponse->entityType = $objResponse['entityType'];
+                    $sharcResponse->entityId = $objResponse['entityId'];
+                    $sharcResponse->status = $objResponse['status'];
+                    
+                    $result = $sharcResponse->save(); 
+                    if ($result){ //= 1 success
+                        $response["status"] = SUCCESS;                        
+                        $response["data"] = $sharcResponse->toArray();
+                    }   
+                    else {  //error
+                        $response["status"] = ERROR;
+                        $response["data"] = INTERNAL_SERVER_ERROR;                
+                    }                      
                 }               
             }
             catch(Exception $e) {

@@ -12,6 +12,7 @@ function login()
 
 function showLoginDialog()
 {
+    //window.location.href = 'http://' + callbackURL;
     $('#dialog-message').html('');        
     $('#dialog-message').dialog({ title: "Sharc Locative media Authoring Tool"});
     var is_chrome = navigator.userAgent.toLowerCase().indexOf('chrome');

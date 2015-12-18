@@ -232,7 +232,7 @@
         $table->string('content');
         $table->string('description');                
         $table->string('entityType');
-        $table->integer('entityId');
+        $table->string('entityId');
         $table->string('status');
         $table->integer('size');
         $table->date('submittedDate');        

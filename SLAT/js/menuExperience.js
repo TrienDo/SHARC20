@@ -122,7 +122,7 @@ function askToCreateNewProject()
 {
     $('#dialog-confirm').html('');        
     $('#dialog-confirm').dialog({ title: "Sharc Locative media Authoring Tool"});           
-    $('#dialog-confirm').append('<p>No available experiences! Would you like to create a new one?</p>');
+    $('#dialog-confirm').append('<p>No available experiences stored under this cloud storage! You may have experiences stored under one of your other cloud storage accounts! Would you like to create a new experience?</p>');
     $("#dialog-confirm").dialog({
         modal: true,
         width: 350,
@@ -145,11 +145,11 @@ function renderExperience(data)
     renderPoiTypes(data.allPoiTypes);
     renderEOIs(data.allEois);
     renderRoutes(data.allRoutes);
+    renderResponse(data.allResponses);
     $("#noOfPOI").text("Number of POIs: " + allPOIs.length);
     $("#noOfEOI").text("Number of EOIs: " + allEOIs.length);
-    $("#noOfROU").text("Number of Routes: " + allRoutes.length);
-    
-    //showNotification();//Red rectangle next to the Response menu to indicate new responses    
+    $("#noOfROU").text("Number of Routes: " + allRoutes.length);    
+    showNotification();//Red rectangle next to the Response menu to indicate new responses    
     showMapWithCorrectBound(map,maxZoomLevel)   
 }
 
@@ -234,6 +234,17 @@ function renderPoiTypes(retPoiTypes){
         allPOITypes.push(poiType);                
     }
 }
+
+function renderResponse(retResponses){
+    for(i = 0; i < retResponses.length; i++) {        //( ,  ,  , , , , , , , , )
+        var res = new SharcResponse(retResponses[i].id, retResponses[i].experienceId,retResponses[i].userId,retResponses[i].contentType,retResponses[i].content
+                        ,retResponses[i].description ,retResponses[i].entityType ,retResponses[i].entityId ,retResponses[i].status ,retResponses[i].size,retResponses[i].submittedDate);
+        allResponses.push(res);
+        if(res.status == "waiting")
+            allNewResponses.push(res);                
+    }
+}
+
 function renderEOIs(retEOIs)    
 {
     for(i = 0; i < retEOIs.length; i++) {
@@ -593,5 +604,5 @@ function getProjectSummary()
 		for(var i = 0; i < allRoutes.length; i++)
 			routeInfo += " [Route name: " + allRoutes[i].routeDesigner.name + " (" +   allRoutes[i].getDistance() + " km). " + allRoutes[i].description +"].";
 	}
-    return "This experience has " + allRoutes.length + " route(s), " + allEOIs.length + " EOI(s), and " + allPOIs.length + " POI(s)." + routeInfo;
+    return " This experience has been designed by " + designerInfo.username + " since "  + curProject.createdDate +  ". It has " + allRoutes.length + " route(s), " + allEOIs.length + " EOI(s), and " + allPOIs.length + " POI(s)." + routeInfo;
 }

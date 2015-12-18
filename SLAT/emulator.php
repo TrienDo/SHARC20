@@ -11,6 +11,7 @@
     <script src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/2.0.1/src/markerclusterer.js"></script>
     <script type="text/javascript" src="js/emulatorLogic.js"></script>    
     <script type="text/javascript" src="js/utils.js"></script>
+    <script src="js/restful.js"> </script>
 </head>
 <body id="emulatorBody">	
 	<div id="mapEmulatorCanvas"></div>

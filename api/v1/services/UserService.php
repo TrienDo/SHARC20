@@ -66,6 +66,59 @@
             return $response;                 
         }
         
+        
+        /**
+         * Update location for a user
+         * @param String $objLocation: a json object of location(lat,lng))                  
+         */
+        public static function updateLocation($userId, $objLocation) {
+            $response = array();
+            try{
+                $user = SharcUser::find($userId);
+                if ($user != null){  
+                    $user->location = $objLocation;
+                    $result = $user->save(); 
+                    if ($result){ //= 1 success
+                        $response["status"] = SUCCESS;            
+                        $response["data"] = $user->location;    
+                    }   
+                    else {  //error
+                        $response["status"] = ERROR;
+                        $response["data"] = INTERNAL_SERVER_ERROR;                
+                    }
+                }
+            }
+            catch(Exception $e) {
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }    
+            return $response;                 
+        }
+        
+        /**
+         * Get location of a user
+         * @param String $userId:                   
+         */
+        public static function getLocation($userId) {
+            $response = array();
+            try{
+                $user = SharcUser::find($userId);
+                if ($user != null){ 
+                    $response["status"] = SUCCESS;            
+                    $response["data"] = $user->location;    
+                }   
+                else {  //error
+                    $response["status"] = ERROR;
+                    $response["data"] = INTERNAL_SERVER_ERROR;
+                }
+            }
+            catch(Exception $e) {
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }    
+            return $response;                 
+        }
+        
         public static function trackConsumerExperience($experienceId, $cloudAccountId, $username, $useremail, $cloudType){
             //Check login
             $objUser = array();

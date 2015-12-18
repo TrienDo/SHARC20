@@ -62,7 +62,7 @@ function SharcDropBox()
                 localStorage.setItem("oauth_token",params["oauth_token"]);
                 localStorage.setItem("oauth_token_secret",params["oauth_token_secret"]);
                 REQUEST_HEADER = 'OAuth oauth_version="1.0", oauth_signature_method="PLAINTEXT", oauth_consumer_key="'+ DROPBOX_APP_KEY + '", oauth_token="' + localStorage.getItem("oauth_token") + '", oauth_signature="' + DROPBOX_APP_SECRET + '&' + localStorage.getItem("oauth_token_secret")+'"';
-                $('#logIn').text("Log out");
+                //$('#logIn').text("Log out");
                 //Get user info
                 $.ajax({
                     type:'GET',
@@ -71,7 +71,7 @@ function SharcDropBox()
                     headers: { 'Authorization': REQUEST_HEADER },
                     success: function(data) {                        
                         var result = JSON.parse(data);
-                        $("#userAccount").html('Logged in as ' + result.display_name + '<img src="images/arrow.png" class="arrowMenu"/>');
+                        $("#userAccount").html(result.display_name + '@Dropbox<img src="images/arrow.png" class="arrowMenu"/>');
                         designerInfo = new SharcUser(0, result.display_name, result.email, "", "", "Dropbox", result.uid, "", "");
                         logedIn = true;   
                         showMenu(true);                          
@@ -84,58 +84,7 @@ function SharcDropBox()
             }
         });         
     }     
-     
-    
-    this.saveSnapshot = function(filename,mdata)//save data to a file in Dropbox and share it with everyone
-    {        
-        $.ajax({
-            type:'POST',
-            url: 'https://api-content.dropbox.com/1/files_put/auto/' + filename,
-            headers: { 'Authorization': REQUEST_HEADER, 'Content-Type': 'text/plain'},
-            dataType: 'html',            
-            data: mdata,
-            success: function(data) {                
-                var result = JSON.parse(data);
-                //Share to get public URL and update Project table
-                //1. Share the file                
-                $.ajax({
-                    type:'POST',
-                    url: 'https://api.dropbox.com/1/shares/auto' + result.path + '?short_url=false',
-                    dataType: 'html',
-                    headers: { 'Authorization': REQUEST_HEADER },
-                    success: function(data) {
-                        var rs = JSON.parse(data);
-                        var url = rs.url;
-                        url = url.substring(0,url.lastIndexOf("?"));
-                        url = url.replace("https://www.drop","https://dl.drop");
-                        //2. Update MySQL database
-                        var proCenter = getExperienceBoundary().getCenter();
-                        $.post(
-                            'php/updateProjectURL.php',
-                            {
-                                proAuthID: designerInfo.id,
-                                proPath: projectID,            
-                                proPublicURL: url,
-                                proLocation: proCenter.lat() + " " + proCenter.lng()
-                            },
-                            function(data,status){
-                                var result = JSON.parse(data);
-                                if(result.success == 1)
-                                {    
-                                    showMessage("A new snapshot of the current experience has been created and saved in your dropbox folder Dropbox\\Apps\\SharcAu.");
-                                }
-                                else
-                                    showMessage("Error when creating a new snapshot of the current experience: " + result.message);
-                        });
-                    }
-                });                
-            },
-            error: function(jqXHR, textStatus, errorThrown ) {
-                showMessage("Error when saving file: " + textStatus + " because:" + errorThrown);
-            }
-        });
-    }
-                           
+        
     
     this.saveKmlFile = function(filename,mdata)//Save data to file in Dropbox
     {        

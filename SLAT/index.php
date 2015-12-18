@@ -119,7 +119,7 @@
         <li  >
             <a   id="userAccount" href="#">Your account<img src="images/arrow.png" class="arrowMenu"/></a>
             <ul class="dropdown-menu">
-                <li><a id="logIn" href="#">Log in</a></li>
+                <li><a id="logIn" href="#">Switch account</a></li>
                 <li><a id="help" href="#">Help</a></li>                
                 <li><a id="aboutUs" href="#">About SLAT</a></li>
             </ul>

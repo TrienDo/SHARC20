@@ -59,24 +59,24 @@ function presentNewResponses( )
     {
         $('#dialog-message').html('');        
         $('#dialog-message').dialog({ title: "Moderate new responses" });
-        $('#dialog-message').append('<table width="100%" id="tblData"><thead><tr><th>No.</th><th class="tableNameColumn">Content</th><th>Description</th><th>Associated entity</th><th>Submitter name</th><th>Submitter email</th><th class="tableNameColumn">Action</th></tr></thead><tbody></tbody></table>');
+        $('#dialog-message').append('<table width="100%" id="tblData"><thead><tr><th>No.</th><th class="tableNameColumn">Content</th><th>Description</th><th>Associated entity</th><th>Submitter name</th><th class="tableNameColumn">Action</th></tr></thead><tbody></tbody></table>');
         var count = 0;
         for(var i=0; i < allNewResponses.length; i++)
         {            
-            if (allNewResponses[i].status == "Waiting")
+            if (allNewResponses[i].status == "waiting")
             {
                 count ++;
                 //$("#tblData tbody").append('<tr><td>' + count + '</td><td>' + allNewResponses[i].content + '</td><td>' + allNewResponses[i].desc + '</td><td style="text-align:center;">' + allNewResponses[i].entityID + '</td><td style="text-align:center;">' + allNewResponses[i].conName + '</td><td style="text-align:center;">' + allNewResponses[i].conEmail + '</td><td><button class="btnApprove googleLookAndFeel"><img style="vertical-align:middle" src="images/approve.png"> Approve this response</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Reject this response</button> <button class="btnView googleLookAndFeel">View this response</button></td></tr>');
                 var contentString = "";
-                if(allNewResponses[i].type == "text")
-                    contentString = allNewResponses[i].content;
-                else if(allNewResponses[i].type == "image")
+                if(allNewResponses[i].contentType == "text")
+                    contentString = '<object class="textMediaBox" type="text/html" data="' + allResponses[i].content + '" ></object>';
+                else if(allNewResponses[i].contentType == "image")
                     contentString = '<img style="width:100px" src="' + allNewResponses[i].content + '">';
-                else if(allNewResponses[i].type == "audio")
+                else if(allNewResponses[i].contentType == "audio")
                     contentString = '<audio width="100" controls ><source src="' + allNewResponses[i].content + '" type="audio/mpeg"></audio>';
-                else if(allNewResponses[i].type == "video")
+                else if(allNewResponses[i].contentType == "video")
                     contentString = '<video width="100" controls> <source src="' + allNewResponses[i].content + '"></video>';
-                $("#tblData tbody").append('<tr><td>' + count + '</td><td style="text-align:center;">' + contentString + '</td><td>' + allNewResponses[i].desc + '</td><td style="text-align:center;">' + allNewResponses[i].entityType + " (" + allNewResponses[i].entityName + ")" + '</td><td style="text-align:center;">' + allNewResponses[i].conName + '</td><td style="text-align:center;">' + allNewResponses[i].conEmail + '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/approve.png"> Accept this response</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Reject this response</button><button class="btnView googleLookAndFeel"> Show response\'s details</button></td></tr>');
+                $("#tblData tbody").append('<tr><td>' + count + '</td><td style="text-align:center;">' + contentString + '</td><td>' + allNewResponses[i].description + '</td><td style="text-align:center;">' + allNewResponses[i].entityType + " (" + allNewResponses[i].entityId + ")" + '</td><td style="text-align:center;">' + allNewResponses[i].userId + '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/approve.png"> Accept this response</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Reject this response</button><button class="btnView googleLookAndFeel"> Show response\'s details</button></td></tr>');
             }
         } 
         $("#tblData").addClass("tableBorder");
@@ -97,7 +97,7 @@ function approveResponseNew()
     var par = $(this).parent().parent(); //Get the selected row
     var tdIndex = par.children("td:nth-child(1)");//index of the selected row
     tdIndex = parseInt(tdIndex.text()) - 1;
-    setResponseStatus(tdIndex, "Accepted",true);
+    setResponseStatus(tdIndex, "accepted",true);
 }
 
 function rejectResponseNew()
@@ -105,7 +105,7 @@ function rejectResponseNew()
     var par = $(this).parent().parent(); //Get the selected row
     var tdIndex = par.children("td:nth-child(1)");//index of the selected row
     tdIndex = parseInt(tdIndex.text()) - 1;
-    setResponseStatus(tdIndex,"Rejected",true);    
+    setResponseStatus(tdIndex,"rejected",true);    
 }
 
 function viewResponse()
@@ -128,19 +128,19 @@ function showResponseDetails(index)
         entityText = "A new location (see the map below). If you accept this response, a new POI will be created.<br/><div id='mapResponse'></div>";        
     }
     else if(response.entityType == "POI")
-        entityText = "The POI: " + response.entityName + ".";
+        entityText = "The POI: " + response.entityId + ".";
     else if(response.entityType == "EOI")
-        entityText = "The EOI: " + response.entityName + ".";    
+        entityText = "The EOI: " + response.entityId + ".";    
     else if(response.entityType == "ROUTE")    
         entityText = "The whole experience.";
     else
     { 
         entityText = "<br/>The a media item <br/>";
-        entityText += getCodeForMedia(getMediaWithID(response.entityID), 200);
+        entityText += getCodeForMedia(getMediaWithID(response.entityId), 200);
     }
         
         
-    var content = '<p class="formLabel">' + response.conName + ' submitted a comment/response </p><hr/><div>' +  getCodeForMedia(response, 200) + '</div><hr/><p class="formLabel"> on </p>' + entityText;
+    var content = '<p class="formLabel">' + response.userId + ' submitted a comment/response </p><hr/><div>' +  getCodeForMedia(response, 200) + '</div><hr/><p class="formLabel"> on </p>' + entityText;
     
     $('#dialog-media').append(content);
     
@@ -164,19 +164,19 @@ function showResponseDetails(index)
     $("#dialog-media").dialog({
         modal: true,
         width: 500,
-        height: 380,        
+        height: 600,        
         buttons: [                
             {   
                 text: "Accept this response",
                 click: function() {
-                    setResponseStatus(tdIndex, "Accepted",true);
+                    setResponseStatus(index, "accepted",true);
                     $( this ).dialog( "close" );                    
                 }
             },                                      
             {   
                 text: "Reject this response",                
                 click: function() {
-                    setResponseStatus(tdIndex, "Rejected",true); 
+                    setResponseStatus(index, "rejected",true); 
                     $( this ).dialog( "close" );
                 }
             },
@@ -190,39 +190,35 @@ function showResponseDetails(index)
     });
 }
 
-function getCodeForMedia(tmpMedia, width)
+function getCodeForMedia(tmpMedia, height)
 {
+    if(tmpMedia == null)
+        return "";
     var title = "";
     if(tmpMedia.name != undefined)
         title = tmpMedia.name;
     else
-        title = tmpMedia.desc;
+        title = tmpMedia.description;
         
     var contentString = "";
-    if(tmpMedia.type == "text")
-        contentString = tmpMedia.content;
-    else if(tmpMedia.type == "image")
+    if(tmpMedia.contentType == "text")
+        contentString = '<object class="textMediaBox" type="text/html" data="' + tmpMedia.content + '" ></object>';
+    else if(tmpMedia.contentType == "image")
         contentString = '<img style="height:' + height + 'px;" src="' + tmpMedia.content + '">';
-    else if(tmpMedia.type == "audio")
+    else if(tmpMedia.contentType == "audio")
         contentString = '<audio controls ><source src="' + tmpMedia.content + '" type="audio/mpeg"></audio>';
-    else if(tmpMedia.type == "video")
-        contentString = '<video controls> <source src="' + tmpMedia.content + '"></video>';
+    else if(tmpMedia.contentType == "video")
+        contentString = '<video controls style="height: 300px;"> <source src="' + tmpMedia.content + '"></video>';
         
-    if(tmpMedia.type == "text")
-        contentString = "<p style='font-weight: bold;'>" +  title + "</p>" + contentString;
-    else
+    if(tmpMedia.contentType != "text")
         contentString += "<p style='font-weight: bold;'>" + title + "</p>";    
     return contentString;
 }
 
 function getMediaWithID(id)
 {
-    for (var i = 0; i < allMedia.length; i++)
-        if (allMedia[i].id == id)
-            return allMedia[i];
-    for (var i = 0; i < allResponses.length; i++)
-        if (allResponses[i].id == id)
-            return allResponses[i];
+    //retrieve from database a media
+    return null;
 }
 
 //Show all responses: new - undecided - rejected - accepted
@@ -270,15 +266,15 @@ function presentAllResponses( )
         {            
             //$("#tblData tbody").append('<tr><td>' + count + '</td><td>' + allResponses[i].content + '</td><td>' + allResponses[i].desc + '</td><td style="text-align:center;">' + allResponses[i].entityID + '</td><td style="text-align:center;">' + allResponses[i].conName + '</td><td style="text-align:center;">' + allResponses[i].conEmail + '</td><td><button class="btnApprove googleLookAndFeel"><img style="vertical-align:middle" src="images/approve.png"> Approve this response</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Reject this response</button> <button class="btnView googleLookAndFeel">View this response</button></td></tr>');
             var contentString = "";
-                if(allResponses[i].type == "text")
-                    contentString = allResponses[i].content;
-                else if(allResponses[i].type == "image")
+                if(allResponses[i].contentType == "text")
+                    contentString = '<object class="textMediaBox" type="text/html" data="' + allResponses[i].content + '" ></object>';
+                else if(allResponses[i].contentType == "image")
                     contentString = '<img style="width:100px" src="' + allResponses[i].content + '">';
-                else if(allResponses[i].type == "audio")
+                else if(allResponses[i].contentType == "audio")
                     contentString = '<audio width="100" controls ><source src="' + allResponses[i].content + '" type="audio/mpeg"></audio>';
-                else if(allResponses[i].type == "video")
+                else if(allResponses[i].contentType == "video")
                     contentString = '<video width="100" controls> <source src="' + allResponses[i].content + '"></video>';
-            $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td style="text-align:center;">' + contentString + '</td><td>' + allResponses[i].desc + '</td><td style="text-align:center;">' + allResponses[i].entityName + '</td><td style="text-align:center;">' + allResponses[i].conName + '</td><td style="text-align:center;">' + allResponses[i].status + '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/approve.png"> Accept this response</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Reject this response</button><button class="btnView googleLookAndFeel">Set back waiting</button></td></tr>');
+            $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td style="text-align:center;">' + contentString + '</td><td>' + allResponses[i].description + '</td><td style="text-align:center;">' + allResponses[i].entityId + '</td><td style="text-align:center;">' + allResponses[i].userId + '</td><td style="text-align:center;">' + allResponses[i].status + '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/approve.png"> Accept this response</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Reject this response</button><button class="btnView googleLookAndFeel">Set back waiting</button></td></tr>');
         } 
         $("#tblData").addClass("tableBorder");
         $("#tblData td").addClass("tableBorder");
@@ -297,7 +293,7 @@ function approveResponse()
     var par = $(this).parent().parent(); //tr
     var tdIndex = par.children("td:nth-child(1)");
     tdIndex = parseInt(tdIndex.text()) - 1;
-    setResponseStatus(tdIndex,"Accepted",false);    
+    setResponseStatus(tdIndex,"accepted",false);    
 }
 
 function rejectResponse()
@@ -305,7 +301,7 @@ function rejectResponse()
     var par = $(this).parent().parent(); //tr
     var tdIndex = par.children("td:nth-child(1)");
     tdIndex = parseInt(tdIndex.text()) - 1;
-    setResponseStatus(tdIndex,"Rejected",false);    
+    setResponseStatus(tdIndex,"rejected",false);    
 }
  
 function resetResponse()
@@ -313,7 +309,7 @@ function resetResponse()
     var par = $(this).parent().parent(); //tr
     var tdIndex = par.children("td:nth-child(1)");
     tdIndex = parseInt(tdIndex.text()) - 1;
-    setResponseStatus(tdIndex,"Waiting",false);   
+    setResponseStatus(tdIndex,"waiting",false);   
 }
 
 //Update status of a response
@@ -322,14 +318,15 @@ function resetResponse()
 //      - mStatus: status of the response
 //      - isNew: whether this function is called from the "Moderate new responses" or "Moderate all responses"  
 function setResponseStatus(index, mStatus, isNew)
-{    
+{   
     if (isNew)
         curResponse = allNewResponses[index];
     else
         curResponse = allResponses[index];
+    var oldStatus = curResponse.status; 
     curResponse.status = mStatus;
     //if the response is for new location --> Create a new POI and make the the response the first media of the POI    
-    if(mStatus == "Accepted" && curResponse.entityType == "NEW")
+    if(mStatus == "accepted" && curResponse.entityType == "NEW")
     {
         /*There maybe more than one responses for the the new location
             The first (its location is not the same as any existing POIs) will be made a new POI else make a normal response*/
@@ -337,15 +334,20 @@ function setResponseStatus(index, mStatus, isNew)
         //Loop through all POI
         for(var i = 0; i < allPOIs.length; i++)
         {
-            if(allPOIs[i].latLng == curResponse.entityID)
+            if(allPOIs[i].getFirstPointString() == curResponse.entityId)
             {
                 curResponse.entityType = "POI";
-                curResponse.entityID = allPOIs[i].id;
-                mDropBox.updateResponseStatus(curResponse);
+                curResponse.entityId = allPOIs[i].id;
+                allPOIs[i].responseCount ++;
+                resfulManager.updateResponseStatus(curResponse);
                 if(isNew)
                 {
                     allNewResponses.splice(index,1);
                     Response_showNewResponse();
+                    showNotification();
+                }
+                else{
+                    Response_showAllResponse();
                     showNotification();
                 }
                 return;
@@ -353,68 +355,52 @@ function setResponseStatus(index, mStatus, isNew)
         }
         
         curResponse.status = "Made a new POI";
-        var name = curResponse.desc;
+        var name = curResponse.description;
         if(name == "" || name == undefined || name == null)
             name = "Undefined name";
-        //Create a new POI    
-        curPOI = new POI(name + " (created by a user named " + curResponse.conName + ")","", "", name, curResponse.entityID,(new Date()).getTime(),"",""); 
+        //Create a new POI
+        var poiBank = new SharcPoiDesigner(0, name + " (created by a user named " + curResponse.userId + ")", curResponse.entityId, "" ,designerInfo.id);
+        curPOI = new SharcPoiExperience(curProject.id, poiBank, name, 0, "", "", "", 1, 0);
         trigerZonePOI = new google.maps.Circle({					
-    		center: curPOI.getLatLng(), radius: 20,
+    		center: curPOI.getFirstPoint(), radius: 20,
     		strokeColor: "#00FF00", strokeOpacity: 1.0, strokeWeight: 2,
     		fillColor: "#00FF00", fillOpacity: 0.3,		
     		map: map
     	});
-        curPOI.setTriggerZone(trigerZonePOI,"#00FF00");
-        //Create a new media   
-        curMedia = new Media(curResponse.id,name,curResponse.type,name,curResponse.content,0,"",curPOI.id,"POI");
-        var tmpPoiMarker = new google.maps.Marker({  
-		   position: curPOI.getLatLng(), map: map, zIndex:2,visible: true,draggable: false,
-		   icon:"images/poi.png", title: curPOI.name,id: allPOIMarkers.length	
-	    });
+        curPOI.setTriggerZone(trigerZonePOI, "#00FF00");
         
+        curMediaType = "POI";//New media                            
+        curMediaBank = new SharcMediaDesigner(curResponse.id, name, curResponse.contentType, curResponse.content, curResponse.size, designerInfo.id); 
+        curMedia = new SharcMediaExperience(0, curMediaBank, "POI", -2, curProject.id, name, "", false, true,0);                      
+        
+        var tmpPoiMarker = new google.maps.Marker({  
+		   position: curPOI.getFirstPoint(), map: map, zIndex:2,visible: true,draggable: false,
+		   icon:"images/poi.png", title: name,id: allPOIMarkers.length	
+	    });
+                
         addMarkerPOIClickEvent(tmpPoiMarker);                    
         allPOIMarkers.push(tmpPoiMarker);
         allPOIZones.push(trigerZonePOI);
         allPOIs.push(curPOI);
-        curPOI.mediaOrder.push(curMedia.id);
-        curPOI.associatedMedia[curMedia.id] = curMedia;        
-        $("#noOfPOI").text("Number of POIs: " + allPOIs.length);
-        
-        //Create insert command for new POI
-        var newRowPOI = '["I","POIs",' + '"' + curPOI.id + '"' + ',{"name":"' + encodeURI(curPOI.name) + '","type":"' + curPOI.type + '","mediaOrder":"' + curPOI.mediaOrder.join(" ") + '","associatedEOI":"' + curPOI.associatedEOI + '","associatedRoute":"' + curPOI.associatedRoute + '","desc":"' + encodeURI(curPOI.desc) + '","triggerZone":"' + curPOI.triggerZone + '","latLng":"' + curPOI.latLng + '","mediaOrder":"' + curPOI.mediaOrder + '"}]';
-        //Create insert command for new media
-        var newRowMedia = '["I","media","' + curMedia.id + '",{"name":"' +  encodeURI(curMedia.name) + '","type":"' + curMedia.type 
-                                    + '","desc":"' + encodeURI(curMedia.desc) + '","content":"' + curMedia.content + '","noOfLike":"' + curMedia.noOfLike  
-                                    + '","context":"' + encodeURI(curMedia.context)  + '","PoIID":"' + curMedia.PoIID + '","attachedTo":"' + curMedia.attachedTo + '"}]'; 
-        //var updateRowResponse = '["U","Responses","' + curResponse.id + '",{"status":["P","' +  curResponse.status + '"]}]';
-        //Delete the response 
-        var updateRowResponse = '["D","Responses","' + curResponse.id + '"]';
-        
-        var dataChanges = "[" + newRowPOI + "," + newRowMedia + "," + updateRowResponse + "]";
-        mDropBox.updateCommand(dataChanges);
-        //Email the consumer about the action made on their response
-        $.post(
-            'php/emailConsumer.php',
-            {            
-                designerName: designerInfo.userName,
-                consumerName: curResponse.conName,
-                consumerEmail: curResponse.conEmail,
-                experienceName: $("#curProject").text(),
-                responseStatus: curResponse.status                      
-            },
-            function(data,status){
-                //Get all current project name - no duplication
-                //var result = JSON.parse(data);
-            }            
-        );
-        alert("The response you have just accepted has been made a new POI named " + curPOI.name.toUpperCase() + ". You can go to Manage POIs to edit it.");
+        resfulManager.createNewPoi(curPOI);
+        resfulManager.updateResponseStatus(curResponse);
+        $("#noOfPOI").text("Number of POIs: " + allPOIs.length);        
+        alert("The response you have just accepted has been made a new POI named '" + name + "'. You can go to Manage POIs to edit it.");
     }
     else
-        mDropBox.updateResponseStatus(curResponse);
+        resfulManager.updateResponseStatus(curResponse);
     if(isNew)
     {
         allNewResponses.splice(index,1);
         Response_showNewResponse();
+        showNotification();
+    }
+    else{
+        if(mStatus == "waiting" && oldStatus != "waiting"){
+            //if it is not in the new List -> add
+            allNewResponses.push(curResponse);
+        }
+        Response_showAllResponse();
         showNotification();
     }
 }

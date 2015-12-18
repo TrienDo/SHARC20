@@ -87,7 +87,9 @@ function initialize()
     //========================================================================================
     //Your account menu ~ menuUser.js
     $('#logIn').click(function(){
-		showLoginDialog();                 
+		window.location.href = 'http://' + callbackURL;
+        showLoginDialog(); 
+                        
 	});
      
     $('#help').click(function(){

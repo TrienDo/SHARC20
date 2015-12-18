@@ -1,7 +1,8 @@
 var mockLocation;   //a marker show the fake current location
 var shownPOIs = new Array();
 var map;
-var locationID;     //actually the ID of the designer to access the current location of the designer
+var resfulManager;
+var endIcon = null;
 
 var markerManager = null;
 var allPOIMarkers = new Array();
@@ -12,7 +13,11 @@ var allRoutes = new Array();
 var allRoutePaths = new Array();
 var startRouteMarker = null;
 var endRouteMarker = null;
-
+var allRouteMarkers = new Array();//Array to store all Start/End markers of routes
+var allPoiViz = new Array();    //Array to store all viz of POI (e.g., point, polygon, polyline) - point = null, other = polyline as polygon = polyline with same start and end
+var maxZoomLevel = 18;          //Zoom the map to this max level
+var curProject = {id:1, name: ""};
+var designerInfo = {id:1, apiKey: ""};
 //event onload of webpage
 $(document).ready(function(){
     initialize();
@@ -20,11 +25,12 @@ $(document).ready(function(){
 
 function initialize() 
 {
+    resfulManager = new SharcRestful();
     try
 	{		
 		var mapOptions = {
-			center: new google.maps.LatLng( 54.103,-2.609),
-			zoom: 17,
+			center: new google.maps.LatLng( 0,0),
+			zoom: 12,
 			mapTypeControl: false,
 			mapTypeId: google.maps.MapTypeId.MAP
 		};	
@@ -52,10 +58,17 @@ function initialize()
 			draggable: false}
 		);
         
+        endIcon = {
+            url: 'images/end.png',        
+            size: new google.maps.Size(32, 64),        
+            origin: new google.maps.Point(0, 0),        
+            anchor: new google.maps.Point(16, 0)
+        };
+    
         endRouteMarker = new google.maps.Marker({
             position: new google.maps.LatLng(0,0),
             draggable:true,
-            icon: "images/end.png",
+            icon: endIcon,
             map:null
         });
         
@@ -81,10 +94,21 @@ function initialize()
 		{
 			map.setCenter(mockLocation.getPosition());	
 		});		
-        locationID = localStorage.getItem("designerID");
+        var proId = localStorage.getItem("projectID");
+        var apiKey = localStorage.getItem("apiKey");
+        var locationId = localStorage.getItem("designerID");
+        
+        proId = 1;
+        locationID = 1;
+        apiKey = "059f0e0bb017817db7ef9c372a7c6f69";
+        
+        curProject.id = proId;
+        designerInfo.id = locationID;
+        designerInfo.apiKey = apiKey;
+         
 		//Load default file
 		window.setTimeout("loadExperience()",1000);         
-		window.setInterval("updateCurrentLocation()",2000);			
+		window.setInterval("updateCurrentLocation()",1000);			
 	}
 	catch(e)
 	{
@@ -94,23 +118,16 @@ function initialize()
 
 function updateCurrentLocation()//get the current location from MySQL database and show it on map
 {
-	$.post(
-        'php/getMockLocation.php',
-        {            
-            locationID: locationID,                                 
-        },
-        function(data,status){
-            var result = JSON.parse(data);
-			if(result.success == 1) //success is coded in JSON object from server = 0/1 and sharcFiles = arrays of name and description
-			{				
-				//alert(result.location[0].lat + " x " + result.location[0].lng);	
-				var newPos = new google.maps.LatLng(result.location[0].lat,result.location[0].lng);
-				mockLocation.setPosition(newPos);
-				//map.setCenter(newPos);
-				findTriggerPoint(newPos);	
-			}
-        }            
-    );	
+	resfulManager.getMockLocation(designerInfo.id );
+}
+
+function renderLocation(location){
+    //alert(result.location[0].lat + " x " + result.location[0].lng);
+    var latLng = location.split(" ");	
+	var newPos = new google.maps.LatLng(parseFloat(latLng[0]),parseFloat(latLng[1]));
+	mockLocation.setPosition(newPos);
+	//map.setCenter(newPos);
+	findTriggerPoint(newPos);
 }
 
 
@@ -121,7 +138,9 @@ function findTriggerPoint(curLocation) //Identify the current POI
         return;
 	if(shownPOIs.indexOf(index)==-1)
 	{
-		displayInfo(allPOIs[i]);									
+		//displayInfo(allPOIs[i]);
+        curPOI = allPOIs[i];
+        resfulManager.getMediaForEntity("POI", curPOI.id);									
 		shownPOIs.push(index);
 	}  
 }
@@ -184,161 +203,141 @@ function Angle2D( y1,  x1,  y2, x2)
 }
  
 function loadExperience()
-{
-	var proPath = localStorage.getItem("projectID");	
-    $.post(
-        'php/getSnapshotPathFromID.php',
-        {            
-            proPath: proPath     
-        },
-        function(data,status){
-            var result = JSON.parse(data);
-			if(result.success == 1 && result.projects.length > 0) //success is coded in JSON object from server = 0/1 and sharcFiles = arrays of name and description
-			{				
-                var expPublicURL = result.projects[0].proPublicURL;
-                $.ajax({
-                    url: expPublicURL,
-                    success: function (data){
-                        var result = JSON.parse(data);
-                        presentExperience(result); 
-                    }
-                });
-            }
-            else
-                alert("Please make sure that you have published your project!")
-        }            
-    );  
+{	
+    resfulManager.getExperienceSnapshotForConsumer(curProject.id);
 }
 
-function presentExperience(snapshot)
+function renderExperience(data)
 {
-    var tableID = "";
-    var tmpData;
-    var tmpPoiMarker;      
-    var tmpPoiZone;                 
-    var hashTablePOI = new Array();//For fast adding media to POI    
-    var hashTableRoute = new Array();//For fast adding media to Route
-    var allMedia = new Array();//For fast adding media to POI
-    var tmpMedia = null; 
-    var tmpLatLng;    
-    for(var i = 0; i < snapshot.rows.length; i ++)
-    {
-        tableID = snapshot.rows[i].tid;
-        tmpData = snapshot.rows[i].data;
-        if(tableID == "POIs")
+    //clearScreen();
+    renderPOIs(data.allPois);    
+    //renderEOIs(data.allEois);
+    renderRoutes(data.allRoutes);
+    showMapWithCorrectBound(map,maxZoomLevel);
+}
+
+function renderPOIs(retPOIs)    
+{
+    for(i = 0; i < retPOIs.length; i++) {
+        //Get info
+        var poiDesigner = new SharcPoiDesigner(retPOIs[i].poiDesigner.id, retPOIs[i].poiDesigner.name, retPOIs[i].poiDesigner.coordinate, retPOIs[i].poiDesigner.triggerZone, retPOIs[i].poiDesigner.designerId);
+        curPOI = new SharcPoiExperience(retPOIs[i].experienceId,retPOIs[i].poiDesigner,retPOIs[i].description,retPOIs[i].id, retPOIs[i].typeList, retPOIs[i].eoiList,retPOIs[i].routeList, retPOIs[i].mediaCount, retPOIs[i].responseCount);
+        allPOIs.push(curPOI);
+        //Vis Geofence
+        var fenceInfo = curPOI.poiDesigner.triggerZone.trim().split(" ");
+        if(fenceInfo[0]== "circle") //String format-->circle colourWithout# Radius Lat Lng
         {
-            curPOI = new POI(decodeURI(tmpData.name),tmpData.type,tmpData.associatedEOI,decodeURI(tmpData.desc),tmpData.latLng,snapshot.rows[i].rowid,tmpData.associatedRoute, tmpData.triggerZone);
-            if(tmpData.mediaOrder != undefined)
-                curPOI.mediaOrder = tmpData.mediaOrder.split(" ");
-                 
-            tmpLatLng = curPOI.getLatLng();                          
-            tmpPoiMarker = new google.maps.Marker({  
-			   position: tmpLatLng, map: map, zIndex:2,visible: true,draggable: false,
-			   icon:"images/poi.png", title: curPOI.name,id: allPOIMarkers.length	
-		    });
-            markerManager.addMarker(tmpPoiMarker);
-            addMarkerPOIClickEvent(tmpPoiMarker);                                
-            allPOIMarkers.push(tmpPoiMarker);                                    
-            hashTablePOI[curPOI.id] = allPOIs.length;//key = id and value = index of POI in array
-            allPOIs.push(curPOI);
-            //Geofence
-            if(curPOI.triggerZone == null)
-            {
-                tmpPoiZone = new google.maps.Circle({					
-            		center: tmpLatLng, radius: 20,
-            		strokeColor: "#00FF00", strokeOpacity: 1.0, strokeWeight: 2,
-            		fillColor: "#00FF00", fillOpacity: 0.3,		
-            		map: map
-            	});
-                curPOI.triggerZone = "circle 00FF00 20" + " " + tmpLatLng.lat() + " " + tmpLatLng.lng();
-            }
-            else
-            {
-                var fenceInfo = curPOI.triggerZone.split(" ");
-                if(fenceInfo[0]== "circle") //String format-->circle colourWithout# Radius Lat Lng
-                {
-                    tmpPoiZone = new google.maps.Circle({					
-                		center: new google.maps.LatLng(parseFloat(fenceInfo[3]), parseFloat(fenceInfo[4])), 
-                        radius: parseFloat(fenceInfo[2]),
-                		strokeColor: "#" + fenceInfo[1], strokeOpacity: 1.0, strokeWeight: 2,
-                		fillColor: "#" + fenceInfo[1], fillOpacity: 0.3,		
-                		map: map
-                	});
-                }
-                else if(fenceInfo[0]== "polygon")//String format-->polygon colourWithout# Lat1 Lng1 Lat2 Lng2
-                {
-                    
-                    var polyPath = new Array();
-        			var k = 2;
-        			while (k < fenceInfo.length)
-        			{
-        				var tmpPoint =  new google.maps.LatLng(parseFloat(fenceInfo[k]), parseFloat(fenceInfo[k+1]));				
-        				polyPath.push(tmpPoint);
-        				k+=2;
-        			}
-                    
-                    tmpPoiZone = new google.maps.Polygon({					
-                		paths: polyPath,
-                        strokeColor: "#" + fenceInfo[1], strokeOpacity: 1.0, strokeWeight: 2,
-                		fillColor: "#" + fenceInfo[1], fillOpacity: 0.3,		
-                		map: map
-                	});
-                }
-            }
-            allPOIZones.push(tmpPoiZone);                                            
+            tmpPoiZone = new google.maps.Circle({					
+        		center: new google.maps.LatLng(parseFloat(fenceInfo[3]), parseFloat(fenceInfo[4])), 
+                radius: parseFloat(fenceInfo[2]),
+        		strokeColor: "#" + fenceInfo[1], strokeOpacity: 1.0, strokeWeight: 2,
+        		fillColor: "#" + fenceInfo[1], fillOpacity: 0.3,		
+        		map: map
+        	});
         }
-        else if(tableID == "media")
+        else if(fenceInfo[0]== "polygon")//String format-->polygon colourWithout# Lat1 Lng1 Lat2 Lng2
         {
-            tmpMedia = new Media(snapshot.rows[i].rowid, decodeURI(tmpData.name),tmpData.type,decodeURI(tmpData.desc),tmpData.content,tmpData.noOfLike,tmpData.context,tmpData.PoIID,tmpData.attachedTo);
-            allMedia.push(tmpMedia);                                
-        }
-        else if(tableID == "Routes")
-        {
-            //get points of path
-            var allCoors = tmpData.polygon.split(" ");
-            var tmpPath = new Array();
-            for(k = 0; k < allCoors.length; k=k+2)
-        	{		
-        		tmpPath.push(new google.maps.LatLng(allCoors[k],allCoors[k+1]));
-        	}
-            routePath = new google.maps.Polyline({ path: tmpPath,geodesic: true,editable:false, map: map, strokeColor: ("#" + tmpData.colour),strokeOpacity: 1.0,strokeWeight: 2}); 
-            allRoutePaths.push(routePath);
-            curRoute = new Route(snapshot.rows[i].rowid, tmpData.name,tmpData.desc,"#" + tmpData.colour,tmpData.associatedPOI,routePath.getPath(),tmpData.associatedEOI);
             
-            if(tmpData.mediaOrder != undefined)
-               curRoute.mediaOrder = tmpData.mediaOrder.split(" ");
-          
-            hashTableRoute[curRoute.id] = allRoutes.length;//key = id and value = index of EOI in array
+            var polyPath = new Array();
+			var k = 2;
+			while (k < fenceInfo.length)
+			{
+				var tmpPoint =  new google.maps.LatLng(parseFloat(fenceInfo[k]), parseFloat(fenceInfo[k+1]));				
+				polyPath.push(tmpPoint);
+				k+=2;
+			}
             
-            allRoutes.push(curRoute);
-            
-            var directed = tmpData.directed;
-            if(directed == undefined)
-                directed = true;
-            //show start and end marker
-            if(directed)
-        	{
-        		var tmpR = routePath.getPath().getArray();		
-        		endRouteMarker.setPosition(tmpR[tmpR.length - 1]);
-        		endRouteMarker.setMap(map);
-                startRouteMarker.setPosition(tmpR[0]);
-        		startRouteMarker.setMap(map);
-        	}
-        }
-    }
-    //Associate media with POIs
-    for(var i = 0; i< allMedia.length; i++)
-    {
-        if(allMedia[i].attachedTo == "POI")
-        {
-            if(allPOIs[hashTablePOI[allMedia[i].PoIID]] != undefined)
-                allPOIs[hashTablePOI[allMedia[i].PoIID]].associatedMedia[allMedia[i].id] = allMedia[i];
+            tmpPoiZone = new google.maps.Polygon({					
+        		paths: polyPath,
+                strokeColor: "#" + fenceInfo[1], strokeOpacity: 1.0, strokeWeight: 2,
+        		fillColor: "#" + fenceInfo[1], fillOpacity: 0.3,		
+        		map: map
+        	});
         }        
-    } 
-    
-    map.fitBounds(getExperienceBoundary());
-    if(map.getZoom()>16)
-        map.setZoom(16);
+        allPOIZones.push(tmpPoiZone);                                
+        //hashTablePOI[curPOI.id] = allPOIs.length;//key = id and value = index of POI in array --> to associate media with POI later
+        //Viz marker        
+        tmpLatLng = curPOI.getFirstPoint();
+        var poiIcon = null;
+        //if(curPOI.type == "accessibility")
+        //    poiIcon = "images/access.png";
+        //else
+        //{
+            //poiIcon = getFirstImage(curPOI);
+            //if(poiIcon == null)
+                poiIcon = "images/poi.png";
+        //}
+        if(retPOIs[i].thumbnail == "")
+            poiIcon = "images/poi.png";
+        else
+            poiIcon =  getImageMarker(retPOIs[i].thumbnail);                        
+        tmpPoiMarker = new google.maps.Marker({  
+        			   position: tmpLatLng, map: map, zIndex:2,visible: true,draggable: false,
+        			   icon: poiIcon, title: curPOI.poiDesigner.name,id: allPOIMarkers.length	
+        		    });
+        //markerManager.addMarker(tmpPoiMarker);
+        addMarkerPOIClickEvent(tmpPoiMarker);                                
+        allPOIMarkers.push(tmpPoiMarker);
+        
+        //Viz of POI
+        var tmpPath =  curPOI.getPoiVizPath();
+        if(tmpPath.length > 0)
+        {
+            var poiViz = new google.maps.Polyline({ path: tmpPath,geodesic: true,editable:false, map: map, strokeColor: ("#FF0000"),strokeOpacity: 1.0,strokeWeight: 2}); 
+            allPoiViz.push(poiViz);
+        }
+        else 
+            allPoiViz.push(null);
+    }                                                             
+}
+
+function renderRoutes(retRoutes)    
+{
+    for(i = 0; i < retRoutes.length; i++) {
+        //Get info
+        var routeDesigner = new SharcRouteDesigner(retRoutes[i].routeDesigner.id, retRoutes[i].routeDesigner.name,retRoutes[i].routeDesigner.directed,retRoutes[i].routeDesigner.colour, retRoutes[i].routeDesigner.path,retRoutes[i].routeDesigner.designerId);
+        //get points of path
+        var allCoors = new Array();
+        if(routeDesigner.path.trim()!= "")
+            allCoors = routeDesigner.path.split(" ");
+        
+        var tmpPath = new Array();
+        for(k = 0; k < allCoors.length; k=k+2)
+    	{		
+    		tmpPath.push(new google.maps.LatLng(allCoors[k],allCoors[k+1]));
+    	}
+        routePath = new google.maps.Polyline({ path: tmpPath,geodesic: true,editable:false, map: map, strokeColor: (routeDesigner.colour),strokeOpacity: 1.0,strokeWeight: 2}); 
+        allRoutePaths.push(routePath);
+        
+        //show start and end marker
+		var tmpR = routePath.getPath().getArray();
+        if (tmpR.length > 0)
+        {		
+    		tmpRouteMarker = new google.maps.Marker({
+                position: new google.maps.LatLng(0,0),
+                draggable:true,
+                icon: endIcon,
+                map:null
+            });
+            tmpRouteMarker.setPosition(tmpR[tmpR.length - 1]);
+    		if(routeDesigner.directed)
+                tmpRouteMarker.setMap(map);
+            allRouteMarkers.push(tmpRouteMarker);
+            
+            tmpRouteMarker = new google.maps.Marker({
+                position: new google.maps.LatLng(0,0),
+                draggable:true,
+                icon: "images/start.png",
+                map:null
+            });
+            tmpRouteMarker.setPosition(tmpR[0]);
+    		if(routeDesigner.directed)
+                tmpRouteMarker.setMap(map);
+            allRouteMarkers.push(tmpRouteMarker);
+        }
+        curRoute = new SharcRouteExperience(retRoutes[i].id, routeDesigner, retRoutes[i].experienceId,retRoutes[i].description, routePath.getPath(), retRoutes[i].poiList, retRoutes[i].eoiList,retRoutes[i].mediaCount, retRoutes[i].responseCount);
+        allRoutes.push(curRoute);                
+    }                                                             
 }
 
 function addMarkerPOIClickEvent(marker)
@@ -353,36 +352,34 @@ function addMarkerPOIClickEvent(marker)
     });
 }
 
-function displayInfo(tmpObject)
+function getMediaContent(mediaExperience)//For displaying media pane
 {
-	var content = "<div>" + getPOIMediaContent(tmpObject) + "</div>";		
+    var content = '<ul id="uList" style="list-style:none; padding-left:0;display:table; margin:0 auto;">';
+    var tmpMedia;
+    for(var i=0; i < mediaExperience.length; i++)
+    {
+        tmpMedia = mediaExperience[i].mediaDesigner;
+        
+        if(tmpMedia.contentType == "text")
+            content += '<li id="' + mediaExperience[i].id + '"><div><object class="textMediaBox" id="mediaPOI" type="text/html" data="' + tmpMedia.content + '" ></object></div>';
+        else if(tmpMedia.contentType == "image")
+            content += '<li id="' + mediaExperience[i].id + '"><img class="imgMedia" width="318" src="' + tmpMedia.content + '"/>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';        
+        else if(tmpMedia.contentType == "audio")
+            content += '<li id="' + mediaExperience[i].id + '"><div class="mediaPlacehold"><audio width="318" height="50" controls ><source src="' + tmpMedia.content + '" type="audio/mpeg"></audio></div>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';
+        else if(tmpMedia.contentType == "video")
+            content += '<li id="' + mediaExperience[i].id + '"><div class="mediaPlacehold"><video width="318" height="200" controls> <source src="' + tmpMedia.content + '"></video></div>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';
+    }   
+    return content + '</ul>';
+}
+
+function viewAllMediaItems(data)
+{
+    var content = "<div>" + getMediaContent(data) + "</div>";		
 	$("#mediaContent").html(content);
 	$("#mediaContent").show();
-	$("#mediaTitle").html(tmpObject.name + ": " + tmpObject.mediaOrder.length + " media");
+	$("#mediaTitle").html(curPOI.poiDesigner.name + ": " + data.length + " media");
 	$("#mediaTitle").show();
 	$("#closeMediaContent").show();	
-	//alert(content); 
+    $('#dialog-message').html('');
 }
- 
-function getPOIMediaContent(tmpPOI)
-{
-    var content = '<ul style="list-style:none; padding-left:0;display:table; margin:0 auto;">';
-    var tmpMedia;
-    for(var i=0; i < tmpPOI.mediaOrder.length; i++)
-    {
-        tmpMedia = tmpPOI.associatedMedia[tmpPOI.mediaOrder[i]];
-        if(tmpMedia.type == "text")
-            content += '<li id="' + i + '"><div>' + decodeURI(tmpMedia.content) +'</div>';
-        else if(tmpMedia.type == "image")
-            content += '<li id="' + i + '"><img hspace="5px" class="imgMedia" width="97%" src="' + tmpMedia.content + '"/>';        
-        else if(tmpMedia.type == "audio")
-            content += '<li id="' + i + '"><div style="text-align:center;"><audio width="97%" controls ><source src="' + tmpMedia.content + '" type="audio/mpeg"></audio></div>' ;
-        else if(tmpMedia.type == "video")
-            content += '<li id="' + i + '"><div style="text-align:center;"><video width="97%" controls> <source src="' + tmpMedia.content + '"></video></div>';
-        if(tmpMedia.type == "text")
-            content = '<div style="text-align:center;font-weight:bold;">' + tmpMedia.name + '</div>' + content + '<br/>';
-        else
-            content += '<div style="text-align:center;font-weight:bold;">' + tmpMedia.name + '</div><hr/>';
-    }
-    return content + '</ul>';
-} 
+

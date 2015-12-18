@@ -217,7 +217,7 @@
         }
         
         /**
-         * Get content of an experience
+         * Get content of an experience -> use when loading an experience from SLAT
          * @param int $id: id of the SharcExperience         
          */
         public static function getExperienceContent($designerId, $experienceId){
@@ -281,6 +281,34 @@
                     }                    
                     $response["data"]["allRoutes"] = $tmpRoutes;
                     
+                    //Get all responses
+                    $objResponses = SharcResponse::where('experienceId',$experienceId)->get();
+                    $tmpResponse = $objResponses->toArray();                    
+                    $i = 0;
+                    for ($i; $i< $objResponses->count(); $i++) {
+                        $rs = SharcUser::find($objResponses[$i]->userId);
+                        if ($rs != null)
+                        $tmpResponse[$i]["userId"] = $rs->username;
+                        //get entity name as well
+                        switch($objResponses[$i]->entityType){
+                            case "POI":
+                                $obj = SharcPoiExperience::find($objResponses[$i]->entityId);                                
+                                $tmpResponse[$i]["entityId"] = SharcPoiDesigner::find($obj->poiDesignerId)->name;
+                                break;
+                            case "EOI":
+                                $obj = SharcEoiExperience::find($objResponses[$i]->entityId);                                
+                                $tmpResponse[$i]["entityId"] = SharcEoiDesigner::find($obj->eoiDesignerId)->name;
+                                break;
+                            case "ROUTE":
+                                $obj = SharcRouteExperience::find($objResponses[$i]->entityId);                                
+                                $tmpResponse[$i]["entityId"] = SharcRouteDesigner::find($obj->routeDesignerId)->name;
+                                break;
+                            case "media":
+                                break;    
+                        }
+                    }             
+                    $response["data"]["allResponses"] = $tmpResponse;
+                    
                     //Get all PoiType of the experience
                     $objPoiTypes = SharcPoiType::where('designerId',$designerId)->get();
                     $response["data"]["allPoiTypes"] = $objPoiTypes->toArray();
@@ -299,7 +327,7 @@
          * Get content of an experience
          * @param int $id: id of the SharcExperience         
          */
-        public static function getExperienceSnapshot($designerId, $experienceId){
+        public static function getExperienceSnapshotForKmlSlat($designerId, $experienceId){
             $response = array();
             try{    
                 //Check if the designerId owns the experience
@@ -423,17 +451,26 @@
                 $rs = SharcMediaDesigner::where('id',$objMedia[$i]->mediaDesignerId)->where('designerId',$designerId)->get();
                 $tmpMedia[$i]["mediaDesigner"] = $rs[0]->toArray();
                 //Response for media                                
-                /*$media = MediaService::getMediaForEntityServer($designerId, $experienceId, $objRoutes[$i]->id, "ROUTE");
-                $tmpRoutes[$i]["media"] = $media->toArray();
+                $media = SharcResponse::where('experienceId',$experienceId)->where('entityType','media')->where('entityId', $objMedia[$i]->id)->where('status','accepted')->get();
                 if($media != null)
-                    $tmpRoutes[$i]["mediaCount"] = $media->count();
+                    $tmpMedia[$i]["commentCount"] = $media->count();
                 else
-                    $tmpRoutes[$i]["mediaCount"] = 0;
-                $tmpRoutes[$i]["responseCount"] = 0;
-                */
+                    $tmpRoutes[$i]["commentCount"] = 0;                
             }             
             $response["data"]["allMedia"] = $tmpMedia;
             
+            //Get all responses
+            $objResponses = SharcResponse::where('experienceId',$experienceId)->where('status','accepted')->get();
+            $tmpResponse = $objResponses->toArray();                    
+            $i = 0;
+            for ($i; $i< $objResponses->count(); $i++) {
+                $rs = SharcUser::find($objResponses[$i]->userId);
+                if ($rs != null)
+                $tmpResponse[$i]["userId"] = $rs->username;
+                //get entity name as well
+            }             
+            $response["data"]["allResponses"] = $tmpResponse;
+                
             //Get all PoiType of the experience
             $objPoiTypes = SharcPoiType::where('designerId',$designerId)->get();
             $response["data"]["allPoiTypes"] = $objPoiTypes->toArray();

@@ -61,6 +61,13 @@ function SharcPoiExperience(experienceId,poiDesigner,description,id, typeList, e
         var tmpLatLng = this.poiDesigner.coordinate.split(" ");
         return new google.maps.LatLng(parseFloat(tmpLatLng[0]), parseFloat(tmpLatLng[1]));
     }
+    
+    this.getFirstPointString = function()
+    {
+        var tmpLatLng = this.poiDesigner.coordinate.split(" ");
+        return tmpLatLng[0] + " " + tmpLatLng[1];
+    }
+    
     this.getPoiVizPath = function()
     {
         var tmpPath = new Array();
