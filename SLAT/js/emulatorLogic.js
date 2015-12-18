@@ -25,12 +25,16 @@ $(document).ready(function(){
 
 function initialize() 
 {
-    resfulManager = new SharcRestful();
+    
     try
 	{		
-		var mapOptions = {
+		var proId = localStorage.getItem("projectID");
+        var apiKey = localStorage.getItem("apiKey");
+        var locationId = localStorage.getItem("designerID");
+        resfulManager = new SharcRestful();
+        var mapOptions = {
 			center: new google.maps.LatLng( 0,0),
-			zoom: 12,
+			zoom: 2,
 			mapTypeControl: false,
 			mapTypeId: google.maps.MapTypeId.MAP
 		};	
@@ -94,17 +98,15 @@ function initialize()
 		{
 			map.setCenter(mockLocation.getPosition());	
 		});		
-        var proId = localStorage.getItem("projectID");
-        var apiKey = localStorage.getItem("apiKey");
-        var locationId = localStorage.getItem("designerID");
         
-        proId = 1;
-        locationID = 1;
-        apiKey = "059f0e0bb017817db7ef9c372a7c6f69";
+        //proId = 1;
+        //locationID = 1;
+        //apiKey = "059f0e0bb017817db7ef9c372a7c6f69";
         
         curProject.id = proId;
         designerInfo.id = locationID;
         designerInfo.apiKey = apiKey;
+        alert(curProject.id + designerInfo.id + designerInfo.apiKey);
          
 		//Load default file
 		window.setTimeout("loadExperience()",1000);         
@@ -346,7 +348,8 @@ function addMarkerPOIClickEvent(marker)
     {
         if(marker.id!=null)
         {         
-            displayInfo(allPOIs[marker.id]);
+            curPOI = allPOIs[marker.id];
+            resfulManager.getMediaForEntity("POI", curPOI.id);
             //highlightPOI(marker.id);           
         }
     });
