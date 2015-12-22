@@ -165,7 +165,7 @@
 					</tr>    					                    					
 					<tr>						
                         <td><div id="leftButton"></div></td>
-						<td></td>
+						<td class="formInstructionLabel">Move<br/><input id="movingStep" value="10" type="number" min="1" max="50"/>(m)<br />per click</td>
 						<td><div id="rightButton"></div></td>
 					</tr>						
 					<tr>

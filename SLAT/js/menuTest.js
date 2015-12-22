@@ -10,7 +10,7 @@ var Test_isTestMode = false;        //Test mode - show the fake location
 var Test_mockLocation;              //A marker which represent the current fake location 
 var Test_emulatorWindow = null;     //Hold a handle to the emulator window
 var ANIMATION_SPEED = 500;          //Speed of Show/hide direction movement arrows
-var STEP = 0.0001;                  //~ 11m - Define how far each step the current location move when the user clicks movement arrows ~ a walk
+var STEP = 0.00001;                  //~ 1m - Define how far each step the current location move when the user clicks movement arrows ~ a walk
 
 function Test_createMockLocation()
 {
@@ -106,7 +106,7 @@ function Test_openEmulator(isEmulator)//emulator or real device
                 	Test_mockLocation.setPosition(map.getCenter());
                 	Test_saveMockLocation(map.getCenter().lat(),map.getCenter().lng());
                 	$("#emulatorFrame").show(ANIMATION_SPEED);	
-                	localStorage.setItem("projectID",projectID);
+                	localStorage.setItem("projectID",curProject.id);
                     localStorage.setItem("designerID",designerInfo.id);
                     localStorage.setItem("apiKey",designerInfo.apiKey);
                     Test_emulatorWindow = window.open("emulator.php", "Emulator","width=454,height=742,titlebar=no,resizable=no");
@@ -122,7 +122,7 @@ function Test_openEmulator(isEmulator)//emulator or real device
     	Test_mockLocation.setPosition(map.getCenter());
     	Test_saveMockLocation(map.getCenter().lat(),map.getCenter().lng());
     	$("#emulatorFrame").show(ANIMATION_SPEED);	
-    	localStorage.setItem("projectID",projectID);
+    	localStorage.setItem("projectID",curProject.id);
         localStorage.setItem("apiKey",designerInfo.apiKey);
         localStorage.setItem("designerID",designerInfo.id);
     } 
@@ -139,7 +139,8 @@ function Test_closeEmulator()
 
 function Test_goUpLocation()
 {
-	var curPos = Test_mockLocation.getPosition();
+	getStep();
+    var curPos = Test_mockLocation.getPosition();
 	var lat = curPos.lat() + STEP;
 	var lng = curPos.lng();
 	Test_mockLocation.setPosition(new google.maps.LatLng(lat,lng));
@@ -147,7 +148,8 @@ function Test_goUpLocation()
 }
 function Test_goDownLocation()
 {
-	var curPos = Test_mockLocation.getPosition();
+	getStep();
+    var curPos = Test_mockLocation.getPosition();
 	var lat = curPos.lat() - STEP;
 	var lng = curPos.lng();
 	Test_mockLocation.setPosition(new google.maps.LatLng(lat,lng));
@@ -155,7 +157,8 @@ function Test_goDownLocation()
 }
 function Test_goLeftLocation()
 {	
-	var curPos = Test_mockLocation.getPosition();
+	getStep();
+    var curPos = Test_mockLocation.getPosition();
 	var lat = curPos.lat();
 	var lng = curPos.lng() - STEP;
 	Test_mockLocation.setPosition(new google.maps.LatLng(lat,lng));
@@ -164,7 +167,8 @@ function Test_goLeftLocation()
 
 function Test_goRightLocation()
 {
-	var curPos = Test_mockLocation.getPosition();
+	getStep();
+    var curPos = Test_mockLocation.getPosition();
 	var lat = curPos.lat();
 	var lng = curPos.lng() + STEP;
 	Test_mockLocation.setPosition(new google.maps.LatLng(lat,lng));
@@ -173,6 +177,7 @@ function Test_goRightLocation()
 
 function Test_goUpLeftLocation()
 {
+    getStep();
     var curPos = Test_mockLocation.getPosition();
 	var lat = curPos.lat() + STEP;
 	var lng = curPos.lng() - STEP;
@@ -183,6 +188,7 @@ function Test_goUpLeftLocation()
 
 function Test_goUpRightLocation()
 {
+    getStep();
     var curPos = Test_mockLocation.getPosition();
 	var lat = curPos.lat() + STEP;
 	var lng = curPos.lng() + STEP;
@@ -193,6 +199,7 @@ function Test_goUpRightLocation()
 
 function Test_goDownLeftLocation()
 {
+    getStep();
     var curPos = Test_mockLocation.getPosition();
 	var lat = curPos.lat() - STEP;
 	var lng = curPos.lng() - STEP;
@@ -203,6 +210,7 @@ function Test_goDownLeftLocation()
 
 function Test_goDownRightLocation()
 {
+    getStep();
     var curPos = Test_mockLocation.getPosition();
 	var lat = curPos.lat() - STEP;
 	var lng = curPos.lng() + STEP;
@@ -213,4 +221,8 @@ function Test_goDownRightLocation()
 function Test_saveMockLocation(lat,lng)
 {	
     resfulManager.setMockLocation(lat + " " + lng);
+}
+
+function getStep(){
+    STEP = 0.00001 * $('#movingStep').val();    
 }		 

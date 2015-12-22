@@ -385,7 +385,7 @@ function setResponseStatus(index, mStatus, isNew)
         resfulManager.createNewPoi(curPOI);
         resfulManager.updateResponseStatus(curResponse);
         $("#noOfPOI").text("Number of POIs: " + allPOIs.length);        
-        alert("The response you have just accepted has been made a new POI named '" + name + "'. You can go to Manage POIs to edit it.");
+        showMessage("The response you have just accepted has been made a new POI named '" + name + "'. You can go to Manage POIs to edit it.");
     }
     else
         resfulManager.updateResponseStatus(curResponse);

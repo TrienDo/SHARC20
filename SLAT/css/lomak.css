@@ -514,6 +514,10 @@ td
 	font-style:italic;
 }
 
+#movingStep{
+    width:35px;
+}
+
 #upButton 
 {
 	background-image: url('../images/up.png');

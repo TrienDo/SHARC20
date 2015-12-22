@@ -52,6 +52,7 @@ function SharcGoogleDrive()
     this.createSharcFolder = function()
     {
         //check exist
+        try{
         var request = gapi.client.drive.files.list({"q":"mimeType='application/vnd.google-apps.folder' and trashed=false and title='SHARC20' and 'root' in parents"});
         request.execute(function(resp) {
             if (resp.items.length > 0) {
@@ -66,29 +67,34 @@ function SharcGoogleDrive()
                 }
                 var request = gapi.client.drive.files.insert({
                     'resource': body
-                });
-                
-                //request.execute(callback);
+                });                
                 request.execute(function(resp) {
                     SharcFolderId = resp.id;
-                    var permissionBody = {
-                        'value': '',
-                        'type': 'anyone',
-                        'role': 'reader'
-                    };
-                    var permissionRequest = gapi.client.drive.permissions.insert({
-                        'fileId': resp.id,
-                        'resource': permissionBody
-                    });
-                    permissionRequest.execute(function(resp) {
-                        cloudManager.getWebViewLink();
-                    });
+                    cloudManager.shareSharcFolder();                    
                 });
-            }
-            //Get user info
-            cloudManager.getUserInfo();
+            }            
         });
+        }
+        catch(e){
+            alert("Error:" + e.message);
+        }
+        
           
+    }
+    
+    this.shareSharcFolder = function(){
+        var permissionBody = {
+            'value': '',
+            'type': 'anyone',
+            'role': 'reader'
+        };
+        var permissionRequest = gapi.client.drive.permissions.insert({
+            'fileId': SharcFolderId,
+            'resource': permissionBody
+        });
+        permissionRequest.execute(function(resp) {
+            cloudManager.getWebViewLink();
+        });
     }
     
     this.getWebViewLink = function()
@@ -97,7 +103,9 @@ function SharcGoogleDrive()
             'fileId': SharcFolderId
         });
         req.execute(function(resp) {
-            SharcWebViewLink = resp.webViewLink;            
+            SharcWebViewLink = resp.webViewLink;    
+            //Get user info
+            cloudManager.getUserInfo();        
         });
     }
     
@@ -244,6 +252,12 @@ function SharcGoogleDrive()
 
 function uploadFile(filename, data)
 {
+    if(SharcWebViewLink == "" || SharcWebViewLink == undefined){
+        cloudManager.shareSharcFolder();
+        showMessage("Sorry, there was an error. Please try again");
+        return;
+    }
+    
     const boundary = '-------314159265358979323846';
     const delimiter = "\r\n--" + boundary + "\r\n";
     const close_delim = "\r\n--" + boundary + "--";
@@ -273,6 +287,7 @@ function uploadFile(filename, data)
     //request.execute(callback);
     request.execute(function(resp) {
         if (resp.error == null) {
+            alert("Returned object:" + JSON.stringify(resp));
             curMediaBank.size = resp.fileSize;                
             curMediaBank.content = SharcWebViewLink + resp.title;
             curMediaBank.id = resp.id;

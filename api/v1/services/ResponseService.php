@@ -108,7 +108,7 @@
                     $user = SharcUser::find($sharcResponse->userId);
                     $conEmail	= $user->email;
                     $conName	= $user->username;
-                    
+                                        
                     //Sending email to designer if moderate is needed
                     $subject = "A new response from SMEP";
                     if($experience->moderationMode == 1){
@@ -147,13 +147,24 @@
                 $sharcResponse = SharcResponse::find($objResponse['id']);
                 if($sharcResponse != null){
                     $sharcResponse->entityType = $objResponse['entityType'];
-                    $sharcResponse->entityId = $objResponse['entityId'];
+                    if(is_numeric($objResponse['entityId']))
+                        $sharcResponse->entityId = $objResponse['entityId'];//Sometimes It can be a string when reseting status
                     $sharcResponse->status = $objResponse['status'];
                     
                     $result = $sharcResponse->save(); 
                     if ($result){ //= 1 success
                         $response["status"] = SUCCESS;                        
                         $response["data"] = $sharcResponse->toArray();
+                        //Email consumer -> Get consumer info
+                        $user = SharcUser::find($sharcResponse->userId);
+                        $conEmail	= $user->email;
+                        $conName	= $user->username;
+                        //Experience info
+                        $experience = SharcExperience::find($sharcResponse->experienceId);
+                        $msg = "Dear $conName \n\nYour response (<a href='" + $sharcResponse->content + "'>Click to view your response</a>) to the $experience->name experience has been moderated. Its status is: $sharcResponse->status. \n\nPlease do not reply to this automatic email. You can contact us at thesharcproject@gmail.com.\n\nThank you.\n\nThe SHARC project team.";
+                        $headers = "From: SMET" . "\r\n" . "CC: thesharcproject@gmail.com";
+                        mail($conEmail, "The moderation outcome of your response using SMEP",$msg,$headers);
+                        
                     }   
                     else {  //error
                         $response["status"] = ERROR;

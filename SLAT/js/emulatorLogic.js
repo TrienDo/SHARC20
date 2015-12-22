@@ -104,9 +104,8 @@ function initialize()
         //apiKey = "059f0e0bb017817db7ef9c372a7c6f69";
         
         curProject.id = proId;
-        designerInfo.id = locationID;
+        designerInfo.id = locationId;
         designerInfo.apiKey = apiKey;
-        alert(curProject.id + designerInfo.id + designerInfo.apiKey);
          
 		//Load default file
 		window.setTimeout("loadExperience()",1000);         
@@ -114,7 +113,7 @@ function initialize()
 	}
 	catch(e)
 	{
-		showMessage("initialize()", e);
+		showMessage("initialize()", e.message);
 	}	
 }
 
@@ -124,11 +123,9 @@ function updateCurrentLocation()//get the current location from MySQL database a
 }
 
 function renderLocation(location){
-    //alert(result.location[0].lat + " x " + result.location[0].lng);
     var latLng = location.split(" ");	
 	var newPos = new google.maps.LatLng(parseFloat(latLng[0]),parseFloat(latLng[1]));
 	mockLocation.setPosition(newPos);
-	//map.setCenter(newPos);
 	findTriggerPoint(newPos);
 }
 
@@ -140,7 +137,6 @@ function findTriggerPoint(curLocation) //Identify the current POI
         return;
 	if(shownPOIs.indexOf(index)==-1)
 	{
-		//displayInfo(allPOIs[i]);
         curPOI = allPOIs[i];
         resfulManager.getMediaForEntity("POI", curPOI.id);									
 		shownPOIs.push(index);

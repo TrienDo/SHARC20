@@ -152,8 +152,8 @@
             return;
         }
            
-        $designerId = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only     
-        $response = ExperienceService::getExperienceContent($designerId, $experienceId);
+        $designerId = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = ExperienceService::getExperienceContent($designerId, $experienceId);        
         Utils::echoResponse($response); 
     });
     

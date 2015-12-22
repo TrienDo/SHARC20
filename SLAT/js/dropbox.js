@@ -8,9 +8,6 @@ var DROPBOX_APP_SECRET = '9zeykvpdfuwlzo7';
 var REQUEST_HEADER = "";
 var logedIn = false;
 var designerInfo = null;
-var projectID ="";
-var databaseHandle = "";
-var databaseRevision = "";
 var allMedia = new Array();//Store all media items
     
 function SharcDropBox()
