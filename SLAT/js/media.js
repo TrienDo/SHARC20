@@ -33,6 +33,29 @@ function showUploadingStatus(message)
     });
 }
 
+function selectMediaSource()
+{
+    //window.location.href = 'http://' + callbackURL;
+    $('#dialog-message').html('');        
+    $('#dialog-message').dialog({ title: "Sharc Locative media Authoring Tool"});
+    $('#dialog-message').append('<p>Where do you want to add media from</p>');
+    $( "#dialog-message" ).dialog({
+        modal: true,            
+        height: 250,
+        width: 400,            
+        buttons: {
+            "Your media library": function() {                
+           	    $( this ).dialog("close");
+                Library_showMediaLibrary();                                
+            }, 
+            "Your local machine": function() {                
+           	    $( this ).dialog("close");
+                selectMediaType();
+            }            
+        }
+    });
+}
+
 //Dialog for designer to select type of media item: text - image - audio - video
 function selectMediaType()
 {
@@ -881,7 +904,8 @@ function viewAllMediaItems(data)
                     click: function() {
                         //$( this ).dialog("close");
                         callFrom = VIEW_FORM;                
-                        selectMediaType();
+                        //selectMediaType();
+                        selectMediaSource();
                     }                
                 }, 
                 Edit: {

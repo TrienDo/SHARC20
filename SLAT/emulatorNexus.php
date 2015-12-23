@@ -13,12 +13,12 @@
     <script type="text/javascript" src="js/utils.js"></script>
     <script src="js/restful.js"> </script>
 </head>
-<body id="emulatorBody" class="eBody">	
-	<div id="mapEmulatorCanvas" class="eMap"></div>
-	<div id="centerMapButton" class="eCenter"></div>
-    <div id="zoomLevel" class="eZoom"></div>	
-	<div id="mediaTitle" class="eTitle"></div>	 
-	<div id="closeMediaContent" class="eCloseDiv"><button id="closeMediaButton" class="eClose">Close</button></div>	 
-	<div id="mediaContent" class="eContent"></div>	 
+<body id="emulatorBody" class="eBodyNexus">	
+	<div id="mapEmulatorCanvas" class="eMapNexus"></div>
+	<div id="centerMapButton" class="eCenterNexus"></div>
+    <div id="zoomLevel" class="eZoomNexus"></div>	
+	<div id="mediaTitle" class="eTitleNexus"></div>	 
+	<div id="closeMediaContent" class="eCloseDivNexus"><button id="closeMediaButton" class="eCloseNexus">Close</button></div>	 
+	<div id="mediaContent" class="eContentNexus"></div>	 
 </body>
 </html>

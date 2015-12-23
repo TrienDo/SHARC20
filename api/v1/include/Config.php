@@ -11,7 +11,7 @@
         'collation' => 'utf8_general_ci',
         'prefix' => ''
     );
- 
+    define('ADMIN_ID', 2);
     //Define general constants
     define('SUCCESS', "success");
     define('FAILED', "failed");

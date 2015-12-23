@@ -209,7 +209,12 @@ function initialize()
     //Test menu ~ menuTest.js
     $('#useEmulator').click(function(){
         Test_openEmulator(true);   
-	}); 
+	});
+    
+    $('#useEmulatorNexus').click(function(){
+        Test_openEmulatorNexus();     
+	});
+     
     
     $('#useDevice').click(function(){
         Test_openEmulator(false);     

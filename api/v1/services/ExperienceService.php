@@ -147,8 +147,11 @@
         {
             $response = array();
             try{    
-                $response["status"] = SUCCESS;            
-                $response["data"] = SharcExperience::where('designerId',$id)->get()->toArray();
+                $response["status"] = SUCCESS;
+                if($id == ADMIN_ID)//admin
+                    $response["data"] = SharcExperience::all()->toArray();
+                else            
+                    $response["data"] = SharcExperience::where('designerId',$id)->get()->toArray();
             }
             catch(Exception $e)
             {
@@ -224,6 +227,10 @@
             $response = array();
             try{    
                 //Check if the designerId owns the experience
+                if($designerId == ADMIN_ID){//admin
+                    $ex = SharcExperience::find($experienceId);
+                    $designerId = $ex->designerId;
+                }
                 $rs = SharcExperience::where('id',$experienceId)->where('designerId',$designerId)->get();
                 if ($rs->count() == 0){ //Not exists 
                     $response["status"] = FAILED;            

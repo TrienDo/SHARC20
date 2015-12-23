@@ -43,8 +43,9 @@ function createGoogleObjects()
 	var mapOptions = {
 		center: new google.maps.LatLng(54,0),
 		zoom: 7,
-		mapTypeId: google.maps.MapTypeId.MAP
-	};	
+        mapTypeControl: true,
+		mapTypeId: google.maps.MapTypeId.HYBRID;
+	};    	
 	map = new google.maps.Map(document.getElementById('spetCanvas'), mapOptions);
     
     var clusterOptions = {

@@ -86,6 +86,19 @@ function Test_createMockLocation()
     
 }
 
+
+function Test_openEmulatorNexus(){
+    Test_createMockLocation();    
+	Test_mockLocation.setPosition(map.getCenter());
+	Test_saveMockLocation(map.getCenter().lat(),map.getCenter().lng());
+	$("#emulatorFrame").show(ANIMATION_SPEED);	
+	localStorage.setItem("projectID",curProject.id);
+    localStorage.setItem("designerID",designerInfo.id);
+    localStorage.setItem("apiKey",designerInfo.apiKey);
+    Test_emulatorWindow = window.open("emulatorNexus.php", "Emulator","width=800,height=1280,titlebar=no,resizable=no");
+                    
+} 
+
 function Test_openEmulator(isEmulator)//emulator or real device
 {    	
 	//Test_mockLocation.setVisible(Test_isTestMode);    

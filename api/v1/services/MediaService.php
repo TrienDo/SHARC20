@@ -147,6 +147,10 @@
             $response = array();
             try{    
                 //Get all mediaexperience
+                if($designerId == ADMIN_ID){//admin
+                    $ex = SharcExperience::find($experienceId);
+                    $designerId = $ex->designerId;
+                }
                 $mediaExperience = SharcMediaExperience::where('entityId',$entityId)->where('entityType',$entityType)->where('experienceId',$experienceId)->orderBy('order')->get();
                 //$mediaExperience = $mediaExperience->sortBy('order');
                 $response["status"] = SUCCESS;

@@ -35,8 +35,8 @@ function initialize()
         var mapOptions = {
 			center: new google.maps.LatLng( 0,0),
 			zoom: 2,
-			mapTypeControl: false,
-			mapTypeId: google.maps.MapTypeId.MAP
+			mapTypeControl: true,
+            mapTypeId: google.maps.MapTypeId.HYBRID
 		};	
 		map = new google.maps.Map(document.getElementById('mapEmulatorCanvas'), mapOptions);
     		var clusterOptions = {
@@ -120,6 +120,7 @@ function initialize()
 function updateCurrentLocation()//get the current location from MySQL database and show it on map
 {
 	resfulManager.getMockLocation(designerInfo.id );
+    $('#zoomLevel').text("Zoom level: " + map.getZoom()); 
 }
 
 function renderLocation(location){
@@ -129,17 +130,22 @@ function renderLocation(location){
 	findTriggerPoint(newPos);
 }
 
-
+var prevPOI = -1;
 function findTriggerPoint(curLocation) //Identify the current POI
 {
     var index = getCurrentTriggerZoneIndex(curLocation);
-    if(index == -1)
+    if(index == -1){
+        prevPOI = index;
         return;
-	if(shownPOIs.indexOf(index)==-1)
+    }
+        
+	//if(shownPOIs.indexOf(index)==-1)
+    if(index != prevPOI)
 	{
         curPOI = allPOIs[i];
         resfulManager.getMediaForEntity("POI", curPOI.id);									
-		shownPOIs.push(index);
+		//shownPOIs.push(index);
+        prevPOI = index;
 	}  
 }
 
@@ -362,11 +368,11 @@ function getMediaContent(mediaExperience)//For displaying media pane
         if(tmpMedia.contentType == "text")
             content += '<li id="' + mediaExperience[i].id + '"><div><object class="textMediaBox" id="mediaPOI" type="text/html" data="' + tmpMedia.content + '" ></object></div>';
         else if(tmpMedia.contentType == "image")
-            content += '<li id="' + mediaExperience[i].id + '"><img class="imgMedia" width="318" src="' + tmpMedia.content + '"/>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';        
+            content += '<li id="' + mediaExperience[i].id + '"><img class="imgMedia" width="99%" src="' + tmpMedia.content + '"/>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';        
         else if(tmpMedia.contentType == "audio")
-            content += '<li id="' + mediaExperience[i].id + '"><div class="mediaPlacehold"><audio width="318" height="50" controls ><source src="' + tmpMedia.content + '" type="audio/mpeg"></audio></div>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';
+            content += '<li id="' + mediaExperience[i].id + '"><div class="mediaPlacehold"><audio width="99%"   controls ><source src="' + tmpMedia.content + '" type="audio/mpeg"></audio></div>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';
         else if(tmpMedia.contentType == "video")
-            content += '<li id="' + mediaExperience[i].id + '"><div class="mediaPlacehold"><video width="318" height="200" controls> <source src="' + tmpMedia.content + '"></video></div>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';
+            content += '<li id="' + mediaExperience[i].id + '"><div class="mediaPlacehold"><video width="99%"  controls> <source src="' + tmpMedia.content + '"></video></div>' + '<div class="formLabel">' + mediaExperience[i].caption + '</div>';
     }   
     return content + '</ul>';
 }

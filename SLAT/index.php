@@ -92,7 +92,8 @@
         <li  >
             <a   href="#">Test<img src="images/arrow.png" class="arrowMenu"/></a>
             <ul class="dropdown-menu">
-                <li><a id="useEmulator" href="#">Use emulator</a></li>                
+                <li><a id="useEmulator" href="#">Use emulator</a></li> 
+                <li><a id="useEmulatorNexus" href="#">Use Nexus 7 emulator</a></li>               
                 <li><a id="useDevice" href="#">Use mobile device</a></li>                
             </ul>
         </li>
@@ -106,7 +107,7 @@
         </li>
         
         <li  >
-            <a   href="#">My Library<img src="images/arrow.png" class="arrowMenu"/></a>
+            <a   href="#">Library<img src="images/arrow.png" class="arrowMenu"/></a>
             <ul class="dropdown-menu">
                 <li><a id="mediaLibrary" href="#">Media library</a></li>                
                 <li><a id="poiLibrary" href="#">[POI library]</a></li>
@@ -145,15 +146,15 @@
     <div id="dialog-status"></div>  <!-- waiting status dialog -->    
     <div id="dialog-confirm"></div> <!-- a replacement of defaul "alert" dialog of javascript -->
     <div id="dialog-media"></div>   <!-- placehold for dialogs relating to media -->
-    <div id="emulatorFrame">        <!-- create a control for the emulator at the bottom left of screen -->
-		<form  class="formBorder">
+    <div id="emulatorFrame" class="formBorder">        <!-- create a control for the emulator at the bottom left of screen -->
+		
 			<fieldset>				
 				<table border="0">    					
 					<tr>
 						<td class="formInstructionLabel" style="font-size: 13px;" colspan="3">Emulator control</td>
 					</tr>    
 					<tr>
-						<td class="italicText" colspan="3">You can either click the mouse on the map to simulate the "current location" or use the direction arrows below.</td>
+						<td class="italicText" colspan="3">You can either click the mouse on the map to simulate the "current location" or use the direction arrows below. Media items will be triggered whenever the YAH marker enters a trigger zone.</td>
 					</tr>
                     <tr>						
                         <td colspan="4"><hr /></td>						
@@ -181,7 +182,7 @@
                     </tr>					
 				</table>	
 			</fieldset>	
-		</form>
+	
     </div>    
 </body>
 </html>
