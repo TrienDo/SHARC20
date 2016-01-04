@@ -370,8 +370,8 @@ function setResponseStatus(index, mStatus, isNew)
         curPOI.setTriggerZone(trigerZonePOI, "#00FF00");
         
         curMediaType = "POI";//New media                            
-        curMediaBank = new SharcMediaDesigner(curResponse.id, name, curResponse.contentType, curResponse.content, curResponse.size, designerInfo.id); 
-        curMedia = new SharcMediaExperience(0, curMediaBank, "POI", -2, curProject.id, name, "", false, true,0);                      
+        curMediaBank = new SharcMediaDesigner(curResponse.id, name, curResponse.contentType, curResponse.content, curResponse.size, designerInfo.id, curResponse.submittedDate, ""); 
+        curMedia = new SharcMediaExperience(0, curMediaBank, "POI", -2, curProject.id, name, "", false, true,0, curResponse.size);                      
         
         var tmpPoiMarker = new google.maps.Marker({  
 		   position: curPOI.getFirstPoint(), map: map, zIndex:2,visible: true,draggable: false,

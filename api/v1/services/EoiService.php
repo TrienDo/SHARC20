@@ -1,7 +1,7 @@
 <?php
  
     /**
-     * This class to handle all db operations relating to a SharcEoiDesigner and SharcEoiExperience     
+     * This class to handle db operations relating to a SharcEoiDesigner and SharcEoiExperience     
      *
      * @author: Trien Do  
      */
@@ -20,6 +20,7 @@
             $response = array();
             try{
                 $eoiDesigner = SharcEoiDesigner::create(array(
+                    'id' => $objEoi['id'],
                     'name' => $objEoi['eoiDesigner']['name'],                   
                     'description' => $objEoi['eoiDesigner']['description'],                                    
                     'designerId' => $objEoi['eoiDesigner']['designerId']
@@ -32,6 +33,7 @@
                 }            
                 
                 $eoiExperience = SharcEoiExperience::create(array(
+                    'id' => $objEoi['id'],
                     'experienceId' => $objEoi['experienceId'],                   
                     'eoiDesignerId' => $eoiDesigner->id,
                     'note' => $objEoi['note'],

@@ -8,7 +8,8 @@
     class SharcExperience extends Model
     {	
     	public $timestamps = false;
-    	protected $fillable = array('name','description','createdDate','lastPublishedDate','designerId','isPublished','moderationMode','latLng','summary','snapshotPath','thumbnailPath','size','theme');
+    	public $incrementing = false;//Important for non-increment id
+    	protected $fillable = array('id','name','description','createdDate','lastPublishedDate','designerId','isPublished','moderationMode','latLng','summary','snapshotPath','thumbnailPath','size','theme');
     	protected $table = 'SharcExperiences'; //name of table
     }
 ?>

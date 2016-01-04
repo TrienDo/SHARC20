@@ -12,14 +12,6 @@ class Utils
         return INTERNAL_SERVER_ERROR." ".$e->getMessage();
     }
     
-    public static function updateAssociatedList($id, $strList) {
-        $strList = " ".$strList." ";//fomalize the list "spaceIDspaceIDspace
-        if(strpos($strList,$id) == false)//not contain -> add
-        {
-            
-        }
-        //have to update id not in the list to remove
-    }
     
     public static function echoResponse($response) {
 	    $app = \Slim\Slim::getInstance();
@@ -33,34 +25,5 @@ class Utils
 	    $app->contentType('application/json');	 
 	    echo json_encode($response);
 	}
-        
-    public static function verifyRequiredParams($required_fields) {
-	    $error = false;
-	    $error_fields = "";
-	    $request_params = array();
-	    $request_params = $_REQUEST;
-	    // Handling PUT request params
-	    if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
-	        $app = \Slim\Slim::getInstance();
-	        parse_str($app->request()->getBody(), $request_params);
-	    }
-	    foreach ($required_fields as $field) {
-	        if (!isset($request_params[$field]) || strlen(trim($request_params[$field])) <= 0) {
-	            $error = true;
-	            $error_fields .= $field . ', ';
-	        }
-	    }
-	 
-	    if ($error) {
-	        // Required field(s) are missing or empty
-	        // echo error json and stop the app
-	        $response = array();
-	        $app = \Slim\Slim::getInstance();
-	        $response["error"] = true;
-	        $response["message"] = 'Required field(s) ' . substr($error_fields, 0, -2) . ' is missing or empty';
-	        Utils::echoResponse(400, $response);
-	        $app->stop();
-	    }
-	} 
  }
  ?>

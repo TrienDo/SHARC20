@@ -4,6 +4,9 @@ function SharcRestful()
     //When the designer logs into SLAT, store details about her dropbox account in a MySQL db
     this.updateOrAddUser = function(userInfo)
     {  
+        //Assign id
+        userInfo.id = getIdString();
+        
         var data = JSON.stringify(userInfo);
         $.post(
             apiRoot + 'users',
@@ -23,6 +26,9 @@ function SharcRestful()
     //Working with Experience
     this.createExperience = function(experienceInfo)
     {
+        //Assign id
+        experienceInfo.id = getIdString();
+        
         var data = JSON.stringify(experienceInfo);
         $.ajax({
             type:'POST',
@@ -195,6 +201,8 @@ function SharcRestful()
     //Working with POI
     this.createNewPoi = function (poiExperience)
     {
+        //Assign id
+        poiExperience.id = getIdString();
         var data = JSON.stringify(poiExperience);
         $.ajax({
             type:'POST',
@@ -273,6 +281,9 @@ function SharcRestful()
     //Working with POI Type
     this.createPoiType = function (poiType)
     {
+        //Assign id
+        poiType.id = getIdString();
+        
         var data = JSON.stringify(poiType);
         $.ajax({
             type:'POST',
@@ -338,6 +349,9 @@ function SharcRestful()
     //Working with EOI
     this.createNewEoi = function (eoiExperience)
     {
+        //Assign id
+        eoiExperience.id = getIdString();
+        
         var data = JSON.stringify(eoiExperience);
         $.ajax({
             type:'POST',
@@ -405,6 +419,9 @@ function SharcRestful()
     //Working with Route
     this.createNewRoute = function (routeExperience)
     {
+        //Assign id
+        routeExperience.id = getIdString();
+        
         var data = JSON.stringify(routeExperience);
         $.ajax({
             type:'POST',
@@ -471,6 +488,8 @@ function SharcRestful()
     //Working with Media
     this.addMedia = function(mediaExperience)
     {
+        //Assign id
+        mediaExperience.id = getIdString();
         
         var data = JSON.stringify(mediaExperience);
         $.ajax({

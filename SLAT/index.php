@@ -49,6 +49,7 @@
             <ul class="dropdown-menu">
                 <li><a id="newProject" href="#" >Create a new experience</a></li>
                 <li><a id="openProject" href="#" >Open an experience</a></li>                
+                <li><a id="saveAsProject" href="#" >[Save current experience as...]</a></li>
                 <li><a id="viewProject" href="#" >Edit experience details and moderation modes</a></li>
                 <li><a id="exportKML" href="#" >Export to a KML file</a></li>
                 <li><a id="importKML" href="#" >[Import from a KML]</a></li>

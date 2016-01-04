@@ -20,6 +20,7 @@
             $response = array();
             try{
                 $routeDesigner = SharcRouteDesigner::create(array(
+                    'id' => $objRoute['id'],
                     'name' => $objRoute['routeDesigner']['name'],                   
                     'directed' => $objRoute['routeDesigner']['directed'],
                     'colour' => $objRoute['routeDesigner']['colour'],    
@@ -34,6 +35,7 @@
                 }            
                 
                 $routeExperience = SharcRouteExperience::create(array(
+                    'id' => $objRoute['id'],
                     'experienceId' => $objRoute['experienceId'],                   
                     'routeDesignerId' => $routeDesigner->id,
                     'description' => $objRoute['description'],

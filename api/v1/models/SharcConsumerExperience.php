@@ -10,7 +10,8 @@
     class SharcConsumerExperience extends Model
     {	 
     	public $timestamps = false;
-    	protected $fillable = array('userId', 'experienceId','lastVisitedDate');
+        public $incrementing = false;//Important for non-increment id
+    	protected $fillable = array('id', 'userId', 'experienceId','lastVisitedDate');
     	protected $table = 'SharcConsumerExperiences'; //name of table
     }
 ?>

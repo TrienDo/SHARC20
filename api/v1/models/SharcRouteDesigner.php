@@ -10,7 +10,8 @@
     class SharcRouteDesigner extends Model
     {	 
     	public $timestamps = false;
-    	protected $fillable = array('name', 'directed', 'colour','path','designerId');
+    	public $incrementing = false;//Important for non-increment id
+    	protected $fillable = array('id', 'name', 'directed', 'colour','path','designerId');
     	protected $table = 'SharcRouteDesigners'; //name of table        
     }
 ?>

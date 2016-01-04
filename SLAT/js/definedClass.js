@@ -101,7 +101,7 @@ function SharcPoiExperience(experienceId,poiDesigner,description,id, typeList, e
     }
 }
   
-function SharcMediaDesigner(id, name, contentType, content, size, designerId)
+function SharcMediaDesigner(id, name, contentType, content, size, designerId, createdDate, fileId)
 {
     this.id = id;    
     this.name = name;
@@ -109,9 +109,11 @@ function SharcMediaDesigner(id, name, contentType, content, size, designerId)
     this.content = content;                  // Content (Text vs. path to media)   
     this.size = size;   
     this.designerId = designerId;    
+    this.createdDate = createdDate;
+    this.fileId = fileId;
 }
 
-function SharcMediaExperience(id, mediaDesigner, entityType, entityId, experienceId, caption, context, mainMedia, visible, order)
+function SharcMediaExperience(id, mediaDesigner, entityType, entityId, experienceId, caption, context, mainMedia, visible, order, size)
 {
     this.id = id;
     this.mediaDesigner = mediaDesigner;
@@ -123,6 +125,7 @@ function SharcMediaExperience(id, mediaDesigner, entityType, entityId, experienc
     this.mainMedia = mainMedia;        
     this.visible = visible; 
     this.order = order;
+    this.size = size;
 }
 
 function SharcEoiDesigner(id, name, description, designerId)

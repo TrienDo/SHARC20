@@ -10,7 +10,8 @@
     class SharcPoiExperience extends Model 
     {	 
     	public $timestamps = false;
-    	protected $fillable = array('experienceId', 'poiDesignerId','description', 'typeList', 'eoiList', 'routeList');
+    	public $incrementing = false;//Important for non-increment id
+    	protected $fillable = array('id', 'experienceId', 'poiDesignerId','description', 'typeList', 'eoiList', 'routeList');
     	protected $table = 'SharcPoiExperiences'; //name of table
         /*public function sharcPoiDesigner()
         {

@@ -146,7 +146,8 @@ function SharcDropBox()
             success: function(data) {                
                 var result = JSON.parse(data);  
                 //Update size for media
-                curMediaBank.size = result.bytes;                
+                curMediaBank.size = result.bytes;   
+                curMediaBank.fileId = curMediaBank.id;             
                                
                 //Share data                
                 $.ajax({

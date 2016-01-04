@@ -287,10 +287,10 @@ function uploadFile(filename, data)
     //request.execute(callback);
     request.execute(function(resp) {
         if (resp.error == null) {
-            alert("Returned object:" + JSON.stringify(resp));
+            //alert("Returned object:" + JSON.stringify(resp));
             curMediaBank.size = resp.fileSize;                
             curMediaBank.content = SharcWebViewLink + resp.title;
-            curMediaBank.id = resp.id;
+            curMediaBank.fileId = resp.id;
             resfulManager.addMedia(curMedia);
         } 
         else {

@@ -1,7 +1,7 @@
 <?php
  
     /**
-     * This class to handle all db operations relating to a SharcMediaDesigner and SharcMediaExperience     
+     * This class to handle db operations relating to a SharcMediaDesigner and SharcMediaExperience     
      *
      * @author: Trien Do  
      */
@@ -13,8 +13,8 @@
         
         /**
          * Get a Media item = get SharcMediaExperience + SharcMediaDesigner
-         * @param int $mediaExperienceId: id of the SharcMediaExperience                
-         * @param int $designerId: id of the Designer
+         * @param String $mediaExperienceId: id of the SharcMediaExperience                
+         * @param String $designerId: id of the Designer
          */
         public static function getMedia($mediaExperienceId, $designerId) {
             $response = array();
@@ -48,12 +48,14 @@
             try{
                 //'contentType', 'content', 'size', 'designerId'
                 $mediaDesigner = SharcMediaDesigner::create(array(
-                    'id' => $objMedia['mediaDesigner']['id'],
+                    'id' => $objMedia['id'],
                     'name' => $objMedia['mediaDesigner']['name'],
                     'contentType' => $objMedia['mediaDesigner']['contentType'],                   
                     'content' => $objMedia['mediaDesigner']['content'],
                     'size' => $objMedia['mediaDesigner']['size'],                   
-                    'designerId' => $objMedia['mediaDesigner']['designerId']
+                    'designerId' => $objMedia['mediaDesigner']['designerId'],
+                    'createdDate' => date('Y-m-d'),
+                    'fileId' => $objMedia['mediaDesigner']['fileId']//Google Drive needs this info to update file
                 ));                
                 $result = $mediaDesigner->save(); 
                 if (!$result){                     
@@ -72,6 +74,7 @@
                 else
                     $maxOrder = $maxOrder + 1;
                 $mediaExperience = SharcMediaExperience::create(array(
+                    'id' => $objMedia['id'],
                     'mediaDesignerId' => $mediaDesigner->id,
                     'entityType' => $objMedia['entityType'],                  
                     'entityId' => $objMedia['entityId'],
@@ -80,7 +83,8 @@
                     'context' => $objMedia['context'],
                     'mainMedia' => $objMedia['mainMedia'],
                     'visible' => $objMedia['visible'],
-                    'order' => $maxOrder
+                    'order' => $maxOrder,
+                    'size' => $objMedia['mediaDesigner']['size']
                 ));
                 
                                 

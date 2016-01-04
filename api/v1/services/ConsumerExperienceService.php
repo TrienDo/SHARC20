@@ -1,7 +1,7 @@
 <?php
  
     /**
-     * This class to handle all db operations relating to a ConsumerExperience     
+     * This class to handle db operations relating to a ConsumerExperience     
      *
      * @author: Trien Do  
      */
@@ -23,6 +23,7 @@
                 $rs = SharcConsumerExperience::where('userId',$objConEx['userId'])->where('experienceId',$objConEx['experienceId'])->get();
                 if ($rs->count() == 0){ //Not exists -> add a new row 
                     $conEx = SharcConsumerExperience::create(array(
+                        'id' => $objConEx['id'],
                         'userId' => $objConEx['userId'],                   
                         'experienceId' => $objConEx['experienceId'],
                         'lastVisitedDate' => date('Y-m-d'),

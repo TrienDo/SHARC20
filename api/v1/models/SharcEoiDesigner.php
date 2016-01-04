@@ -10,7 +10,8 @@
     class SharcEoiDesigner extends Model
     {	 
     	public $timestamps = false;
-    	protected $fillable = array('name', 'description', 'designerId');
+    	public $incrementing = false;//Important for non-increment id
+    	protected $fillable = array('id', 'name', 'description', 'designerId');
     	protected $table = 'SharcEoiDesigners'; //name of table        
     }
 ?>

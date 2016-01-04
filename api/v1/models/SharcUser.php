@@ -10,7 +10,8 @@
     class SharcUser extends Model
     {	 
     	public $timestamps = false;
-    	protected $fillable = array('username', 'email','registrationDate','lastOnline','cloudType','cloudAccountId','apiKey','location');
+    	public $incrementing = false;//Important for non-increment id
+    	protected $fillable = array('id', 'username', 'email','registrationDate','lastOnline','cloudType','cloudAccountId','apiKey','location');
     	protected $table = 'SharcUsers'; //name of table
     }
 ?>

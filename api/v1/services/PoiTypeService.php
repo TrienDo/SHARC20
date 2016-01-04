@@ -20,6 +20,7 @@
             $response = array();
             try{
                 $poiType = SharcPoiType::create(array(
+                    'id' => $objPoiType['id'],
                     'name' => $objPoiType['name'],                   
                     'description' => $objPoiType['description'],                                    
                     'designerId' => $objPoiType['designerId']

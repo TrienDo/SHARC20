@@ -23,6 +23,7 @@
                 $rs = SharcUser::where('email',$objUser['email'])->where('cloudType',$objUser['cloudType'])->get();
                 if ($rs->count() == 0){ //Not exists -> add a new user 
                     $user = SharcUser::create(array(
+                        'id' => $objUser['id'],
                         'username' => $objUser['username'],                   
                         'email' => $objUser['email'],
                         'registrationDate' => date('Y-m-d'),

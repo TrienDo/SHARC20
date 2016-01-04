@@ -10,7 +10,8 @@
     class SharcPoiDesigner extends Model
     {	 
     	public $timestamps = false;
-    	protected $fillable = array('name', 'coordinate','triggerZone', 'designerId');
+    	public $incrementing = false;//Important for non-increment id
+    	protected $fillable = array('id', 'name', 'coordinate','triggerZone', 'designerId');
     	protected $table = 'SharcPoiDesigners'; //name of table
         /*public function sharcPoiExperience()
         {

@@ -126,8 +126,8 @@ function selectMediaType()
                 Next: function() {
                     var type = $('input[name=mediaType]:checked', '#selectMediaType').val();
                     //curMedia = new Media((new Date()).getTime(),"",type,"","",0,"","",curMediaType);
-                    curMediaBank = new SharcMediaDesigner((new Date()).getTime() + "", "", type, "", 0, designerInfo.id); 
-                    curMedia = new SharcMediaExperience(0, curMediaBank, curMediaType, 0, curProject.id, "", "", false, true,0);
+                    curMediaBank = new SharcMediaDesigner((new Date()).getTime() + "", "", type, "", 0, designerInfo.id, "", ""); 
+                    curMedia = new SharcMediaExperience(0, curMediaBank, curMediaType, 0, curProject.id, "", "", false, true, 0, 0);
                     curBrowsingType = type;
                     $( this ).dialog("close");
                     switch (type)
@@ -288,7 +288,7 @@ function showTextDialog(isCreating, curMedia)
                     if(isCreating)
                         uploadAndAddMedia();
                     else{
-                        cloudManager.updateMedia(curMedia.mediaDesigner.id, curMediaData);
+                        cloudManager.updateMedia(curMedia.mediaDesigner.fileId, curMediaData);
                         $("#dialog-media").dialog("close");
                         selectedPOIMarker.setMap(null);
                         //goBack();

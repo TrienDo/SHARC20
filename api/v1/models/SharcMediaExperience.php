@@ -10,7 +10,8 @@
     class SharcMediaExperience extends Model
     {	 
     	public $timestamps = false;        
-    	protected $fillable = array('mediaDesignerId', 'entityType','entityId', 'experienceId','caption', 'context', 'mainMedia', 'visible', 'order');
+    	public $incrementing = false;//Important for non-increment id
+    	protected $fillable = array('id', 'mediaDesignerId', 'entityType','entityId', 'experienceId','caption', 'context', 'mainMedia', 'visible', 'order', 'size');
     	protected $table = 'SharcMediaExperiences'; //name of table
     }
 ?>

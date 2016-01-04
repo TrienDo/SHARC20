@@ -20,6 +20,7 @@
             $response = array();
             try{//poiDesignerId, name, coordinate, triggerZone, designerID
                 $poiDesigner = SharcPoiDesigner::create(array(
+                    'id' => $objPoi['id'],
                     'name' => $objPoi['poiDesigner']['name'],                   
                     'coordinate' => $objPoi['poiDesigner']['coordinate'],
                     'triggerZone' => $objPoi['poiDesigner']['triggerZone'],                   
@@ -33,6 +34,7 @@
                 }            
                 
                 $poiExperience = SharcPoiExperience::create(array(
+                    'id' => $objPoi['id'],
                     'experienceId' => $objPoi['experienceId'],                   
                     'poiDesignerId' => $poiDesigner->id,
                     'description' => $objPoi['description'],

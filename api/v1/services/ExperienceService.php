@@ -1,7 +1,7 @@
 <?php
  
     /**
-     * This class to handle all db operations relating to a SharcExperience     
+     * This class to handle db operations relating to a SharcExperience     
      *
      * @author: Trien Do  
      */
@@ -22,6 +22,7 @@
                 $rs = SharcExperience::where('name',$objExperience['name'])->get();
                 if ($rs->count() == 0){ //Not exists -> add a new experience 
                     $experience = SharcExperience::create(array(
+                        'id' => $objExperience['id'],
                         'name' => $objExperience['name'],                   
                         'description' => $objExperience['description'],
                         'createdDate' => date('Y-m-d'),
@@ -62,8 +63,9 @@
         
         /**
          * Update an experience
-         * @param int $id: id of the SharcExperience
+         * @param String $id: id of the SharcExperience
          * @param String $objExperience: a json object of SharcExperience
+         * @param String $designerId: id of the designer
          */
         public static function updateExperience($id, $objExperience, $designerId) {
             $response = array();
@@ -75,7 +77,7 @@
                     return $response;
                 }
                            
-                if ($experience != null){ //Not exists -> add a new experience
+                if ($experience != null){ 
                     $experience->name = $objExperience['name'];                   
                     $experience->description = $objExperience['description'];
                     $experience->lastPublishedDate = date('Y-m-d');
@@ -85,8 +87,8 @@
                     $experience->summary = $objExperience['summary'];
                     $experience->snapshotPath = $objExperience['snapshotPath'];                                       
                     $experience->thumbnailPath = $objExperience['thumbnailPath'];
-                    //$experience->size = SharcMediaExperience::where('experienceId', $objExperience['experienceId'])->sum('size');
-                    $experience->size = MediaService::getMediaSizeForExperience($designerId, $objExperience['id']);
+                    $experience->size = SharcMediaExperience::where('experienceId', $objExperience['experienceId'])->sum('size');
+                    //$experience->size = MediaService::getMediaSizeForExperience($designerId, $objExperience['id']);
                     $experience->theme = $objExperience['theme']; 
                                     
                     $result = $experience->save();
@@ -114,7 +116,7 @@
         
         /**
          * Get info of an experience
-         * @param int $id: id of the SharcExperience         
+         * @param String $id: id of the SharcExperience         
          */
         public static function getExperienceFromId($id)
         {
@@ -141,7 +143,7 @@
         
         /**
          * Get available experiences of a designer
-         * @param int $id: id of the designer         
+         * @param String $id: id of the designer         
          */
         public static function getExperienceOfDesigner($id)
         {
@@ -160,6 +162,7 @@
             }
             return $response;
         }
+        
         /**
          * Get all published experiences
          */
@@ -180,8 +183,8 @@
         
         /**
          * Delete an experience
-         * @param int $experienceId: id of the SharcExperience         
-         * @param int $designerId: id of the SharcUser -> experience can be deleted by its owner only
+         * @param String $experienceId: id of the SharcExperience         
+         * @param String $designerId: id of the SharcUser -> experience can be deleted by its owner only
          */
         public static function deleteExperience($designerId, $experienceId)
         {
@@ -221,7 +224,8 @@
         
         /**
          * Get content of an experience -> use when loading an experience from SLAT
-         * @param int $id: id of the SharcExperience         
+         * @param String $experienceId: id of the SharcExperience
+         * @param String $designerId: id of the designer           
          */
         public static function getExperienceContent($designerId, $experienceId){
             $response = array();
@@ -332,7 +336,8 @@
         
         /**
          * Get content of an experience
-         * @param int $id: id of the SharcExperience         
+         * @param String $experienceId: id of the SharcExperience
+         * @param String $designerId: id of the designer           
          */
         public static function getExperienceSnapshotForKmlSlat($designerId, $experienceId){
             $response = array();
@@ -357,7 +362,7 @@
         
         /**
          * Get content of an experience for SMEP
-         * @param int $id: id of the SharcExperience         
+         * @param String $id: id of the SharcExperience         
          */
         public static function getExperienceSnapshotForConsumer($experienceId){
             $response = array();
@@ -380,6 +385,12 @@
             return $response;    
         }
         
+        
+        /**
+         * Get content of an experience details - this function is called by two above funtions
+         * @param String $experienceId: id of the SharcExperience
+         * @param String $designerId: id of the designer           
+         */
         public static function getExperienceSnapshotDetails($designerId, $experienceId){
             $response = array();
             $response["status"] = SUCCESS;                    

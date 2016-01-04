@@ -4,6 +4,10 @@
     Tasks:      Declaring some common functions which are used at different places   
 */
 
+function getIdString(){
+    return (new Date().getTime() + "_" + designerInfo.cloudAccountId);
+}
+
 //Get the boundary of an experience = smallest rectangle which contains all POIs and Routes
 function getExperienceBoundary()
 {
