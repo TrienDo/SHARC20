@@ -238,7 +238,7 @@ function renderPoiTypes(retPoiTypes){
 function renderResponse(retResponses){
     for(i = 0; i < retResponses.length; i++) {        //( ,  ,  , , , , , , , , )
         var res = new SharcResponse(retResponses[i].id, retResponses[i].experienceId,retResponses[i].userId,retResponses[i].contentType,retResponses[i].content
-                        ,retResponses[i].description ,retResponses[i].entityType ,retResponses[i].entityId ,retResponses[i].status ,retResponses[i].size,retResponses[i].submittedDate);
+                        ,retResponses[i].description ,retResponses[i].entityType ,retResponses[i].entityId ,retResponses[i].status ,retResponses[i].size,retResponses[i].submittedDate, retResponses[i].fileId);
         allResponses.push(res);
         if(res.status == "waiting")
             allNewResponses.push(res);                

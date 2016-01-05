@@ -473,7 +473,7 @@
     });  
     
     //Get content of an experience for SMEP
-    $app->get('/experienceSnapshot/:experienceId', function ($experienceId) use ($app) {
+    $app->get('/experienceSnapshot/:experienceId', function ($experienceId) use ($app) {        
         $response = ExperienceService::getExperienceSnapshotForConsumer($experienceId);
         Utils::echoResponse($response); 
     });
@@ -481,13 +481,14 @@
     //Tracking who logs into SMEP and consume which experience
     $app->post('/consumerExperience',function () use ($app){
         ///:experienceId/:cloudAccountId/:username/:useremail/:cloudType
+        $userId = $app->request->post('userId');
         $experienceId = $app->request->post('experienceId');     
         $cloudAccountId = $app->request->post('cloudAccountId');
         $username = $app->request->post('username');
         $useremail = $app->request->post('useremail');
         $cloudType = $app->request->post('cloudType');
         
-        $response = UserService::trackConsumerExperience($experienceId, $cloudAccountId, $username, $useremail, $cloudType);
+        $response = UserService::trackConsumerExperience($userId, $experienceId, $cloudAccountId, $username, $useremail, $cloudType);
         Utils::echoResponse($response); 
     });
     
@@ -510,6 +511,7 @@
         
         $objResponse['size'] = $app->request->post('size');
         $objResponse['submittedDate'] = $app->request->post('submittedDate');
+        $objResponse['fileId'] = $app->request->post('fileId');
         
         //Check authentication        
         $rs = UserService::checkAuthentication($objResponse['apiKey']);

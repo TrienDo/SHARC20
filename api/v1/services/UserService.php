@@ -120,9 +120,10 @@
             return $response;                 
         }
         
-        public static function trackConsumerExperience($experienceId, $cloudAccountId, $username, $useremail, $cloudType){
+        public static function trackConsumerExperience($userId, $experienceId, $cloudAccountId, $username, $useremail, $cloudType){
             //Check login
             $objUser = array();
+            $objUser['id'] = $userId;
             $objUser['username'] = $username;
             $objUser['email'] = $useremail;
             $objUser['cloudType'] = $cloudType;

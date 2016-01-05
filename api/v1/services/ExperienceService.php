@@ -87,8 +87,8 @@
                     $experience->summary = $objExperience['summary'];
                     $experience->snapshotPath = $objExperience['snapshotPath'];                                       
                     $experience->thumbnailPath = $objExperience['thumbnailPath'];
-                    $experience->size = SharcMediaExperience::where('experienceId', $objExperience['experienceId'])->sum('size');
-                    //$experience->size = MediaService::getMediaSizeForExperience($designerId, $objExperience['id']);
+                    //$experience->size = SharcMediaExperience::where('experienceId', $objExperience['experienceId'])->sum('size');
+                    $experience->size = MediaService::getMediaSizeForExperience($designerId, $objExperience['id']);
                     $experience->theme = $objExperience['theme']; 
                                     
                     $result = $experience->save();
@@ -368,7 +368,8 @@
             $response = array();
             try{    
                 //Check if the designerId owns the experience
-                $rs = SharcExperience::find($experienceId);
+                
+                $rs = SharcExperience::find($experienceId);                
                 if ($rs == null || $rs->isPublished == 0){ //Not exists 
                     $response["status"] = FAILED;            
                     $response["data"] = EXPERIENCE_NOT_EXIST;

@@ -11,7 +11,7 @@
         'collation' => 'utf8_general_ci',
         'prefix' => ''
     );
-    define('ADMIN_ID', 2);//Define an Admin here -> Admin user can view (not edit) all experience
+    define('ADMIN_ID', "1451935885289_08502048040581351438");//Define an Admin here (SHARC@GoogleDrive)-> Admin user can view (not edit) all experience
     //Define general constants
     define('SUCCESS', "success");
     define('FAILED', "failed");
@@ -22,10 +22,10 @@
     define('EXPERIENCE_EXIST', "This name already exists. Please use another name for your experience.");
     define('EXPERIENCE_NOT_EXIST', "Could not find any experience with the submitted parameters.");
     define('EXPERIENCES_NOT_FOUND', "There are no experiences at the moment.");
-    define('EXPERIENCE_NOT_AUTHORIZED', "You do not have permission to delete this experience.");    
+    define('EXPERIENCE_NOT_AUTHORIZED', "You do not have permission to perform this action on this experience.");    
     define('USER_NOT_AUTHENTICATED', "User not authenticated.");    
     define('MEDIA_NOT_FOUND', "No media with the submitted Id.");
-    define('MEDIA_NOT_AUTHORIZED', "You do not have permission to delete this media.");
+    define('MEDIA_NOT_AUTHORIZED', "You do not have permission perform this action on this experience.");
     
         
     //Bootstrap Eloquent ORM -> https://laracasts.com/lessons/how-to-use-eloquent-outside-of-laravel
@@ -246,7 +246,8 @@
         $table->string('entityId');
         $table->string('status');
         $table->integer('size');
-        $table->date('submittedDate');        
+        $table->date('submittedDate');  
+        $table->string('fileId');      
     });    
     */          
 ?>

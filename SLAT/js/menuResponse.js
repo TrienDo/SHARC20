@@ -147,7 +147,7 @@ function showResponseDetails(index)
     if(response.entityType == "NEW")
     {
         //show location of new POI
-        var latLngString = response.entityID.split(" ");
+        var latLngString = response.entityId.split(" ");
         var poiLatLng = new google.maps.LatLng(parseFloat(latLngString[0]), parseFloat(latLngString[1]));
         var mapResponse = new google.maps.Map(document.getElementById('mapResponse'), null);//mapOptions = null
         mapResponse.setMapTypeId(google.maps.MapTypeId.SATELLITE);
@@ -370,8 +370,8 @@ function setResponseStatus(index, mStatus, isNew)
         curPOI.setTriggerZone(trigerZonePOI, "#00FF00");
         
         curMediaType = "POI";//New media                            
-        curMediaBank = new SharcMediaDesigner(curResponse.id, name, curResponse.contentType, curResponse.content, curResponse.size, designerInfo.id, curResponse.submittedDate, ""); 
-        curMedia = new SharcMediaExperience(0, curMediaBank, "POI", -2, curProject.id, name, "", false, true,0, curResponse.size);                      
+        curMediaBank = new SharcMediaDesigner(curResponse.id, name, curResponse.contentType, curResponse.content, curResponse.size, designerInfo.id, curResponse.submittedDate, curResponse.fileId); 
+        curMedia = new SharcMediaExperience(curResponse.id, curMediaBank, "POI", -2, curProject.id, name, "", false, true,0, curResponse.size);                      
         
         var tmpPoiMarker = new google.maps.Marker({  
 		   position: curPOI.getFirstPoint(), map: map, zIndex:2,visible: true,draggable: false,

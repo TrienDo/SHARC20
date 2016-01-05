@@ -212,7 +212,7 @@ function SharcPoiType(id, name, description)
 }
 
 
-function SharcResponse(id, experienceId, userId, contentType, content, description, entityType, entityId, status, size, submittedDate)
+function SharcResponse(id, experienceId, userId, contentType, content, description, entityType, entityId, status, size, submittedDate, fileId)
 {
     this.id = id;    
     this.experienceId = experienceId;         
@@ -225,6 +225,7 @@ function SharcResponse(id, experienceId, userId, contentType, content, descripti
     this.status = status;
     this.size = size;
     this.submittedDate = submittedDate;
+    this.fileId = fileId;
 }
 
 

@@ -32,7 +32,8 @@
                     'entityId' => $objResponse['entityId'],
                     'status' => $objResponse['status'],
                     'size' => $objResponse['size'],
-                    'submittedDate' => $objResponse['submittedDate']
+                    'submittedDate' => $objResponse['submittedDate'],
+                    'fileId' => $objResponse['fileId']
                 ));
                 
                 $experience = SharcExperience::find($sharcResponse->experienceId);
@@ -80,7 +81,10 @@
                                     $objMedia['mediaDesigner']['contentType'] = $sharcResponse->contentType;
                                     $objMedia['mediaDesigner']['content'] = $sharcResponse->content;
                                     $objMedia['mediaDesigner']['size'] = $sharcResponse->size;
+                                    $objMedia['mediaDesigner']['createdDate'] = $sharcResponse->submittedDate;
+                                    $objMedia['mediaDesigner']['fileId'] = $sharcResponse->fileId;
                                     $objMedia['mediaDesigner']['designerId'] = $experience->designerId; 
+                                    
                                     $response = MediaService::addNewMedia($objMedia);
                                 }
                                 $sharcResponse->status = "Made a new POI";

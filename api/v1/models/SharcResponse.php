@@ -11,7 +11,7 @@
     {	 
     	public $timestamps = false;
         public $incrementing = false;//Important for non-increment id
-    	protected $fillable = array('id', 'experienceId', 'userId', 'contentType', 'content', 'description', 'entityType', 'entityId', 'status', 'size', 'submittedDate');
+    	protected $fillable = array('id', 'experienceId', 'userId', 'contentType', 'content', 'description', 'entityType', 'entityId', 'status', 'size', 'submittedDate', 'fileId');
     	protected $table = 'SharcResponses'; //name of table       
     }
 ?>
