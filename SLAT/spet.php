@@ -14,7 +14,7 @@
 </head>
 <body>
     <div id="spetTaskpane">
-        <div id="welcome">SPET</div><div id="version">Version 1.0</div>              
+        <div id="welcome">SPET</div><div id="version">Version 2.0</div>              
         <hr style="width: 90%;"/>        
         <div id="promptSection" style="padding-bottom:5px;padding-top: 5px; padding-left: 15px; padding-right: 15px;">
             <p>SPET(Sharc Public Exploration Tool) enables you to explore locative media experiences online. To enjoy experiences in-situ, please download our SMEP mobile app (Sharc Mobile Experience Player).</p> 

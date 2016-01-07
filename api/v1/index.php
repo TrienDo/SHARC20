@@ -424,6 +424,12 @@
         Utils::echoResponse($response);
     });
     
+    //This endpoint is called by SPET so no user info
+    $app->get('/mediaForEntityForSpet/:experienceId/:entityId/:entityType', function ($experienceId, $entityId, $entityType) use ($app) {
+        $response = MediaService::getMediaForEntityForSpet($experienceId, $entityId, $entityType);
+        Utils::echoResponse($response);
+    });
+    
     $app->put('/mediaForEntity/:designerId/:experienceId/:entityId/:entityType', function ($designerId, $experienceId, $entityId, $entityType) use ($app) {
         //Check authentication        
         $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));

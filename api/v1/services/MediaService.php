@@ -176,6 +176,32 @@
         
         /**
          * Get all media associated with an entity
+         * @param $objMediaParam: entityType, entityId, experienceId         
+         */
+        public static function getMediaForEntityForSpet($experienceId, $entityId, $entityType){            
+            $response = array();
+            try{    
+                //Get all mediaexperience                
+                $mediaExperience = SharcMediaExperience::where('entityId',$entityId)->where('entityType',$entityType)->where('experienceId',$experienceId)->orderBy('order')->get();
+                //$mediaExperience = $mediaExperience->sortBy('order');
+                $response["status"] = SUCCESS;
+                //Get mediadesigner for each mediaexperience
+                $i = 0;
+                for ($i = 0; $i< $mediaExperience->count(); $i++) {
+                    $mediaDesigner = SharcMediaDesigner::where('id',$mediaExperience[$i]->mediaDesignerId)->get();
+                    $mediaExperience[$i]["mediaDesigner"] = $mediaDesigner[0]->toArray();
+                }                    
+                $response["data"] = $mediaExperience->toArray();
+            }
+            catch(Exception $e){
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }
+            return $response;    
+        }
+        
+        /**
+         * Get all media associated with an entity
          * @param $objMediaParam: entityType, entityId, experienceId, designerId         
          */
         public static function getMediaForEntityServer($designerId, $experienceId, $entityId, $entityType){
