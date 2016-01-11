@@ -525,5 +525,82 @@
             
             return $response;
         }
+        
+        /**
+         * Get content of an experience for SPVT
+         * @param String $experienceId: id of the SharcExperience         
+         * @param String $userId: id of the SharcUser
+         */
+        public static function getExperienceSnapshotForSpvt($experienceId, $userId){
+            $response = array();
+            try{    
+                //Check if the designerId owns the experience                
+                $rs = SharcExperience::find($experienceId);                
+                if ($rs == null || $rs->isPublished == 0){ //Not exists 
+                    $response["status"] = FAILED;            
+                    $response["data"] = EXPERIENCE_NOT_EXIST;
+                    return $response; 
+                }
+                else{
+                    $response = ExperienceService::getSnapshotForSpvt($rs->designerId, $experienceId, $userId);
+                }
+            }
+            catch(Exception $e){
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }
+            return $response;    
+        }
+        
+        /**
+         * Get content of an experience details - this function is called by two above funtions
+         * @param String $experienceId: id of the SharcExperience
+         * @param String $designerId: id of the designer 
+         * @param String $userId: id of the SharcUser          
+         */
+        public static function getSnapshotForSpvt($designerId, $experienceId, $userId){
+            $response = array();
+            $response["status"] = SUCCESS;                    
+            //Get all POIs of the experience
+            $objPois = SharcPoiExperience::where('experienceId',$experienceId)->get();            
+            $tmpPois = $objPois->toArray();                    
+            $i = 0;
+            for ($i; $i< $objPois->count(); $i++) {
+                $rs = SharcPoiDesigner::where('id',$objPois[$i]->poiDesignerId)->where('designerId',$designerId)->get();
+                $tmpPois[$i]["poiDesigner"] = $rs[0]->toArray();
+                //Thumbnail
+                $media = SharcMediaExperience::where('entityId',$objPois[$i]->id)->where('entityType','POI')->where('mainMedia',1)->get();
+                if($media->count() > 0){                        
+                    $mediaDesigner = SharcMediaDesigner::where('id',$media[0]->mediaDesignerId)->where('designerId',$designerId)->get();
+                    if($mediaDesigner->count() > 0)
+                        $tmpPois[$i]["thumbnail"] = $mediaDesigner[0]->content;
+                    else
+                        $tmpPois[$i]["thumbnail"] = "";
+                }
+                else
+                    $tmpPois[$i]["thumbnail"] = "";
+                //Media for POI                                
+                $media = MediaService::getMediaForEntityServer($designerId, $experienceId, $objPois[$i]->id, "POI");
+                $tmpPois[$i]["media"] = $media->toArray();
+                //Responses for POI by this user
+                $tmpPois[$i]["responses"] = SharcResponse::where('experienceId',$experienceId)->where('userId', $userId)->where('entityId', $objPois[$i]->id)->get()->toArray(); 
+            }                    
+            $response["data"]["allPois"] = $tmpPois;
+                       
+            //Get all Routes of the experience
+            $objRoutes = SharcRouteExperience::where('experienceId',$experienceId)->get();            
+            $tmpRoutes = $objRoutes->toArray();                    
+            $i = 0;
+            for ($i; $i< $objRoutes->count(); $i++) {
+                $rs = SharcRouteDesigner::where('id',$objRoutes[$i]->routeDesignerId)->where('designerId',$designerId)->get();
+                $tmpRoutes[$i]["routeDesigner"] = $rs[0]->toArray();
+            }                    
+            $response["data"]["allRoutes"] = $tmpRoutes;
+                        
+            //Get all responses                                     
+            $response["data"]["allResponses"] = SharcResponse::where('experienceId',$experienceId)->where('userId', $userId)->where('entityType', 'NEW')->get()->toArray();            
+            
+            return $response;
+        }
     }
 ?>

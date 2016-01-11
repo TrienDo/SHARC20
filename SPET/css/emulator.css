@@ -1,0 +1,191 @@
+/*Emulator*/
+.eMap
+{
+    position: absolute;
+    top: 84px;
+	left:50px;
+    width: 358px;    
+	height: 570px;    
+    z-index: 3;
+    background-color: #fff;        
+}
+
+.eCenter
+{
+    position: absolute;
+    top: 88px;
+	left:382px;
+    width: 20px;    
+	height: 20px;    
+    z-index: 4;
+    background-color: #FFF;
+    background-image:url('../images/centerMapButton.png');
+	background-size: 20px 20px;
+	border:1px solid grey;
+}
+
+.eContent 
+{
+    position: absolute;
+    top: 114px;
+	left:50px;
+    width: 358px;    
+	height: 570px;    
+    z-index: 5;
+    background-color: #fff;        
+	overflow-x:hidden;
+}
+
+.eZoom
+{
+    position: absolute;
+    top: 95px;
+	left:170px;
+    width: 110px;    
+	height: 23px;    
+    z-index: 5;
+	padding-top: 5px;    
+	padding-left: 5px;  
+    color : maroon;  
+    background-color: #FFF;        	
+	font-weight: bold; 
+}
+
+
+.eTitle
+{
+    position: absolute;
+    top: 84px;
+	left:50px;
+    width: 303px;    
+	height: 25px;    
+    z-index: 6;
+	padding-top: 5px;    
+	padding-left: 5px;    
+    background-color: #CCC;        	
+	font-weight: bold; 
+}
+
+.eCloseDiv
+{
+    position: absolute;
+    top: 84px;
+	left:352px;
+    width: 52px;    
+	height: 26px;
+	padding: 2px;    
+    z-index: 6;
+    background-color: #CCC;        	
+}
+
+.eClose
+{
+	position: absolute;
+    top: 2px;
+	left:3px;
+    width: 50px;    
+	height: 26px;    
+    z-index: 7;	
+}
+
+.eBody
+{
+	background-image:url('../images/nexus7.png');
+	background-repeat:no-repeat;
+}
+
+/* For Nexus 7 real*/
+.eMapNexus
+{
+    position: absolute;
+    top: 145px;
+	left:87px;
+    width: 605px;    
+	height: 985px;    
+    z-index: 3;
+    background-color: #fff;        
+}
+
+.eCenterNexus
+{
+    position: absolute;
+    top: 155px;
+	left:660px;
+    width: 20px;    
+	height: 20px;    
+    z-index: 4;
+    background-color: #FFF;
+    background-image:url('../images/centerMapButton.png');
+	background-size: 20px 20px;
+	border:1px solid grey;
+}
+
+.eContentNexus 
+{
+    position: absolute;
+    top: 175px;
+	left:87px;
+    width: 605px;    
+	height: 985px;    
+    z-index: 5;
+    background-color: #fff;        
+	overflow-x:hidden;
+}
+
+.eZoomNexus
+{
+    position: absolute;
+    top: 155px;
+	left:200px;
+    width: 110px;    
+	height: 23px;    
+    z-index: 5;
+	padding-top: 5px;    
+	padding-left: 5px;  
+    color : maroon;  
+    background-color: #FFF;        	
+	font-weight: bold; 
+}
+
+
+.eTitleNexus
+{
+    position: absolute;
+    top: 145px;
+	left:87px;
+    width: 600px;    
+	height: 25px;    
+    z-index: 6;
+	padding-top: 5px;    
+	padding-left: 5px;    
+    background-color: #CCC;        	
+	font-weight: bold; 
+}
+
+.eCloseDivNexus
+{
+    position: absolute;
+    top: 145px;
+	left:352px;
+    width: 52px;    
+	height: 26px;
+	padding: 2px;    
+    z-index: 6;
+    background-color: #CCC;        	
+}
+
+.eCloseNexus
+{
+	position: absolute;
+    top: 2px;
+	left:285px;
+    width: 50px;    
+	height: 26px;    
+    z-index: 7;	
+}
+
+.eBodyNexus
+{
+	background-image:url('../images/nexus7Big.png');
+	background-repeat:no-repeat;
+}

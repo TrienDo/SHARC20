@@ -1,0 +1,657 @@
+html 
+{		
+    width: 100%;
+    height: 100%;
+}
+
+body 
+{
+	margin:0px 0px 0px 0px;	
+    background: #1D365D;
+    font-family: 'Lucida Grande', 'Helvetica Neue', sans-serif;
+	font-size: 11px;
+    width: 100%;
+    height: 100%;
+}
+
+/* CSS for menu */
+#mainMenu
+{
+    background:#1D365D;
+    height: 50px;
+    display: flex;
+    justify-content: center; /* align horizontal */
+    align-items: center; /* align vertical */ 
+}
+#sddm
+{	margin: 0;
+	padding: 0;   
+	z-index: 30;    
+}
+
+#sddm li/*main menu*/
+{	
+    margin: 0;
+	padding: 0;
+	list-style: none;
+	float: left;
+	font-size: 14px;
+    font-weight: normal;
+    background: white;
+    z-index: 30
+}
+
+#sddm li a
+{	
+    display: block;
+	margin: 0 1px 0 0;
+	padding: 4px 10px;	
+	background: #1D365D;    
+	color: #FFF;
+	text-align: center;
+	text-decoration: none;
+    /*width: 200px;*/
+    z-index: 30
+ }
+
+#sddm li a:hover
+{	
+    background: #172B4A;
+    color:#D6EBFF;
+    z-index: 30
+}
+
+#sddm div
+{	
+    position: absolute;
+	visibility: hidden;
+	margin: 0;
+	padding: 0;
+	background: #EAEBD8;
+	border: 1px solid #C2C2C6;
+    z-index: 30
+}
+
+#sddm div a /*sub menu*/
+{	
+    position: relative;
+	display: block;
+	margin: 0;
+	padding: 5px 10px;
+	/*width: 200px;*/
+	white-space: nowrap;
+	text-align: left;
+	text-decoration: none;
+	background: #FFFFFF;
+	color: #000;
+	font-size: 12px;
+    z-index: 30;
+}
+
+#sddm div a:hover
+{	
+    background: #F6F6F6;
+	color: #000;    
+	z-index: 30;
+}
+
+.arrowMenu
+{
+    margin-left: 4px;
+    margin-top: 4px;
+    vertical-align:top;
+    float: right;
+}
+
+#notification
+{
+	 text-align: center;
+}
+
+.noNotification
+{
+	width:0px;
+	height:0px;
+}
+
+.hasNotification
+{
+	width:24px;
+	height:16px;
+	margin-left:3px;
+	vertical-align:top;
+	font-size: 12px;
+	background-image: url('../images/notification.png') ;
+	background-repeat: no;
+	display:inline-block;
+}
+
+/* CSS for main view*/
+#taskpane
+{
+	background-color:#D3E6F5;
+	height: calc(100% - 50px);
+	width:253px;
+	float:left;
+	border-right:1px solid #75A8D7;            
+}
+
+#welcome
+{
+	font-weight: bold; 
+	text-align:center;
+    margin-top: 5px;
+	color: #D14836;
+	font-size: 22px;    
+}
+
+#version
+{
+    font-weight: bold; 
+	text-align:center;
+	color: #D14836;
+	font-size: 16px;
+}
+
+#curProject
+{
+    font-weight: bold; 	
+	color: maroon;	
+	padding-top: 5px;   
+    padding-left: 15px;
+    font-size: 14px;
+}
+.taskpaneLabel
+{        
+    padding-bottom: 5px;
+    padding-top: 5px;   
+    padding-left: 30px;     
+}
+
+#mapCanvas
+{
+	background-color:#EEEEEE; 
+    border:0px;   
+    height: calc(100% - 50px); 
+   	z-index: 1;
+}
+
+#spetCanvas
+{
+	background-color:#EEEEEE; 
+    border:0px;   
+    height: 100%;
+   	z-index: 1;
+}
+
+#spetTaskpane
+{
+	background-color:#D3E6F5;
+	height: 100%;
+	width:253px;
+	float:left;
+	border-right:1px solid #75A8D7;            
+}
+
+/* Common style for dialogs */
+.formLabel
+{
+    font-weight: bold;    
+    padding-bottom: 10px;
+    padding-top: 10px;    
+}
+
+.formLabelCenter
+{
+    font-weight: bold;    
+    padding-bottom: 10px;
+    padding-top: 10px;
+    text-align: center;
+}
+
+.formInstructionLabel
+{
+    font-weight: bold;    
+    font-style: italic;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    text-align: center;
+    color: maroon;
+}
+
+.inputText
+{
+    width: 315px;
+}
+
+.formText
+{    
+    padding-bottom: 5px;
+    padding-top: 3px;
+    padding-left: 10px;
+    font-weight: normal;    
+}
+
+.googleLookAndFeel, ::-webkit-file-upload-button
+{
+	display: inline-block;
+	background-color: #f5f5f5;
+	background-image: -webkit-linear-gradient(top,#f5f5f5,#f1f1f1);
+	background-image: -moz-linear-gradient(top,#f5f5f5,#f1f1f1);
+	background-image: -ms-linear-gradient(top,#f5f5f5,#f1f1f1);
+	background-image: -o-linear-gradient(top,#f5f5f5,#f1f1f1);
+	background-image: linear-gradient(top,#f5f5f5,#f1f1f1);
+	color: #444;
+	border: 1px solid #dcdcdc;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;	
+	cursor: default;
+	font-weight: bold;
+	text-align: center;
+	height: 30px;	
+	margin-top: 2px;
+	margin-bottom: 2px;
+	margin-left: 2px;
+	margin-right: 2px;
+	line-height: 27px;
+	min-width: 54px;
+	padding: 0 8px;
+	text-decoration: none;	
+}
+
+.googleLookAndFeel:hover, ::-webkit-file-upload-button:hover {
+	background-color: #F8F8F8;
+	background-image: -webkit-linear-gradient(top,#f8f8f8,#f1f1f1);
+	background-image: -moz-linear-gradient(top,#f8f8f8,#f1f1f1);
+	background-image: -ms-linear-gradient(top,#f8f8f8,#f1f1f1);
+	background-image: -o-linear-gradient(top,#f8f8f8,#f1f1f1);
+	background-image: linear-gradient(top,#f8f8f8,#f1f1f1);
+	
+	border: 1px solid #C6C6C6;
+	color: #333;
+	
+	-webkit-box-shadow: 0px 1px 1px rgba(0,0,0,.1);
+	-moz-box-shadow: 0px 1px 1px rgba(0,0,0,.1);
+	box-shadow: 0px 1px 1px rgba(0,0,0,.1);
+}
+
+button:disabled, button:disabled:hover  
+{
+    background: #FFFFFF;
+    border: 1px solid #EEEEEE;    
+    -webkit-box-shadow: 0px 0px 0px rgba(0,0,0,.1);
+	-moz-box-shadow: 0px 0px 0px rgba(0,0,0,.1);
+	box-shadow: 0px 0px 0px rgba(0,0,0,.1);
+}
+
+.inputCheckbox {    
+    padding: 0;
+    margin:0;
+    vertical-align: bottom;
+    position: relative;
+    top: -1px;
+    *overflow: hidden;
+}
+
+.mediaPlacehold
+{
+    background-color:#EEEEEE; 
+    border:1px solid black;
+    width: 318px;   
+    height: 200px; 
+   	z-index: 1;
+    display: flex;
+    justify-content: center; /* align horizontal */
+    align-items: center; /* align vertical */ 
+}
+
+.tableBorder
+{
+	border:1px solid #75A8D7 ;
+	padding:3px;
+	border-collapse:collapse;
+}
+
+.tableHeader	
+{
+	border:1px solid #75A8D7;
+	padding:3px;
+	border-collapse:collapse;
+    background-color:#D3E6F5;
+	color:black;	
+}
+.tableNameColumn
+{
+    width:130px;
+}
+
+
+td 
+{
+    vertical-align: center;        
+}
+
+.btnEdit, .btnDelete, .btnView, .btnPublish, .btnUnpublish
+{ 
+	width:185px;
+    text-align:left;	 
+}
+
+/*Creating POI form */
+#mapPOI
+{
+	background-color:#EEEEEE; 
+    border:1px solid #75A8D7;
+    width: 385px;   
+    height: 307px; 
+   	z-index: 1;
+}
+
+#mapResponse
+{
+	background-color:#EEEEEE; 
+    border:1px solid #75A8D7;
+    width: 385px;   
+    height: 307px; 
+   	z-index: 1;
+}
+
+.makeFistPhotoPOIInputText
+{
+	width: 315px;    
+    margin-left: 10px;	
+    margin-top: 7px;		
+}
+
+#selectFile /*select GPS image file*/
+{ 
+    width: 372px;
+}
+
+#gpsImage
+{
+    background-color:#EEEEEE; 
+    border:1px solid black;
+    width: 372px;   
+    height: 279px;  
+   	z-index: 1;
+    display: flex;
+    justify-content: center; /* align horizontal */
+    align-items: center; /* align vertical */ 
+}
+
+/*Creating route form */
+#mapRoute
+{
+	background-color:#EEEEEE; 
+    border:1px solid #75A8D7;   
+    height:400px;
+    width:900px;
+   	z-index: 1;
+}
+ 
+.routeInput
+{
+	width: 250px;    
+    margin: 1px 40px 1px 3px;    		
+}
+
+.tableListColumn
+{
+    width: 150px;
+}
+
+/*Form POI type*/
+.browseIcon /* Button for POI Type */
+{    
+    margin-top: 10px; 
+    vertical-align: top;
+}
+
+.iconPlacehold /*preview icon */
+{
+    width: 25px;   
+    height: 25px;
+    border:1px solid black;   
+    border-radius: 3px;    
+    margin-top: 10px;
+}
+
+
+/*Media form*/
+.imgBox {
+    max-width: 100%;
+    max-height: 100%;
+}
+.imgMedia {
+   padding:2px;
+   border:1px solid black;   
+   border-radius: 5px;
+}
+.mediaEditView
+{
+    background-color:#EEEEEE; 
+    border:1px solid black;
+    width: 218px;
+   	height: 163px; 
+   	z-index: 1;
+    display: flex;
+    justify-content: center; /* align horizontal */
+    align-items: center; /* align vertical */   
+    margin-left: 10px;	  
+}
+
+.recordingCanvas 
+{ 
+	display: inline-block; 
+	background: #202020; 	
+	box-shadow: 0px 0px 5px black;
+}
+
+.textMediaBox
+{
+    width:310px; 
+    padding:2px;
+    border:1px solid black;   
+    border-radius: 5px;
+}
+
+.leftButtonAddMedia
+{
+	margin-right: 85px !important;
+}
+
+.leftButtonImport
+{
+	margin-right: 325px !important;
+}
+
+/* Align Close button */
+.rightButtonCloseEOI
+{
+	margin-left:700px !important;		
+}
+
+.rightButtonClosePOI
+{
+	margin-left:310px !important;		
+}
+
+.rightButtonCloseRoute
+{
+	margin-left:270px !important;		
+}
+
+.rightButtonClosePOIType
+{
+	margin-left:420px !important;		
+}
+
+.reorder-up, .reorder-down, .reorder-edit, .reorder-delete 
+{	
+    text-align:center;
+}
+
+.actionImage /*Up Down Delete Edit*/
+{   
+    vertical-align:middle;
+}
+
+/*Emulator control*/
+#emulatorFrame{
+	position: absolute;
+    bottom:5px;
+	left:2px;
+    width: 240px;    
+	height: 390px;
+	padding: 2px;    
+    z-index: 6;            	
+}
+
+.italicText
+{  
+	font-style:italic;
+}
+
+#movingStep{
+    width:35px;
+}
+
+#upButton 
+{
+	background-image: url('../images/up.png');
+	height: 64px;
+	width: 64px;   
+    cursor: pointer;
+}
+
+#upButton:hover {
+   background-image: url('../images/upover.png');   
+}
+
+#downButton 
+{
+	background-image: url('../images/down.png');
+	height: 64px;
+	width: 64px;   
+    cursor: pointer;
+}
+
+#downButton:hover {
+   background-image: url('../images/downover.png');   
+}
+
+#leftButton 
+{
+	background-image: url('../images/left.png');
+	height: 64px;
+	width: 64px;   
+    cursor: pointer;
+}
+
+#leftButton:hover {
+   background-image: url('../images/leftover.png');   
+}
+
+#rightButton 
+{
+	background-image: url('../images/right.png');
+	height: 64px;
+	width: 64px;
+    cursor: pointer;   
+}
+
+#rightButton:hover {
+   background-image: url('../images/rightover.png');   
+}
+
+#topLeftButton 
+{
+	background-image: url('../images/topleft.png');
+	height: 64px;
+	width: 64px;   
+    cursor: pointer;
+}
+
+#topLeftButton:hover {
+   background-image: url('../images/topleftover.png');   
+}
+
+#topRightButton 
+{
+	background-image: url('../images/topright.png');
+	height: 64px;
+	width: 64px;   
+    cursor: pointer;
+}
+
+#topRightButton:hover {
+   background-image: url('../images/toprightover.png');   
+}
+
+#botLeftButton 
+{
+	background-image: url('../images/botleft.png');
+	height: 64px;
+	width: 64px;   
+    cursor: pointer;
+}
+
+#botLeftButton:hover {
+   background-image: url('../images/botleftover.png');   
+}
+
+#botRightButton 
+{
+	background-image: url('../images/botright.png');
+	height: 64px;
+	width: 64px;   
+    cursor: pointer;
+}
+
+#botRightButton:hover {
+   background-image: url('../images/botrightover.png');   
+}
+.longInputElm /* Button for SPET */
+{
+	width: 220px;    
+    margin-left: 10px;
+    margin-bottom: 7px;		
+}
+
+.statusBox /*waiting dialog */
+{    
+    display: flex;
+    justify-content: center; /* align horizontal */
+    align-items: center; /* align vertical */   
+    margin-left: 10px;	  
+    margin-top: 10px;
+}
+
+/* Search box for Maps */
+.controls {
+    margin-top: 16px;
+    border: 1px solid transparent;
+    border-radius: 2px 0 0 2px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    height: 32px;
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+#pac-input {
+    background-color: #fff;
+    font-family: Roboto;
+    font-size: 15px;
+    font-weight: 300;
+    margin-left: 12px;
+    padding: 0 11px 0 13px;
+    text-overflow: ellipsis;
+    width: 400px;
+}
+
+#pac-input:focus {
+    border-color: #4d90fe;
+} 

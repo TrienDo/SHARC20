@@ -546,7 +546,7 @@
     }); 
     
     //endpoints for SPVT
-    //Get experiences consumed by a user
+    //Get a list experiences consumed by a user
     $app->get('/experiencesForSpvt/:userId', function ($userId) use ($app) {
         $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
         if($rs["status"] != SUCCESS){
@@ -556,7 +556,20 @@
         $userId = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only     
         $response = ExperienceService::getExperienceOfConsumer($userId);
         Utils::echoResponse($response); 
-    });      
+    }); 
+    
+    
+    //Get content of an experience for SPVT
+    $app->get('/experienceSnapshotForSpvt/:experienceId/:userId', function ($experienceId, $userId) use ($app) {        
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }           
+        $userId = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = ExperienceService::getExperienceSnapshotForSpvt($experienceId, $userId);
+        Utils::echoResponse($response); 
+    });     
  
     $app->map('/hello', function () {
 		echo "Welcome to SHARC 2.0 RESTful Web services";
