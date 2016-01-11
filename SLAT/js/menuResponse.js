@@ -69,7 +69,7 @@ function presentNewResponses( )
                 //$("#tblData tbody").append('<tr><td>' + count + '</td><td>' + allNewResponses[i].content + '</td><td>' + allNewResponses[i].desc + '</td><td style="text-align:center;">' + allNewResponses[i].entityID + '</td><td style="text-align:center;">' + allNewResponses[i].conName + '</td><td style="text-align:center;">' + allNewResponses[i].conEmail + '</td><td><button class="btnApprove googleLookAndFeel"><img style="vertical-align:middle" src="images/approve.png"> Approve this response</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Reject this response</button> <button class="btnView googleLookAndFeel">View this response</button></td></tr>');
                 var contentString = "";
                 if(allNewResponses[i].contentType == "text")
-                    contentString = '<object class="textMediaBox" type="text/html" data="' + allResponses[i].content + '" ></object>';
+                    contentString = '<object class="textMediaBox" type="text/html" data="' + allNewResponses[i].content + '" ></object>';
                 else if(allNewResponses[i].contentType == "image")
                     contentString = '<img style="width:100px" src="' + allNewResponses[i].content + '">';
                 else if(allNewResponses[i].contentType == "audio")

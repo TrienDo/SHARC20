@@ -543,7 +543,20 @@
         $objResponse = json_decode($jsonResponse, true);        
         $response = ResponseService::updateResponse($objResponse);
         Utils::echoResponse($response); 
-    });        
+    }); 
+    
+    //endpoints for SPVT
+    //Get experiences consumed by a user
+    $app->get('/experiencesForSpvt/:userId', function ($userId) use ($app) {
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }           
+        $userId = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only     
+        $response = ExperienceService::getExperienceOfConsumer($userId);
+        Utils::echoResponse($response); 
+    });      
  
     $app->map('/hello', function () {
 		echo "Welcome to SHARC 2.0 RESTful Web services";

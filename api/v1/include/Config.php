@@ -221,8 +221,8 @@
     Capsule::schema()->dropIfExists('SharcConsumerExperiences');
     Capsule::schema()->create('SharcConsumerExperiences', function($table)
     {
-        $table->string('id');
-        $table->primary('id');
+        $table->increments('id');
+        //$table->primary('id');
         $table->string('experienceId');
         $table->foreign('experienceId')->references('id')->on('SharcExperiences')->onDelete('cascade');
         $table->string('userId');

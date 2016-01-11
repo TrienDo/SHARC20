@@ -132,6 +132,7 @@
             $response = UserService::userLogin($objUser);
             //Update consumer - experience
             $objConExp = array();
+            $objConExp['id'] = $response['data']['id'];
             $objConExp['userId'] = $response['data']['id'];
             $objConExp['experienceId'] = $experienceId;
             ConsumerExperienceService::updateConsumerExperience($objConExp);

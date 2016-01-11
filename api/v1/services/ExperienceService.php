@@ -164,6 +164,35 @@
         }
         
         /**
+         * Get experiences consumed by a user
+         * @param String $id: id of the user         
+         */
+        public static function getExperienceOfConsumer($id)
+        {
+            $response = array();
+            $experiences = array();            
+            try{    
+                $response["status"] = SUCCESS;
+                if($id == ADMIN_ID)//admin
+                    $experiences = SharcConsumerExperience::all();
+                else            
+                    $experiences = SharcConsumerExperience::where('userId',$id)->get();
+                $i = 0;                  
+                for ($i = 0; $i< $experiences->count(); $i++) {
+                    //echo SharcExperience::find($experiences[$i]->experienceId)->toJson();
+                    $experiences[$i] = SharcExperience::find($experiences[$i]->experienceId);
+                }
+                $response["data"] =  $experiences->toArray();   
+            }
+            catch(Exception $e)
+            {
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }
+            return $response;
+        }
+        
+        /**
          * Get all published experiences
          */
         public static function getPublishedExperiences()

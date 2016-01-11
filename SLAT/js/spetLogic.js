@@ -11,6 +11,7 @@ var experienceName = "";
 var allExperienceMarkers = new Array();
 var startRouteMarker = null;
 var endRouteMarker = null;
+var endIcon = null;
 var allPOIMarkers = new Array();
 var allPOIZones = new Array();
 var allPoiViz = new Array();    //Array to store all viz of POI (e.g., point, polygon, polyline) - point = null, other = polyline as polygon = polyline with same start and end
@@ -20,6 +21,7 @@ var curEOI;
 var allEOIs = new Array();
 var allRoutes = new Array();
 var allRoutePaths = new Array();
+var allRouteMarkers = new Array();//Array to store all Start/End markers of routes
 var EXPLORE_ZOOM = 7;
 var EXPERIENCE_ZOOM = 16;
 var experienceId = "";
@@ -60,13 +62,21 @@ function createGoogleObjects()
     }
     markerManager = new MarkerClusterer(map, [], clusterOptions);
     
+    endIcon = {
+        url: 'images/end.png',        
+        size: new google.maps.Size(32, 64),        
+        origin: new google.maps.Point(0, 0),        
+        anchor: new google.maps.Point(16, 0)
+    };
+    
     endRouteMarker = new google.maps.Marker({
         position: new google.maps.LatLng(0,0),
-        draggable:true,
-        icon: "images/end.png",
+        draggable: false,
+        icon: endIcon,
         map:null
     });
     
+        
     startRouteMarker = new google.maps.Marker({
         position: new google.maps.LatLng(0,0),
         draggable:true,
@@ -166,6 +176,10 @@ function clearExperience()
     allRoutePaths = [];
     endRouteMarker.setMap(null);
     startRouteMarker.setMap(null);
+    
+    for (var i=0; i < allRouteMarkers.length; i++)
+        allRouteMarkers[i].setMap(null);
+    allRouteMarkers = [];
 }
 
 function gotoExperienceMode(snapshot)
@@ -251,6 +265,7 @@ function renderPOIs(retPOIs)
         curPOI = new SharcPoiExperience(retPOIs[i].experienceId,retPOIs[i].poiDesigner,retPOIs[i].description,retPOIs[i].id, retPOIs[i].typeList, retPOIs[i].eoiList,retPOIs[i].routeList, retPOIs[i].mediaCount, retPOIs[i].responseCount);
         allPOIs.push(curPOI);
         //Vis Geofence
+        /*
         var fenceInfo = curPOI.poiDesigner.triggerZone.trim().split(" ");
         if(fenceInfo[0]== "circle") //String format-->circle colourWithout# Radius Lat Lng
         {
@@ -281,7 +296,8 @@ function renderPOIs(retPOIs)
         		map: map
         	});
         }        
-        allPOIZones.push(tmpPoiZone);                                
+        allPOIZones.push(tmpPoiZone); 
+        */                               
         //hashTablePOI[curPOI.id] = allPOIs.length;//key = id and value = index of POI in array --> to associate media with POI later
         //Viz marker        
         tmpLatLng = curPOI.getFirstPoint();
