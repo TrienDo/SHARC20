@@ -114,39 +114,8 @@ function renderPOIs(retPOIs)
         curPOI.media = retPOIs[i].media;
         curPOI.responses = retPOIs[i].responses;
         allPOIs.push(curPOI);
-        //Vis Geofence
-        var fenceInfo = curPOI.poiDesigner.triggerZone.trim().split(" ");
-        if(fenceInfo[0]== "circle") //String format-->circle colourWithout# Radius Lat Lng
-        {
-            tmpPoiZone = new google.maps.Circle({					
-        		center: new google.maps.LatLng(parseFloat(fenceInfo[3]), parseFloat(fenceInfo[4])), 
-                radius: parseFloat(fenceInfo[2]),
-        		strokeColor: "#" + fenceInfo[1], strokeOpacity: 1.0, strokeWeight: 2,
-        		fillColor: "#" + fenceInfo[1], fillOpacity: 0.3,		
-        		map: map
-        	});
-        }
-        else if(fenceInfo[0]== "polygon")//String format-->polygon colourWithout# Lat1 Lng1 Lat2 Lng2
-        {
-            
-            var polyPath = new Array();
-			var k = 2;
-			while (k < fenceInfo.length)
-			{
-				var tmpPoint =  new google.maps.LatLng(parseFloat(fenceInfo[k]), parseFloat(fenceInfo[k+1]));				
-				polyPath.push(tmpPoint);
-				k+=2;
-			}
-            
-            tmpPoiZone = new google.maps.Polygon({					
-        		paths: polyPath,
-                strokeColor: "#" + fenceInfo[1], strokeOpacity: 1.0, strokeWeight: 2,
-        		fillColor: "#" + fenceInfo[1], fillOpacity: 0.3,		
-        		map: map
-        	});
-        }        
-        allPOIZones.push(tmpPoiZone);                                
-        //hashTablePOI[curPOI.id] = allPOIs.length;//key = id and value = index of POI in array --> to associate media with POI later
+                                       
+        
         //Viz marker
         tmpLatLng = curPOI.getFirstPoint();        
         var frameIcon = null;

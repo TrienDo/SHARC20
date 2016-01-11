@@ -837,7 +837,7 @@ function getResponseContent(responses)//For displaying media pane
         else if(res.contentType == "audio")
         	responseText += '<li id="' + res.id + '"><div class="mediaPlacehold"><audio width="318" height="50" controls ><source src="' + res.content + '" type="audio/mpeg"></audio></div>' + '<div class="formLabel">' + res.description + '</div>';
         else if(res.contentType == "video")
-            content += '<li id="' + res.id + '"><div class="mediaPlacehold"><video width="318" height="200" controls> <source src="' + res.content + '"></video></div>' + '<div class="formLabel">' + res.description + '</div>';        
+            responseText += '<li id="' + res.id + '"><div class="mediaPlacehold"><video width="318" height="200" controls> <source src="' + res.content + '"></video></div>' + '<div class="formLabel">' + res.description + '</div>';        
     	content += responseText;
     }   
     return content + '</ul>';
