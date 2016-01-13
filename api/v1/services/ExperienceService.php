@@ -89,6 +89,8 @@
                     $experience->thumbnailPath = $objExperience['thumbnailPath'];
                     //$experience->size = SharcMediaExperience::where('experienceId', $objExperience['experienceId'])->sum('size');
                     $experience->size = MediaService::getMediaSizeForExperience($designerId, $objExperience['id']);
+                    if($experience->size == 0)
+                        $experience->size = 1;
                     $experience->theme = $objExperience['theme']; 
                                     
                     $result = $experience->save();

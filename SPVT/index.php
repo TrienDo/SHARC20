@@ -3,7 +3,7 @@
 <html>
 <head>
 	<meta charset="UTF-8"/>    
-    <title>SLAT - Sharc Post Visit Tool</title>
+    <title>SPVT - Sharc Post Visit Tool</title>
 	<link rel="shortcut icon" href="images/sharc.png"/>
     <link rel="stylesheet" type="text/css" href="css/lomak.css"/>
     <link rel="stylesheet" type="text/css" href="css/menu.css"/>

@@ -196,18 +196,15 @@ function renderPOIs(retPOIs)
         //Viz marker        
         tmpLatLng = curPOI.getFirstPoint();
         var poiIcon = null;
-        //if(curPOI.type == "accessibility")
-        //    poiIcon = "images/access.png";
-        //else
-        //{
-            //poiIcon = getFirstImage(curPOI);
-            //if(poiIcon == null)
-                poiIcon = "images/poi.png";
-        //}
-        if(retPOIs[i].thumbnail == "")
-            poiIcon = "images/poi.png";
+        if(retPOIs[i].typeList == "accessibility")
+            poiIcon = "images/access.png";
         else
-            poiIcon =  getImageMarker(retPOIs[i].thumbnail);                        
+        {            
+            if(retPOIs[i].thumbnail == "")
+                poiIcon = "images/poi.png";
+            else
+                poiIcon =  getImageMarker(retPOIs[i].thumbnail);
+        }                        
         tmpPoiMarker = new google.maps.Marker({  
         			   position: tmpLatLng, map: map, zIndex:2,visible: true,draggable: false,
         			   icon: poiIcon, title: curPOI.poiDesigner.name,id: allPOIMarkers.length	
@@ -547,7 +544,7 @@ function publishProject()
     $( "#dialog-message" ).dialog({
         modal: true,
         height: 570,
-        width: 715,
+        width: 750,
         position: ['center','middle'],
         buttons: {
             Cancel: function() {
