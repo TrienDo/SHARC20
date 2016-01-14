@@ -446,6 +446,8 @@
                     $tmpPois[$i]["thumbnail"] = "";
                 //Media for POI                                
                 $media = MediaService::getMediaForEntityServer($designerId, $experienceId, $objPois[$i]->id, "POI");
+                $tmpPois[$i]["media"] = $media->toArray();
+                                
                 //$tmpPois[$i]["media"] = $media->toArray();
                 if($media != null)
                     $tmpPois[$i]["mediaCount"] = $media->count();
