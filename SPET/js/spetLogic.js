@@ -83,8 +83,48 @@ function createGoogleObjects()
         icon: "images/start.png",
         map:null
     });
+    addsearchBox(map,'pac-input');
 }
+//Add a search box for Google maps of either main UI/(POI,Route) dialog
+function addsearchBox(searchMap,searchTextBoxID)
+{
+    var searchMarkers = [];
+    var searchInput = document.getElementById(searchTextBoxID);
+    searchMap.controls[google.maps.ControlPosition.TOP_LEFT].push(searchInput);
+    var searchBox = new google.maps.places.SearchBox(searchInput);
+    // [START region_getplaces]
+    // Listen for the event fired when the user selects an item from the
+    // pick list. Retrieve the matching places for that item.
+    google.maps.event.addListener(searchBox, 'places_changed', function() {
+        var places = searchBox.getPlaces();
+        if (places.length == 0) {
+            return;
+        }
+         
+        // For each place, get the icon, place name, and location.
+        searchMarkers = [];
+        var bounds = new google.maps.LatLngBounds();
+        for (var i = 0, place; place = places[i]; i++) {
+            // Create a marker for each place.
+            var marker = new google.maps.Marker({
+                map: null,                
+                position: place.geometry.location
+            });
+            searchMarkers.push(marker);
+            bounds.extend(place.geometry.location);
+        }
+        searchMap.fitBounds(bounds);
+        searchMap.setZoom(16);
+    });
+    // [END region_getplaces]
 
+    // Bias the SearchBox results towards places that are within the bounds of the
+    // current map's viewport.
+    google.maps.event.addListener(searchMap, 'bounds_changed', function() {
+        var bounds = searchMap.getBounds();
+        searchBox.setBounds(bounds);
+    });
+}
 function getPublicExperiences()
 {
     map.setZoom(EXPLORE_ZOOM);        

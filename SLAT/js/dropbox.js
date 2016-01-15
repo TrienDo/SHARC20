@@ -12,6 +12,9 @@ var allMedia = new Array();//Store all media items
     
 function SharcDropBox()
 {      
+    this.getMaxSize = function(){
+        return 150;
+    }
     //////////////////////AUTHENTICATION/////////////////////////////
     this.logIn = function()////Step 1 + 2 of authentication.
     {              

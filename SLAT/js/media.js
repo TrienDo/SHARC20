@@ -484,8 +484,9 @@ function showRecordingDialogWithMic()
 function showVideoDialog()
 {
     $('#dialog-media').html('');        
-    $('#dialog-media').dialog({ title: "Adding a video clip"});
-    var content = '<div class="formLabel"><input type="file" id="inputMedia" accept="video/*" class="formLabel"/></div>'
+    $('#dialog-media').dialog({ title: "Adding a video clip"});    
+    var content =  '<div class="formLabel">Note: maximum file size is ' + cloudManager.getMaxSize() + ' MB </div>'
+                +'<div class="formLabel"><input type="file" id="inputMedia" accept="video/*" class="formLabel"/></div>'
                 + '<div class="mediaPlacehold" id="mediaContent"><video id="mediaPOI" width="318" height="200" controls> <source src="">Your browser does not support the video tag.</video></div>'    
                 + '<div class="formLabel">Caption (optional)</div><div><input type="text" id="mediaCaption" class="inputText"/></div>';
     $('#dialog-media').append(content);

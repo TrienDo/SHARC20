@@ -40,7 +40,7 @@
     //If you want to change the structure of a table:
     // 1 - Copy that block out of the block comment 
     // 2 - Make changes
-    // 3 - Execute it (e.g. call any api)
+    // 3 - Execute it:  past the following URL in the browser: http://wraydisplay.lancs.ac.uk/SHARC20/api/v1/hello
     // 4 - Copy back the block again to keep track of the change
     
     /*
@@ -249,5 +249,5 @@
         $table->date('submittedDate');  
         $table->string('fileId');      
     });    
-    */          
+    */  
 ?>

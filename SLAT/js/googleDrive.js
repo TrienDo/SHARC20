@@ -13,6 +13,10 @@ var SharcWebViewLink = "";
  
 function SharcGoogleDrive()
 {
+    this.getMaxSize = function(){
+        return 250;
+    }
+    
     //////////////////////AUTHENTICATION/////////////////////////////     
     this.logIn = function()
     {     

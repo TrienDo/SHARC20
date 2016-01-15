@@ -5,7 +5,11 @@
     <title>SPET - Sharc Public Exploration Tool</title>	
     <link rel="stylesheet" type="text/css" href="css/lomak.css"/>
     <link rel="stylesheet" href="lib/jqueryUI.1.10.4/css/redmond/jquery-ui.css"/>    
-  	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=drawing"></script>
+  	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=drawing,places"></script>
+    <script src="https://apis.google.com/js/client.js"></script>
+    <script src="http://www.geocodezip.com/scripts/javascript.util.js"></script>
+    <script src="http://www.geocodezip.com/scripts/jsts.js"></script>
+
 	<script src="lib/jqueryUI.1.10.4/js/jquery-1.10.2.js"></script>
     <script src="lib/jqueryUI.1.10.4/js/jquery-ui-1.10.4.custom.js"></script>
     <script src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/2.0.1/src/markerclusterer.js"></script>
@@ -13,6 +17,7 @@
     <script src="js/spetLogic.js"></script>
 </head>
 <body>
+    <input id="pac-input" class="controls" type="text" placeholder="Search Box"/> <!-- search box for Google maps -->
     <div id="spetTaskpane">
         <div id="welcome">SPET</div><div id="version">Version 2.0</div>              
         <hr style="width: 90%;"/>        
