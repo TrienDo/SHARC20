@@ -20,7 +20,8 @@
             $response = array();
             try{
                 $rs = SharcExperience::where('name',$objExperience['name'])->get();
-                if ($rs->count() == 0){ //Not exists -> add a new experience 
+                //if ($rs->count() == 0){ //Not exists -> add a new experience 
+                if (0 == 0){ //Temporal: allow duplicated name as support offline -> cann't always check this -> edit later
                     $experience = SharcExperience::create(array(
                         'id' => $objExperience['id'],
                         'name' => $objExperience['name'],                   
