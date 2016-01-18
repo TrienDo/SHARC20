@@ -3,13 +3,14 @@
     Created:    March 2015
     Tasks:      Implementing menu functions of menu Response   
 */
+var callbackFunctionForResponse = "";
 
 //Show the red square notification next to the Response menu to indicate the number of new/undecided responses   
-function showNotification()
+function showNotification(count)
 {
-	if(allNewResponses.length > 0)
+	if(count > 0)
     {
-    	$("#notification").text(allNewResponses.length);
+    	$("#notification").text(count);
         $("#notification").attr("class","hasNotification");
     }
     else
@@ -22,6 +23,14 @@ function showNotification()
 //Show new/undecided responses
 function Response_showNewResponse()
 {
+    callbackFunctionForResponse = showNewResponsesDialog;    
+    resfulManager.getResponses(curProject.id);
+    
+}
+
+function showNewResponsesDialog(data)
+{
+    renderResponse(data);
     $(function() {        
         presentNewResponses();
         $( "#dialog-message").dialog({
@@ -224,6 +233,14 @@ function getMediaWithID(id)
 //Show all responses: new - undecided - rejected - accepted
 function Response_showAllResponse()
 {
+    callbackFunctionForResponse = showAllResponsesDialog;    
+    resfulManager.getResponses(curProject.id);
+}
+
+
+function showAllResponsesDialog(data)
+{
+    renderResponse(data);
     $(function() {        
         presentAllResponses();
         $( "#dialog-message").dialog({
@@ -274,7 +291,7 @@ function presentAllResponses( )
                     contentString = '<audio width="100" controls ><source src="' + allResponses[i].content + '" type="audio/mpeg"></audio>';
                 else if(allResponses[i].contentType == "video")
                     contentString = '<video width="100" controls> <source src="' + allResponses[i].content + '"></video>';
-            $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td style="text-align:center;">' + contentString + '</td><td>' + allResponses[i].description + '</td><td style="text-align:center;">' + allResponses[i].entityId + '</td><td style="text-align:center;">' + allResponses[i].userId + '</td><td style="text-align:center;">' + allResponses[i].status + '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/approve.png"> Accept this response</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Reject this response</button><button class="btnView googleLookAndFeel">Set back waiting</button></td></tr>');
+            $("#tblData tbody").append('<tr><td>' + (i+1) + '</td><td style="text-align:center;">' + contentString + '</td><td>' + allResponses[i].description + '</td><td style="text-align:center;">' + allResponses[i].entityType + " (" + allResponses[i].entityId + ")"+ '</td><td style="text-align:center;">' + allResponses[i].userId + '</td><td style="text-align:center;">' + allResponses[i].status + '</td><td><button class="btnEdit googleLookAndFeel"><img style="vertical-align:middle" src="images/approve.png"> Accept this response</button> <button class="btnDelete googleLookAndFeel"><img style="vertical-align:middle" src="images/delete.png"> Reject this response</button><button class="btnView googleLookAndFeel">Set back waiting</button></td></tr>');
         } 
         $("#tblData").addClass("tableBorder");
         $("#tblData td").addClass("tableBorder");
@@ -343,13 +360,12 @@ function setResponseStatus(index, mStatus, isNew)
                 if(isNew)
                 {
                     allNewResponses.splice(index,1);
-                    Response_showNewResponse();
-                    showNotification();
+                    Response_showNewResponse();                    
                 }
                 else{
                     Response_showAllResponse();
-                    showNotification();
                 }
+                showNotification(allNewResponses.length);
                 return;
             }
         }
@@ -392,15 +408,14 @@ function setResponseStatus(index, mStatus, isNew)
     if(isNew)
     {
         allNewResponses.splice(index,1);
-        Response_showNewResponse();
-        showNotification();
+        Response_showNewResponse();        
     }
     else{
         if(mStatus == "waiting" && oldStatus != "waiting"){
             //if it is not in the new List -> add
             allNewResponses.push(curResponse);
         }
-        Response_showAllResponse();
-        showNotification();
+        Response_showAllResponse();        
     }
+    showNotification(allNewResponses.length);
 }

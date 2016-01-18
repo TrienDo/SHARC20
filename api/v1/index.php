@@ -545,6 +545,30 @@
         Utils::echoResponse($response); 
     }); 
     
+    //Get all responses of an experience - used when pulling responses of an experience every 5 seconds from SLAT
+    $app->get('/responses/:designerId/:experienceId', function ($designerId, $experienceId) use ($app) {
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }           
+        $designerId = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = ResponseService::getExperienceResponses($designerId, $experienceId);        
+        Utils::echoResponse($response); 
+    });
+    
+    //Get No. of new responses of an experience - used when pulling responses of an experience every 5 seconds from SLAT
+    $app->get('/responsesCount/:designerId/:experienceId', function ($designerId, $experienceId) use ($app) {
+        $rs = UserService::checkAuthentication($app->request->headers->get('apiKey'));
+        if($rs["status"] != SUCCESS){
+            Utils::echoResponse($rs);
+            return;
+        }           
+        $designerId = $rs['data']->id;//So even with a valid apiKey, the designer can access her own resources only
+        $response = ResponseService::getResponsesCount($designerId, $experienceId);        
+        Utils::echoResponse($response); 
+    });
+    
     //endpoints for SPVT
     //Get a list experiences consumed by a user
     $app->get('/experiencesForSpvt/:userId', function ($userId) use ($app) {

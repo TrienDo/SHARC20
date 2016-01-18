@@ -148,9 +148,14 @@ function renderExperience(data)
     renderResponse(data.allResponses);
     $("#noOfPOI").text("Number of POIs: " + allPOIs.length);
     $("#noOfEOI").text("Number of EOIs: " + allEOIs.length);
-    $("#noOfROU").text("Number of Routes: " + allRoutes.length);    
-    showNotification();//Red rectangle next to the Response menu to indicate new responses    
+    $("#noOfROU").text("Number of Routes: " + allRoutes.length);
     showMapWithCorrectBound(map,maxZoomLevel)   
+    showNotification(allNewResponses.length);//Red rectangle next to the Response menu to indicate new responses
+    window.setInterval("getNewResponsesCount()",5000);
+}
+
+function getNewResponsesCount(){    
+    resfulManager.getNumberOfResponses(curProject.id);    
 }
 
 function renderPOIs(retPOIs)    
@@ -233,13 +238,15 @@ function renderPoiTypes(retPoiTypes){
 }
 
 function renderResponse(retResponses){
+    allResponses = [];
+    allNewResponses = [];
     for(i = 0; i < retResponses.length; i++) {        //( ,  ,  , , , , , , , , )
         var res = new SharcResponse(retResponses[i].id, retResponses[i].experienceId,retResponses[i].userId,retResponses[i].contentType,retResponses[i].content
                         ,retResponses[i].description ,retResponses[i].entityType ,retResponses[i].entityId ,retResponses[i].status ,retResponses[i].size,retResponses[i].submittedDate, retResponses[i].fileId);
         allResponses.push(res);
         if(res.status == "waiting")
             allNewResponses.push(res);                
-    }
+    }    
 }
 
 function renderEOIs(retEOIs)    

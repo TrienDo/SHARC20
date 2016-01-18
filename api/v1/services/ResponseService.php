@@ -182,5 +182,97 @@
             }    
             return $response;                 
         }
+        
+        /**
+         * Get all responses of an experience
+         * @param String $experienceId: id of the SharcExperience
+         * @param String $designerId: id of the designer           
+         */
+        public static function getExperienceResponses($designerId, $experienceId){
+            $response = array();
+            try{    
+                //Check if the designerId owns the experience
+                if($designerId == ADMIN_ID){//admin
+                    $ex = SharcExperience::find($experienceId);
+                    $designerId = $ex->designerId;
+                }
+                $rs = SharcExperience::where('id',$experienceId)->where('designerId',$designerId)->get();
+                if ($rs->count() == 0){ //Not exists 
+                    $response["status"] = FAILED;            
+                    $response["data"] = EXPERIENCE_NOT_EXIST;
+                    return $response; 
+                }
+                else {
+                    $response["status"] = SUCCESS;
+                    //Get all responses
+                    $objResponses = SharcResponse::where('experienceId',$experienceId)->get();
+                    $tmpResponse = $objResponses->toArray();                    
+                    $i = 0;
+                    for ($i; $i< $objResponses->count(); $i++) {
+                        $rs = SharcUser::find($objResponses[$i]->userId);
+                        if ($rs != null)
+                        $tmpResponse[$i]["userId"] = $rs->username;
+                        //get entity name as well
+                        switch($objResponses[$i]->entityType){
+                            case "POI":
+                                $obj = SharcPoiExperience::find($objResponses[$i]->entityId);                                
+                                $tmpResponse[$i]["entityId"] = SharcPoiDesigner::find($obj->poiDesignerId)->name;
+                                break;
+                            case "EOI":
+                                $obj = SharcEoiExperience::find($objResponses[$i]->entityId);                                
+                                $tmpResponse[$i]["entityId"] = SharcEoiDesigner::find($obj->eoiDesignerId)->name;
+                                break;
+                            case "ROUTE":
+                                $obj = SharcRouteExperience::find($objResponses[$i]->entityId);                                
+                                $tmpResponse[$i]["entityId"] = SharcRouteDesigner::find($obj->routeDesignerId)->name;
+                                break;
+                            case "media":
+                                break;    
+                        }
+                    }             
+                    $response["data"] = $tmpResponse;
+                    return $response;
+                }
+            }
+            catch(Exception $e){
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }
+            return $response;    
+        }
+        
+        /**
+         * Get number of new reponses for notification purpose only
+         * @param String $experienceId: id of the SharcExperience
+         * @param String $designerId: id of the designer           
+         */
+        public static function getResponsesCount($designerId, $experienceId){
+            $response = array();
+            try{    
+                //Check if the designerId owns the experience
+                if($designerId == ADMIN_ID){//admin
+                    $ex = SharcExperience::find($experienceId);
+                    $designerId = $ex->designerId;
+                }
+                $rs = SharcExperience::where('id',$experienceId)->where('designerId',$designerId)->get();
+                if ($rs->count() == 0){ //Not exists 
+                    $response["status"] = FAILED;            
+                    $response["data"] = EXPERIENCE_NOT_EXIST;
+                    return $response; 
+                }
+                else {
+                    $response["status"] = SUCCESS;
+                    //Get all responses
+                    $objResponses = SharcResponse::where('experienceId',$experienceId)->where('status','waiting')->get();                    
+                    $response["data"] = $objResponses->count();
+                    return $response;
+                }
+            }
+            catch(Exception $e){
+                $response["status"] = ERROR;
+                $response["data"] = Utils::getExceptionMessage($e);
+            }
+            return $response;    
+        }
     }     
 ?>

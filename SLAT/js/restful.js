@@ -101,6 +101,46 @@ function SharcRestful()
         });
     }
     
+    this.getNumberOfResponses = function (experienceId)
+    {
+        $.ajax({
+            type:'GET',
+            url: apiRoot + 'responsesCount/' + designerInfo.id + '/'+ experienceId,                        
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){                    
+                    showNotification(result.data);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });
+    }
+    
+    
+    this.getResponses = function (experienceId)
+    {
+        $.ajax({
+            type:'GET',
+            url: apiRoot + 'responses/' + designerInfo.id + '/'+ experienceId,                        
+            headers: { 'apiKey': designerInfo.apiKey},
+            success: function(result) {                
+                if(result.status == SUCCESS){                    
+                    callbackFunctionForResponse(result.data);
+                }
+                else
+                    showMessage(result.data);
+            },
+            error: function(jqXHR, textStatus, errorThrown ) {
+                showMessage(textStatus + ". " + errorThrown);
+            }
+        });
+    }
+    
+    
     this.deleteExperience = function (experienceId){
         $.ajax({
             type:'DELETE',
