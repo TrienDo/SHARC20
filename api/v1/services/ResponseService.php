@@ -151,7 +151,7 @@
                 $sharcResponse = SharcResponse::find($objResponse['id']);
                 if($sharcResponse != null){
                     $sharcResponse->entityType = $objResponse['entityType'];
-                    if(is_numeric($objResponse['entityId']))
+                    if(is_numeric(substr($objResponse['entityId'],0, 10)))//First 10 digits of Id should be number
                         $sharcResponse->entityId = $objResponse['entityId'];//Sometimes It can be a string when reseting status
                     $sharcResponse->status = $objResponse['status'];
                     
@@ -165,7 +165,7 @@
                         $conName	= $user->username;
                         //Experience info
                         $experience = SharcExperience::find($sharcResponse->experienceId);
-                        $msg = "Dear $conName \n\nYour response (<a href='" + $sharcResponse->content + "'>Click to view your response</a>) to the $experience->name experience has been moderated. Its status is: $sharcResponse->status. \n\nPlease do not reply to this automatic email. You can contact us at thesharcproject@gmail.com.\n\nThank you.\n\nThe SHARC project team.";
+                        $msg = "Dear $conName \n\nYour response (click this link to view $sharcResponse->content) to the $experience->name experience has been moderated. Its status is: $sharcResponse->status. \n\nPlease do not reply to this automatic email. You can contact us at thesharcproject@gmail.com.\n\nThank you.\n\nThe SHARC project team.";
                         $headers = "From: SMET" . "\r\n" . "CC: thesharcproject@gmail.com";
                         mail($conEmail, "The moderation outcome of your response using SMEP",$msg,$headers);
                         
